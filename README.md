@@ -1,6 +1,6 @@
 # Vehicle-Security-Toolkit
 
-汽车安全测试工具集
+汽车安全测试工具集（持续更新）
 
 ## adb-export
 
@@ -23,3 +23,7 @@ $ ./adb-export.sh
     12. Do all of the above
 Choose an option: 
 ```
+
+## 开源协议
+
+Vehicle-Security-Toolkit use SATA(Star And Thank Author) [License](./LICENSE), so you have to star this project before using. 🙏
