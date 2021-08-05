@@ -41,7 +41,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('***************** apk-decompile.py *****************')
+    print('****************** apk-decompile.py ******************')
     args = argument()
     target = Path(args.dir)
 

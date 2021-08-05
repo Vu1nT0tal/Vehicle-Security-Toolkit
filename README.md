@@ -14,7 +14,7 @@ $ ./init.sh
 
 ```sh
 $ ./adb-export.sh
-*************** adb-export script ***************
+***************** adb-export script *****************
     1. Collect basic information, init and selinux
     2. Execute live commands
     3. Execute package manager commands
@@ -32,11 +32,11 @@ Choose an option:
 
 ## apk-decompile.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译代码为 smali 和 java，为后续分析做准备。
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译为 smali 和 java，为后续分析做准备。
 
 ```sh
 $ python3 apk-decompile.py --help                                           
-***************** apk-decompile.py *****************
+****************** apk-decompile.py ******************
 usage: apk-decompile.py [-h] [-a] [-j] -d DIR [-c]
 
 optional arguments:
@@ -53,7 +53,7 @@ optional arguments:
 
 ```sh
 $ python3 apk-leaks.py --help    
-******************** apkleaks.py ********************
+******************** apk-leaks.py ********************
 usage: apk-leaks.py [-h] [-f FILE] [-d DECOMPILED] [-o OUTPUT] [-a ARGS]
 
 optional arguments:
@@ -64,6 +64,23 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         Write to file results
   -a ARGS, --args ARGS  Disassembler arguments (e.g. --deobf)
+```
+
+## apk-mobsf.py
+
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并下载报告。
+
+```sh
+$ docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
+$ python3 apk-mobsf.py --help
+******************* apk-mobsf.py *********************
+usage: apk-mobsf.py [-h] -k KEY [-f FILE] [-d DIR]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -k KEY, --key KEY     Mobsf REST API key
+  -f FILE, --file FILE  APK file to scanning
+  -d DIR, --dir DIR     Target directory
 ```
 
 ## 开源协议

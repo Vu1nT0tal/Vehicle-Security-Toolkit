@@ -220,7 +220,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** apkleaks.py ********************')
+    print('******************** apk-leaks.py ********************')
     args = argument()
     if args.file and not args.decompiled:
         init = APKLeaks(args)
@@ -240,4 +240,4 @@ if __name__ == '__main__':
             init.scanning()
             init.cleanup(rm_tempdir=False)
     else:
-        print('[!] 参数错误（-f和-d只能有一个）: python3 apkleaks.py --help')
+        print('[!] 参数错误（-f和-d只能有一个）: python3 apk-leaks.py --help')
