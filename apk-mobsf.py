@@ -215,6 +215,6 @@ if __name__ == '__main__':
             else:
                 failed.append(str(apk))
         print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-        print({'\n'.join(failed)})
+        print('\n'.join(failed))
     else:
         print('[!] 参数错误（-f和-d只能有一个）: python3 apk-mobsf.py --help')

@@ -8,6 +8,16 @@
 $ ./init.sh
 ```
 
+## top-activity.sh
+
+连接ADB，获取顶层 App 及 Activity：
+
+```sh
+$ ./top-activity.sh
+*************** top-activity.sh ***************
+  mCurrentFocus=Window{33eb3e7 u0 com.fce.btphone/com.fce.btphone.activity.BtActivity}
+```
+
 ## adb-export.sh
 
 当拿到一个车机不知道该下载或查看哪些东西的时候，使用该脚本一键搞定。
