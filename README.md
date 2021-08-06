@@ -45,7 +45,7 @@ Choose an option:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译为 smali 和 java，为后续分析做准备。
 
 ```sh
-$ python3 apk-decompile.py --help                                           
+$ python3 apk-decompile.py --help
 ****************** apk-decompile.py ******************
 usage: apk-decompile.py [-h] [-a] [-j] -d DIR [-c]
 
@@ -62,7 +62,7 @@ optional arguments:
 使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量搜索 IP、URL、Key 等敏感信息。
 
 ```sh
-$ python3 apk-leaks.py --help    
+$ python3 apk-leaks.py --help
 ******************** apk-leaks.py ********************
 usage: apk-leaks.py [-h] [-f FILE] [-d DECOMPILED] [-o OUTPUT] [-a ARGS]
 
@@ -91,6 +91,22 @@ optional arguments:
   -k KEY, --key KEY     Mobsf REST API key
   -f FILE, --file FILE  APK file to scanning
   -d DIR, --dir DIR     Target directory
+```
+
+## lib-cvescan.py
+
+使用 `adb-export.sh` 导出 system 目录后，使用该脚本批量扫描开源组件并获取 CVE 详情。
+
+```sh
+$ python3 lib-cvescan.py --help
+******************* lib-cvescan.py *******************
+usage: lib-cvescan.py [-h] -f FILE [-o OUTPUT]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  File or directory to scanning
+  -o OUTPUT, --output OUTPUT
+                        Write to file results
 ```
 
 ## 开源协议
