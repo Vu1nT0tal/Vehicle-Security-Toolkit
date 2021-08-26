@@ -7,3 +7,6 @@ wget https://nightly.link/skylot/jadx/workflows/build/master/jadx-1.2.0.98-5f241
 unzip -q jadx.zip -d jadx && chmod +x jadx/bin/* && rm jadx.zip
 
 sudo docker pull opensecurity/mobile-security-framework-mobsf:latest
+
+sudo apt-get -y install openjdk-11-jdk
+python3 -m pip install qark

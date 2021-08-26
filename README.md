@@ -78,7 +78,7 @@ optional arguments:
 
 ## apk-mobsf.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并下载报告。
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
 $ docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
@@ -91,6 +91,22 @@ optional arguments:
   -k KEY, --key KEY     Mobsf REST API key
   -f FILE, --file FILE  APK file to scanning
   -d DIR, --dir DIR     Target directory
+```
+
+## apk-qark.py
+
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ python3 apk-qark.py --help
+******************** apk-qark.py *********************
+usage: apk-qark.py [-h] [--apk APK] [--java JAVA] [--report REPORT]
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --apk APK        A directory containing APK to decompile and run static analysis
+  --java JAVA      A directory containing Java code to run static analysis.
+  --report REPORT  Type of report to generate [html|xml|json|csv]
 ```
 
 ## lib-cvescan.py
