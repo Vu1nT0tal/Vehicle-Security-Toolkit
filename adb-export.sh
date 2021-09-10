@@ -333,6 +333,7 @@ content_provider () {
     touch /tmp/tempfile
 
     echo -e "\n[+] Extracting data by using CONTENT PROVIDERS\n[+]"
+    ${SHELL_CMD} dumpsys package providers > ${CONTENTPROVIDER_DIR}/content_providers_list.txt
 
     echo "[*] QUERY CALENDAR CONTENT"
     calendar_array=(calendar_entities calendars attendees event_entities events properties reminders
