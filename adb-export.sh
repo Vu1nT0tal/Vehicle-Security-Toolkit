@@ -55,6 +55,8 @@ set_path () {
 
     KEYS_DIR="${SPATH}/${NOW}_keys"
 
+    CONF_DIR="${SPATH}/${NOW}_conf"
+
     COMPRESSED_DIR="${SPATH}/${NOW}_compressed"
 
     BIN_DIR="${SPATH}/${NOW}_bin"
@@ -483,6 +485,22 @@ keys () {
     echo -e "[+]\n[+] Extracting keys completed at $NOW"
 }
 
+conf_files () {
+    echo -e "\n[+] Extracting configure files\n[+]"
+    set_path
+    mkdir -p "${CONF_DIR}/files"
+
+    $SHELL_CMD find / -type f -name "*.conf" 2>/dev/null > ${CONF_DIR}/conf_files.txt
+
+    while read line; do
+        local_name=$(echo ${line:1} | tr "/" "_")
+        $PULL_CMD $line ${CONF_DIR}/files/$local_name
+    done < ${CONF_DIR}/conf_files.txt
+
+    time_update
+    echo -e "[+]\n[+] Extracting configure files completed at $NOW"
+}
+
 compressed () {
     echo -e "\n[+] Extracting compressed files\n[+]"
     set_path
@@ -539,6 +557,7 @@ all () {
     content_provider
     databases
     keys
+    conf_files
     compressed
     bin_files
     #adb_backup
@@ -549,12 +568,12 @@ menu () {
     1. Collect basic information, init and selinux
     2. Execute live commands
     3. Execute package manager commands
-    4. Execute bugreport, dumpsys, appops
+    4. Execute bugreport, dumpsys and appops
     5. Acquire /system folder
     6. Acquire /sdcard folder
     7. Extract APK files
     8. Extract data from content providers
-    9. Extract databases and keys
+    9. Extract databases, keys and configure files
     10. Extract compressed and bin files
     11. Acquire an ADB Backup
     12. Do all of the above"
@@ -588,6 +607,7 @@ menu () {
         9)
             databases
             keys
+            conf_files
             ;;
         10)
             compressed
