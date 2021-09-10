@@ -57,6 +57,8 @@ set_path () {
 
     COMPRESSED_DIR="${SPATH}/${NOW}_compressed"
 
+    BIN_DIR="${SPATH}/${NOW}_bin"
+
     BACKUP_DIR="${SPATH}/${NOW}_backup"
 }
 
@@ -495,6 +497,21 @@ compressed () {
     echo -e "[+]\n[+] Extracting compressed files completed at $NOW"
 }
 
+bin_files () {
+    echo -e "\n[+] Extracting bin files\n[+]"
+    set_path
+    mkdir -p "${BIN_DIR}/files"
+    $SHELL_CMD find / -type f -name "*.bin" 2>/dev/null > ${BIN_DIR}/bin_files.txt
+
+    while read line; do
+        local_name=$(echo ${line:1} | tr "/" "_")
+        $PULL_CMD $line ${BIN_DIR}/files/$local_name
+    done < ${BIN_DIR}/bin_files.txt
+
+    time_update
+    echo -e "[+]\n[+] Extracting bin files completed at $NOW"
+}
+
 adb_backup () {
     set_path
     mkdir -p "$BACKUP_DIR"
@@ -522,6 +539,7 @@ all () {
     databases
     keys
     compressed
+    bin_files
     #adb_backup
 }
 
@@ -536,7 +554,7 @@ menu () {
     7. Extract APK files
     8. Extract data from content providers
     9. Extract databases and keys
-    10. Extract compressed files
+    10. Extract compressed and bin files
     11. Acquire an ADB Backup
     12. Do all of the above"
 
@@ -572,6 +590,7 @@ menu () {
             ;;
         10)
             compressed
+            bin_files
             ;;
         11)
             adb_backup

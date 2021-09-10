@@ -34,7 +34,7 @@ $ ./adb-export.sh
     7. Extract APK files
     8. Extract data from content providers
     9. Extract databases and keys
-    10. Extract compressed files
+    10. Extract compressed and bin files
     11. Acquire an ADB Backup
     12. Do all of the above
 Choose an option: 
