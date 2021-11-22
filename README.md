@@ -4,7 +4,12 @@
 
 ## 安装
 
-```
+首先安装 Android SDK 并设置环境变量 `$ANDROID_SDK`，然后执行 `init.sh`。
+
+```sh
+$ sudo snap install android-studio --classic  # 安装完成后打开android-studio进行设置
+$ export ANDROID_SDK=$HOME/Android/Sdk
+
 $ ./init.sh
 ```
 
@@ -107,6 +112,20 @@ optional arguments:
   --apk APK        A directory containing APK to decompile and run static analysis
   --java JAVA      A directory containing Java code to run static analysis.
   --report REPORT  Type of report to generate [html|xml|json|csv]
+```
+
+## apk-androbugs.py
+
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ python3 apk-androbugs.py --help         
+****************** apk-androbugs.py ******************
+usage: apk-androbugs.py [-h] --apk APK
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --apk APK   A directory containing APK to run static analysis
 ```
 
 ## lib-cvescan.py
