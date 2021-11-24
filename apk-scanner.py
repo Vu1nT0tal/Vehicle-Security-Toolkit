@@ -7,9 +7,10 @@ from utils import shell_cmd_ret_code
 
 def analysis(path: Path):
     print(f'[+] {path}')
-    report_file = path.parent.joinpath(f'{path.stem}-androbugs.txt')
+    report_file = path.parent.joinpath(f'{path.stem}-scanner.txt')
 
-    cmd = f'docker run --rm -v {str(path.parent)}:/apk danmx/docker-androbugs -f /apk/{path.name} -o /tmp > {str(report_file)}'
+    scanner = Path(__file__).parent.joinpath('tools/ApplicationScanner-main/AppScanner.py')
+    cmd = f'python3 {scanner} -i {path} > {str(report_file)}'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if not report_file.exists():
@@ -27,7 +28,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** apk-androbugs.py ******************')
+    print('******************* apk-scanner.py *******************')
 
     failed = []
     success_num = 0
@@ -40,7 +41,7 @@ if __name__ == '__main__':
             else:
                 failed.append(str(apk))
     else:
-        print('[!] 参数错误: python3 apk-androbugs.py --help')
+        print('[!] 参数错误: python3 apk-scanner.py --help')
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

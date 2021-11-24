@@ -1,10 +1,18 @@
 #!/bin/bash
 
-sudo apt-get update && sudo apt-get -y install python3-dev python3-pip python3-venv openjdk-11-jdk unzip
-python3 -m pip install pyaxmlparser requests_toolbelt cve-bin-tool tqdm qark
+set -e
 
-wget https://nightly.link/skylot/jadx/workflows/build/master/jadx-1.2.0.174-0efca29e.zip -O jadx.zip
+sudo apt-get update && sudo apt-get -y install python3-dev python3-pip python3-venv openjdk-11-jdk unzip npm
+python3 -m pip install wheel pyaxmlparser requests_toolbelt cve-bin-tool tqdm qark lief rich
+sudo npm -g install js-beautify
+
+wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.0/apktool_2.6.0.jar -O ./tools/apktool.jar
+
+wget -q https://github.com/skylot/jadx/releases/download/v1.3.0/jadx-1.3.0.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
+
+wget -q https://github.com/paradiseduo/ApplicationScanner/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
 
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf:latest

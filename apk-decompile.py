@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def apktool(apk_path: Path):
-    apktool_jar = Path(__file__).parent.joinpath('tools/apktool_2.5.0.jar')
+    apktool_jar = Path(__file__).parent.joinpath('tools/apktool.jar')
     output = apk_path.parent.joinpath('apktool_smali')
     cmd = f'java -jar {apktool_jar} d {str(apk_path)} -f -o {output}'
     os.system(cmd)
