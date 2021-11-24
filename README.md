@@ -4,11 +4,10 @@
 
 ## 安装
 
-首先安装 Android SDK 并设置环境变量 `$ANDROID_SDK`，然后执行 `init.sh`。
+首先安装 Android SDK，然后执行 `init.sh`。
 
 ```sh
 $ sudo snap install android-studio --classic  # 安装完成后打开android-studio进行设置
-$ export ANDROID_SDK=$HOME/Android/Sdk
 
 $ ./init.sh
 ```
@@ -157,6 +156,65 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         Write to file results
 ```
+
+- 开源组件漏洞扫描，得到CVE号：[cve-bin-tool](https://github.com/intel/cve-bin-tool)
+- 已知版本号查找 CVE：[cve-search](https://github.com/cve-search/cve-search)
+- Android
+  - APK 第三方库(`.jar`)识别。[paper](https://arxiv.org/pdf/2108.01964.pdf)
+    - [LibDetect](https://sites.google.com/view/libdetect/)
+    - [LibScout](https://github.com/reddr/LibScout)
+    - [LibRadar](https://github.com/pkumza/LibRadar)
+    - [LibPecker](https://github.com/yuanxzhang/LibPecker)
+  - APK 第三方库(`.so`)识别。
+- Linux
+  - `TODO: 动态链接库调用关系`
+
+## can-countid.py
+
+统计 CAN ID 出现次数，并过滤数据。`TODO：将有变化的数据高亮显示`
+
+```bash
+$ python3 cantool.py log.asc 
+******************* can-countid.py *******************
+c9: 1743
+128: 872
+12a: 174
+e1: 35
+please input id: c9
+0.009100: 84 0d 04 00 00 80 c0 d5
+0.019100: 84 0d 04 00 00 80 00 15
+0.029100: 84 0d 04 00 00 80 40 55
+0.039100: 84 0d 0e 00 00 80 80 9f
+```
+
+## idps-test
+
+制造系统网络异常状况，看是否会触发 IDSP 告警。
+
+`killcpu.sh` 死循环占用 CPU：
+
+```bash
+$ ./killcpu.sh   
+USAGE: ./killcpu.sh <cpus>
+cpus: 2
+```
+
+`killmemory.sh` 创建大文件占用内存：
+
+```bash
+$ ./killmemory.sh 
+USAGE: sudo ./killmemory.sh <memory/M>
+MemFree: 190 M
+MemAvailable: 829 M
+```
+
+## 进程间通信抓取
+
+- [Frida Android libbinder](https://bhamza.me/2019/04/24/Frida-Android-libbinder.html)
+- Man-In-The-Binder: He Who Controls IPC Controls The Droid. [slides](https://www.blackhat.com/docs/eu-14/materials/eu-14-Artenstein-Man-In-The-Binder-He-Who-Controls-IPC-Controls-The-Droid.pdf) | [wp](https://sc1.checkpoint.com/downloads/Man-In-The-Binder-He-Who-Controls-IPC-Controls-The-Droid-wp.pdf)
+- [binder transactions in the bowels of the linux kernel](https://www.synacktiv.com/en/publications/binder-transactions-in-the-bowels-of-the-linux-kernel.html)
+- [Android’s Binder – in depth](http://newandroidbook.com/files/Andevcon-Binder.pdf)
+- <https://android.googlesource.com/platform/frameworks/native/+/jb-dev/libs/binder>
 
 ## 开源协议
 
