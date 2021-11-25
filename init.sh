@@ -16,3 +16,10 @@ unzip -q main.zip -d ./tools/ && rm main.zip
 
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf:latest
+
+# 不按照这个顺序会出错，不知道为什么
+python3 -m venv ./tools/mariana-trench
+source ./tools/mariana-trench/bin/activate
+
+python3 -m pip install flask-graphql graphene-sqlalchemy
+python3 -m pip install mariana-trench

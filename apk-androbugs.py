@@ -5,11 +5,11 @@ from pathlib import Path
 from utils import shell_cmd_ret_code
 
 
-def analysis(path: Path):
-    print(f'[+] {path}')
-    report_file = path.parent.joinpath(f'{path.stem}-androbugs.txt')
+def analysis(apk_path: Path):
+    print(f'[+] {apk_path}')
+    report_file = apk_path.parent.joinpath(f'{apk_path.stem}-androbugs.txt')
 
-    cmd = f'docker run --rm -v {str(path.parent)}:/apk danmx/docker-androbugs -f /apk/{path.name} -o /tmp > {str(report_file)}'
+    cmd = f'docker run --rm -v {str(apk_path.parent)}:/apk danmx/docker-androbugs -f /apk/{apk_path.name} -o /tmp > {str(report_file)}'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if not report_file.exists():

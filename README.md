@@ -141,6 +141,24 @@ optional arguments:
   --apk APK   A directory containing APK to run static analysis
 ```
 
+## apk-mariana.py
+
+使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ source ./tools/mariana-trench/bin/activate
+$ python3 apk-mariana.py --help          
+******************* apk-mariana.py *******************
+usage: apk-mariana.py [-h] --apk APK
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --apk APK   A directory containing APK to run static analysis
+
+# 分析完成后查看报告。目前漏洞代码定位有问题: https://github.com/skylot/jadx/issues/476
+$ sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/sources}
+```
+
 ## lib-cvescan.py
 
 使用 `adb-export.sh` 导出 system 目录后，使用该脚本批量扫描开源组件并获取 CVE 详情。
@@ -173,7 +191,7 @@ optional arguments:
 
 统计 CAN ID 出现次数，并过滤数据。`TODO：将有变化的数据高亮显示`
 
-```bash
+```sh
 $ python3 cantool.py log.asc 
 ******************* can-countid.py *******************
 c9: 1743
@@ -193,7 +211,7 @@ please input id: c9
 
 `killcpu.sh` 死循环占用 CPU：
 
-```bash
+```sh
 $ ./killcpu.sh   
 USAGE: ./killcpu.sh <cpus>
 cpus: 2
@@ -201,7 +219,7 @@ cpus: 2
 
 `killmemory.sh` 创建大文件占用内存：
 
-```bash
+```sh
 $ ./killmemory.sh 
 USAGE: sudo ./killmemory.sh <memory/M>
 MemFree: 190 M

@@ -6,14 +6,14 @@ from pathlib import Path
 from utils import shell_cmd_ret_code
 
 
-def analysis(path: Path, mode: str, report: str = None):
-    print(f'[+] {path}')
+def analysis(apk_path: Path, mode: str, report: str = None):
+    print(f'[+] {apk_path}')
 
     report_type = 'html' if report is None else report
-    report_file = path.parent.joinpath(f'report.{report_type}')
-    new_report_file = path.parent.joinpath(f'{path.stem}-qark.{report_type}')
+    report_file = apk_path.parent.joinpath(f'report.{report_type}')
+    new_report_file = apk_path.parent.joinpath(f'{apk_path.stem}-qark.{report_type}')
 
-    cmd = f'qark --{mode} {str(path)} --report-type {report_type} --report-path {str(path.parent)}'
+    cmd = f'qark --{mode} {str(apk_path)} --report-type {report_type} --report-path {str(apk_path.parent)}'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if report_file.exists():
