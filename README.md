@@ -226,6 +226,23 @@ MemFree: 190 M
 MemAvailable: 829 M
 ```
 
+## mem-heapdump.sh
+
+app 堆内存 dump，得到 hprof 文件，并使用 [MAT](https://www.eclipse.org/mat) 进行后续分析：
+
+```sh
+$ ./app-heapdump.sh com.fce.fcesettings 
+******************* mem-heapdump.sh ******************
+restarting adbd as root
+remount succeeded
+system        3912  2058 2 14:28:31 ?     00:00:01 com.fce.fcesettings
+[*] Dumping managed heap...
+/data/local/tmp/original.hprof: 1 file pulled. 7.0 MB/s (21028468 bytes in 2.871s)
+[*] Converting hprof format...
+[*] Executing MAT analysis...
+[*] Managed dump and analysis succeeded
+```
+
 ## 进程间通信抓取
 
 - [Frida Android libbinder](https://bhamza.me/2019/04/24/Frida-Android-libbinder.html)
