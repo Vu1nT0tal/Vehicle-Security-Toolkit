@@ -159,6 +159,20 @@ optional arguments:
 $ sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/sources}
 ```
 
+## apk-quark.py
+
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ python3 apk-quark.py --help          
+******************** apk-quark.py ********************
+usage: apk-quark.py [-h] --apk APK
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --apk APK   A directory containing APK to run static analysis
+```
+
 ## lib-cvescan.py
 
 使用 `adb-export.sh` 导出 system 目录后，使用该脚本批量扫描开源组件并获取 CVE 详情。
