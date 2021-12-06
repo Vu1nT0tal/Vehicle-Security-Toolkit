@@ -4,7 +4,7 @@ set -e
 
 sudo apt-get update && sudo apt-get -y install git python3-dev python3-pip python3-venv openjdk-11-jdk unzip npm graphviz
 python3 -m pip install wheel pyaxmlparser requests_toolbelt cve-bin-tool tqdm qark lief rich quark-engine
-sudo npm -g install js-beautify
+sudo npm -g install js-beautify apk-mitm
 
 freshquark
 

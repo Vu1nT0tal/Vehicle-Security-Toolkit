@@ -9,17 +9,22 @@
 ```sh
 $ sudo snap install android-studio --classic  # 安装完成后打开android-studio进行设置
 
-$ ./init.sh
+$ git clone https://github.com/firmianay/Vehicle-Security-Toolkit.git
+$ cd Vehicle-Security-Toolkit && ./init.sh
+```
+
+连接 ADB 后安装 frida：
+
+```sh
+$ ./frida.sh
 ```
 
 ## top-activity.sh
 
-连接ADB，获取顶层 App 及 Activity：
+连接 ADB，获取顶层 App 及 Activity：
 
 ```sh
-$ ./top-activity.sh
-*************** top-activity.sh ***************
-  mCurrentFocus=Window{33eb3e7 u0 com.fce.btphone/com.fce.btphone.activity.BtActivity}
+$ adb shell dumpsys window | grep mCurrentFocus
 ```
 
 ## adb-export.sh
@@ -171,6 +176,20 @@ usage: apk-quark.py [-h] --apk APK
 optional arguments:
   -h, --help  show this help message and exit
   --apk APK   A directory containing APK to run static analysis
+```
+
+## HTTPS 抓包
+
+从 Android7 开始，系统不再信任用户 CA 证书，想要抓 HTTPS 数据，有三种方法：
+
+1. 使用旧版本Android；
+2. 使用已root的设备，将 BurpSuite 的 CA 证书安装到系统证书目录；
+3. 修改目标 APK 文件，重新启用用户证书目录。
+
+这里使用第三种方法：
+
+```sh
+$ apk-mitm --debuggable <path-to-apk>
 ```
 
 ## lib-cvescan.py
