@@ -49,6 +49,20 @@ $ ./adb-export.sh
 Choose an option: 
 ```
 
+## apk-id.py
+
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量检查加壳、混淆、反调试等保护情况。
+
+```sh
+$ python3 apk-id.py --help          
+********************* apk-id.py **********************
+usage: apk-id.py [-h] --apk APK
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --apk APK   A directory containing APK to run static analysis
+```
+
 ## apk-decompile.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译为 smali 和 java，为后续分析做准备。
