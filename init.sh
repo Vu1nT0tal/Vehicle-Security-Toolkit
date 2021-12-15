@@ -3,7 +3,7 @@
 set -e
 
 sudo apt-get update && sudo apt-get -y install git python3-dev python3-pip python3-venv openjdk-11-jdk unzip npm graphviz apkid
-python3 -m pip install wheel pyaxmlparser requests_toolbelt cve-bin-tool tqdm qark lief rich quark-engine
+python3 -m pip install wheel pyaxmlparser requests_toolbelt cve-bin-tool tqdm qark lief rich quark-engine androguard==3.4.0a1
 sudo npm -g install js-beautify apk-mitm
 
 freshquark
@@ -15,6 +15,9 @@ unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 wget -q https://github.com/paradiseduo/ApplicationScanner/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
+
+wget -q https://github.com/evilpan/jni_helper/archive/refs/heads/master.zip
+unzip -q master.zip -d ./tools/ && rm master.zip
 
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf:latest

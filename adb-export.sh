@@ -471,10 +471,10 @@ keys () {
     mkdir -p "${KEYS_DIR}/keys"
 
     $PULL_CMD /system/etc/security ${KEYS_DIR}/security
-    $SHELL_CMD find / -type f -name "*.csr" -o -name "*.pem" -o -name "*.key" -o -name "*.pkcs12" \
-                   -o -name "*.pfx" -o -name "*.p12" -o -name "*.der" -o -name "*.cert" \
-                   -o -name "*.cer" -o -name "*.crt" -o -name "*.p7b" -o -name "*.keystore" \
-                   -o -name "*.crl" 2>/dev/null > ${KEYS_DIR}/keys_file.txt
+    $SHELL_CMD find / -type f -name "*.csr" -o -name "*.pub" -o -name "*.prv" -o -name "*.pem" -o -name "*.key"
+                    -o -name "*.pkcs12" -o -name "*.pfx" -o -name "*.p12" -o -name "*.der" -o -name "*.cert" \
+                    -o -name "*.cer" -o -name "*.crt" -o -name "*.p7b" -o -name "*.p7c" -o -name "*.keystore" \
+                    -o -name "*.crl" 2>/dev/null > ${KEYS_DIR}/keys_file.txt
 
     while read line; do
         local_name=$(echo ${line:1} | tr "/" "_")

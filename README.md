@@ -192,6 +192,20 @@ optional arguments:
   --apk APK   A directory containing APK to run static analysis
 ```
 
+## apk-jni.py
+
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量提取 JNI 函数特征，可导入到 IDA 和 Ghidra，提升逆向效率。[JNI Helper](https://github.com/evilpan/jni_helper)
+
+```sh
+$ python3 apk-jni.py --help
+********************* apk-jni.py *********************
+usage: apk-jni.py [-h] --apk APK
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --apk APK   A directory containing APK to run static analysis
+```
+
 ## HTTPS 抓包
 
 从 Android7 开始，系统不再信任用户 CA 证书，想要抓 HTTPS 数据，有三种方法：
