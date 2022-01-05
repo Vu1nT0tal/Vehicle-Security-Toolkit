@@ -20,7 +20,8 @@ wget -q https://github.com/evilpan/jni_helper/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
 
 sudo docker pull danmx/docker-androbugs
-sudo docker pull opensecurity/mobile-security-framework-mobsf:latest
+sudo docker pull opensecurity/mobile-security-framework-mobsf
+sudo docker pull frantzme/cryptoguard
 
 # 不按照这个顺序会出错，不知道为什么
 python3 -m venv ./tools/mariana-trench

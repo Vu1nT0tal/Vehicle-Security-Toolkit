@@ -206,6 +206,20 @@ optional arguments:
   --apk APK   A directory containing APK to run static analysis
 ```
 
+## apk-cryptoguard.py
+
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ python3 apk-cryptoguard.py --help         
+***************** apk-cryptoguard.py *****************
+usage: apk-cryptoguard.py [-h] --apk APK
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --apk APK   A directory containing APK to run static analysis
+```
+
 ## apk-jni.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量提取 JNI 函数特征，可导入到 IDA 和 Ghidra，提升逆向效率。[JNI Helper](https://github.com/evilpan/jni_helper)
