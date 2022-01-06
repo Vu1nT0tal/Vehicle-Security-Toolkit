@@ -27,6 +27,29 @@ $ ./frida.sh
 $ adb shell dumpsys window | grep mCurrentFocus
 ```
 
+## img_extract
+
+Android ROM 解包：
+
+```sh
+# 将 Android sparse image 转换成 raw image
+$ simg2img super.img super.img_raw
+# 从 raw image 解包出分区镜像文件
+$ ./tools/lpunpack super.img_raw [out_dir]
+$ ./tools/lpunpack -p system super.img_raw [out_dir]
+# 挂载镜像文件
+$ sudo mount -o ro [out_dir]/system_a.img [system_a_dir]
+```
+
+解析和重打包镜像文件：
+
+```sh
+$ cd ./tools/Android_boot_image_editor-master
+$ cp <original_boot_image> boot.img
+$ ./gradlew unpack
+$ ./gradlew pack
+```
+
 ## adb-export.sh
 
 当拿到一个车机不知道该下载或查看哪些东西的时候，使用该脚本一键搞定。

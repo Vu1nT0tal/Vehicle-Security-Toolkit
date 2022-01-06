@@ -83,6 +83,7 @@ info_collect () {
     MANUFACTURER=$($SHELL_CMD getprop ro.product.manufacturer) 
     ANDROID_SERIAL_NUMBER=$($SHELL_CMD getprop ro.serialno)
     FINGERPRINT=$($SHELL_CMD getprop ro.build.fingerprint)
+    DISPLAY_ID=$($SHELL_CMD getprop ro.build.display.id)
     ANDROID_VERSION=$($SHELL_CMD getprop ro.build.version.release)
     SDK_VERSION=$($SHELL_CMD getprop ro.build.version.sdk)
     BUILD_TYPE=$($SHELL_CMD getprop ro.build.type)
@@ -126,6 +127,7 @@ info_collect () {
 [*] Product Name: $NAME
 [*] Chipname: $CHIPNAME
 [*] Android fingerprint: $FINGERPRINT
+[*] Display ID: $DISPLAY_ID
 [*] Build date: $BUILD_DATE
 [*] Build ID: $BUILD_ID
 [*] Build type: $BUILD_TYPE
