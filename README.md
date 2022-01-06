@@ -27,18 +27,31 @@ $ ./frida.sh
 $ adb shell dumpsys window | grep mCurrentFocus
 ```
 
-## img_extract
+## img_extract.sh
 
 Android ROM 解包：
 
 ```sh
 # 将 Android sparse image 转换成 raw image
-$ simg2img super.img super.img_raw
-# 从 raw image 解包出分区镜像文件
-$ ./tools/lpunpack super.img_raw [out_dir]
-$ ./tools/lpunpack -p system super.img_raw [out_dir]
+$ cp <original_super_image> ./data
+$ simg2img ./data/super.img ./data/super.img_raw
+
+# 从 raw image 提取分区镜像文件
+$ mkdir ./data/system ./data/vendor
+$ ./tools/lpunpack ./data/super.img_raw ./data
+
 # 挂载镜像文件
-$ sudo mount -o ro [out_dir]/system_a.img [system_a_dir]
+$ sudo mount -o ro ./data/system_a.img ./data/system
+$ sudo mount -o ro ./data/vendor_a.img ./data/vendor
+
+# 搜索所有 APK
+$ find ./data -name "*.apk" 2>/dev/null
+```
+
+也可以使用脚本自动化完成：
+
+```sh
+$ ./img_extract.sh <original_super_image>
 ```
 
 解析和重打包镜像文件：
