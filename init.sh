@@ -1,6 +1,8 @@
 #!/bin/bash
 
 set -e
+echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$HOME"/.profile
+source "$HOME"/.profile
 
 sudo apt-get update && sudo apt-get -y install git python3-dev python3-pip python3-venv openjdk-11-jdk unzip npm graphviz dexdump simg2img
 python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm qark lief rich quark-engine exodus-core androguard==3.4.0a1
