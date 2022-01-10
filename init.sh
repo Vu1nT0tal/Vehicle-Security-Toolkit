@@ -12,7 +12,7 @@ freshquark
 
 wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.0/apktool_2.6.0.jar -O ./tools/apktool.jar
 
-wget -q https://github.com/skylot/jadx/releases/download/v1.3.0/jadx-1.3.0.zip -O jadx.zip
+wget -q https://github.com/skylot/jadx/releases/download/v1.3.1/jadx-1.3.1.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 wget -q https://github.com/paradiseduo/ApplicationScanner/archive/refs/heads/main.zip
