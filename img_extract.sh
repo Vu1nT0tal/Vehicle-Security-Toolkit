@@ -15,9 +15,12 @@ sudo mount -o ro ./data/vendor_a.img ./data/vendor
 
 echo "[+] Extracting APK files"
 APK_DIR="./data/apk"
-mkdir -p $APK_DIR/system $APK_DIR/vendor
+mkdir -p $APK_DIR/system/product $APK_DIR/vendor
 cp -r ./data/system/system/app $APK_DIR/system
 cp -r ./data/system/system/priv-app $APK_DIR/system
+cp -r ./data/system/system/product/app $APK_DIR/system/product
+cp -r ./data/system/system/product/priv-app $APK_DIR/system/product
+cp -r ./data/system/system/product/overlay $APK_DIR/system/product
 cp -r ./data/vendor/app $APK_DIR/vendor
 find $APK_DIR -name "*.apk" -exec md5sum {} + > $APK_DIR/apk_list.txt
 
