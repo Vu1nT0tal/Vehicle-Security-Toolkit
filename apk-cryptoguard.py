@@ -37,7 +37,7 @@ if __name__ == '__main__':
     apk_dir = argument().apk
     if apk_dir:
         for apk in Path(apk_dir).rglob('*.apk'):
-            ret = analysis(apk)
+            ret = analysis(apk.absolute())
             if ret == 0:
                 success_num += 1
             else:

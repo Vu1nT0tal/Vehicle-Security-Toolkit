@@ -140,7 +140,7 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
+$ docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf
 $ python3 apk-mobsf.py --help
 ******************* apk-mobsf.py *********************
 usage: apk-mobsf.py [-h] -k KEY [-f FILE] [-d DIR]
@@ -157,6 +157,7 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
+$ source ./tools/qark/bin/activate
 $ python3 apk-qark.py --help
 ******************** apk-qark.py *********************
 usage: apk-qark.py [-h] [--apk APK] [--java JAVA] [--report REPORT]
