@@ -224,8 +224,7 @@ def argument():
     parser.add_argument("-d", "--decompiled", help="Path to decompiled files", type=str, required=False)
     parser.add_argument("-o", "--output", help="Write to file results", type=str, required=False)
     parser.add_argument("-a", "--args", help="Disassembler arguments (e.g. --deobf)", type=str, required=False)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

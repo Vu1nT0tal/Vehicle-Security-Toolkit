@@ -271,6 +271,23 @@ optional arguments:
   --apk APK   A directory containing APK to run static analysis
 ```
 
+## apk-diff.py
+
+使用 `apk-decompile.py` 得到新旧版本 APK 的反编译代码后，使用该脚本进行包和 smali 代码的对比。
+
+```sh
+$ python3 apk-diff.py --help
+******************** apk-diff.py *********************
+usage: apk-diff.py [-h] apk1 apk2
+
+positional arguments:
+  apk1        Location of the first APK.
+  apk2        Location of the second APK.
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
 ## HTTPS 抓包
 
 从 Android7 开始，系统不再信任用户 CA 证书，想要抓 HTTPS 数据，有三种方法：

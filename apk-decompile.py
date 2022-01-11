@@ -9,7 +9,7 @@ from pathlib import Path
 def apktool(apk_path: Path):
     apktool_jar = Path(__file__).parent.joinpath('tools/apktool.jar')
     output = apk_path.parent.joinpath('apktool_smali')
-    cmd = f'java -jar {apktool_jar} d {str(apk_path)} -f -o {output}'
+    cmd = f'java -jar {apktool_jar} d {apk_path} -f -o {output}'
     os.system(cmd)
     print()
 
@@ -17,7 +17,7 @@ def apktool(apk_path: Path):
 def jadx(apk_path: Path):
     jadx_bin = Path(__file__).parent.joinpath('tools/jadx/bin/jadx')
     output = apk_path.parent.joinpath('jadx_java')
-    cmd = f'{jadx_bin} {str(apk_path)} -q -d {output}'
+    cmd = f'{jadx_bin} {apk_path} -q -d {output}'
     os.system(cmd)
     print()
 
@@ -36,8 +36,7 @@ def argument():
     parser.add_argument("-j", "--jadx", help="Use jadx get java", action='store_true')
     parser.add_argument("-d", "--dir", help="Target directory", type=str, required=True)
     parser.add_argument("-c", "--clean", help="Clean all file above", action='store_true')
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

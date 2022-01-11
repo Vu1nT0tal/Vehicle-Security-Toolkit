@@ -13,13 +13,13 @@ def analysis(apk_path: Path, mode: str, report: str = None):
     report_file = apk_path.parent.joinpath(f'report.{report_type}')
     new_report_file = apk_path.parent.joinpath(f'{apk_path.stem}-qark.{report_type}')
 
-    cmd = f'qark --{mode} {str(apk_path)} --report-type {report_type} --report-path {str(apk_path.parent)}'
+    cmd = f'qark --{mode} {apk_path} --report-type {report_type} --report-path {apk_path.parent}'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if report_file.exists():
         report_file.rename(new_report_file)
     else:
-        with open(str(new_report_file)+'.error', 'w+') as f:
+        with open(f'{new_report_file}.error', 'w+') as f:
             f.write(output)
 
     return ret_code
@@ -30,8 +30,7 @@ def argument():
     parser.add_argument("--apk", help="A directory containing APK to decompile and run static analysis", type=str, required=False)
     parser.add_argument("--java", help="A directory containing Java code to run static analysis.", type=str, required=False)
     parser.add_argument("--report", help="Type of report to generate [html|xml|json|csv]", type=str, required=False)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

@@ -11,12 +11,12 @@ def analysis(apk_path: Path):
     report_file = apk_path.parent.joinpath(report_name)
 
     cmd = f'export sdkman="/home/runner/.sdkman/candidates" && \
-        docker run --rm -v {str(apk_path.parent)}:/apk frantzme/cryptoguard $sdkman/java/current/bin/java -jar /Notebook/cryptoguard.jar \
+        docker run --rm -v {apk_path.parent}:/apk frantzme/cryptoguard $sdkman/java/current/bin/java -jar /Notebook/cryptoguard.jar \
             -android $sdkman/android/current -java $sdkman/java/7.0.322-zulu/ -in apk -s /apk/{apk_path.name} -o /apk/{report_name} -n'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if not report_file.exists():
-        with open(str(report_file)+'.error', 'w+') as f:
+        with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
     return ret_code
@@ -25,8 +25,7 @@ def analysis(apk_path: Path):
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--apk", help="A directory containing APK to run static analysis", type=str, required=True)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

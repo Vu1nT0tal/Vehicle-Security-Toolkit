@@ -10,11 +10,11 @@ def analysis(apk_path: Path):
     report_file = apk_path.parent.joinpath(f'{apk_path.stem}-scanner.txt')
 
     scanner = Path(__file__).parent.joinpath('tools/ApplicationScanner-main/AppScanner.py')
-    cmd = f'python3 {scanner} -i {apk_path} > {str(report_file)}'
+    cmd = f'python3 {scanner} -i {apk_path} > {report_file}'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if not report_file.exists():
-        with open(str(report_file)+'.error', 'w+') as f:
+        with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
     return ret_code
@@ -23,8 +23,7 @@ def analysis(apk_path: Path):
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--apk", help="A directory containing APK to run static analysis", type=str, required=True)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

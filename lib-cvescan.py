@@ -22,12 +22,12 @@ class CVEScan:
             self.result.unlink(missing_ok=True)
 
     def scan(self):
-        print(f'[+] CVE漏洞扫描...{str(self.file)}')
-        cmd = f'cve-bin-tool {str(self.file)} --report -f json -o {str(self.output)} > {str(self.console)}'
+        print(f'[+] CVE漏洞扫描...{self.file}')
+        cmd = f'cve-bin-tool {self.file} --report -f json -o {self.output} > {self.console}'
         os.system(cmd)
 
-        print(f'扫描结果输出: {str(self.output)}')
-        print(f'控制台输出: {str(self.console)}')
+        print(f'扫描结果输出: {self.output}')
+        print(f'控制台输出: {self.console}')
 
     def parse_result(self):
         print(f'[+] CVE数据解析...')
@@ -66,7 +66,7 @@ class CVEScan:
 
             with open(self.result, 'w+') as f:
                 f.write(json.dumps(result, indent=4))
-            print(f'解析结果输出: {str(self.result)}')
+            print(f'解析结果输出: {self.result}')
         except Exception as e:
             print(f'[!] 解析错误: {e}')
 
@@ -75,8 +75,7 @@ def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", help="File or directory to scanning", type=str, required=True)
     parser.add_argument("-o", "--output", help="Write to file results", type=str, required=False)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

@@ -9,11 +9,11 @@ def analysis(apk_path: Path):
     print(f'[+] {apk_path}')
     report_file = apk_path.parent.joinpath(f'{apk_path.stem}-androbugs.txt')
 
-    cmd = f'docker run --rm -v {str(apk_path.parent)}:/apk danmx/docker-androbugs -f /apk/{apk_path.name} -o /tmp > {str(report_file)}'
+    cmd = f'docker run --rm -v {apk_path.parent}:/apk danmx/docker-androbugs -f /apk/{apk_path.name} -o /tmp > {report_file}'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if not report_file.exists():
-        with open(str(report_file)+'.error', 'w+') as f:
+        with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
     return ret_code
@@ -22,8 +22,7 @@ def analysis(apk_path: Path):
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--apk", help="A directory containing APK to run static analysis", type=str, required=True)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

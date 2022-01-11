@@ -61,8 +61,7 @@ def analysis(apk_path: Path):
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--apk", help="A directory containing APK to run static analysis", type=str, required=True)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

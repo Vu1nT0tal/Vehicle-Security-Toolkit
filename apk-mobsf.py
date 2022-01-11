@@ -161,8 +161,7 @@ def argument():
     parser.add_argument("-k", "--key", help="Mobsf REST API key", type=str, required=True)
     parser.add_argument("-f", "--file", help="APK file to scanning", type=str, required=False)
     parser.add_argument("-d", "--dir", help="Target directory", type=str, required=False)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 def analysis(apk_path: str):

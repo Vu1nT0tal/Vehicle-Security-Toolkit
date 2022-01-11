@@ -10,14 +10,14 @@ def analysis(apk_path: Path):
     print(f'[+] {apk_path}')
     report_file = apk_path.parent.joinpath(f'{apk_path.stem}-id.json')
 
-    cmd = f'apkid {str(apk_path)} -j'
+    cmd = f'apkid {apk_path} -j'
     output, ret_code = shell_cmd_ret_code(cmd)
     if ret_code == 0:
         with open(report_file, 'w+') as f:
             f.write(json.dumps(json.loads(output), indent=4))
 
     if not report_file.exists():
-        with open(str(report_file)+'.error', 'w+') as f:
+        with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
     return ret_code
@@ -26,8 +26,7 @@ def analysis(apk_path: Path):
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--apk", help="A directory containing APK to run static analysis", type=str, required=True)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ def analysis(apk_path: Path):
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if not report_file.exists():
-        with open(str(report_file)+'.error', 'w+') as f:
+        with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
     shutil.rmtree(tmp_dir)
@@ -31,8 +31,7 @@ def analysis(apk_path: Path):
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument("--apk", help="A directory containing APK to run static analysis", type=str, required=True)
-    arg = parser.parse_args()
-    return arg
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
