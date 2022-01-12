@@ -28,6 +28,7 @@ unzip -q master.zip -d ./tools/ && rm master.zip
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf
 sudo docker pull frantzme/cryptoguard
+sudo docker pull fkiecad/cwe_checker
 
 python3 -m venv ./tools/qark
 source ./tools/qark/bin/activate
