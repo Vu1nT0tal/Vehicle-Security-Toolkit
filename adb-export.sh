@@ -324,7 +324,6 @@ apk () {
         local_path=${APK_DIR}/${apk_type}/${app_folder}
         mkdir -p $local_path
         $PULL_CMD $remote_path $local_path || $PULL_CMD $target_file $local_path
-    continue
     done < $SELECTED_FILE
 
     time_update

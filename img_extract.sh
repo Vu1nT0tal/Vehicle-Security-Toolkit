@@ -39,8 +39,8 @@ do
         echo "cannot found $line"
     fi
     cp $remote_path $local_path
-continue
 done < $LIB_LIST
+find $APK_DIR -name "*.so" -exec md5sum {} + > $LIB_LIST
 
 sudo umount ./data/system
 sudo umount ./data/vendor

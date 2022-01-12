@@ -9,10 +9,13 @@ def analysis(apk_path: Path):
     print(f'[+] {apk_path}')
     report_file = apk_path.parent.joinpath(f'{apk_path.stem}-androbugs.txt')
 
-    cmd = f'docker run --rm -v {apk_path.parent}:/apk danmx/docker-androbugs -f /apk/{apk_path.name} -o /tmp > {report_file}'
+    cmd = f'docker run --rm -v {apk_path.parent}:/apk danmx/docker-androbugs -f /apk/{apk_path.name} -o /tmp'
     output, ret_code = shell_cmd_ret_code(cmd)
 
-    if not report_file.exists():
+    if ret_code == 0:
+        with open(report_file, 'w+') as f:
+            f.write(output)
+    else:
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 

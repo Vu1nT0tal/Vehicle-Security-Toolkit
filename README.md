@@ -90,7 +90,7 @@ Choose an option:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量检查加壳、混淆、反调试等保护情况。
 
 ```sh
-$ python3 apk-id.py --help          
+$ python3 apk-id.py --help
 ********************* apk-id.py **********************
 usage: apk-id.py [-h] --apk APK
 
@@ -174,7 +174,7 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-androbugs.py --help         
+$ python3 apk-androbugs.py --help
 ****************** apk-androbugs.py ******************
 usage: apk-androbugs.py [-h] --apk APK
 
@@ -188,7 +188,7 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-scanner.py --help          
+$ python3 apk-scanner.py --help
 ******************* apk-scanner.py *******************
 usage: apk-scanner.py [-h] --apk APK
 
@@ -203,7 +203,7 @@ optional arguments:
 
 ```sh
 $ source ./tools/mariana-trench/bin/activate
-$ python3 apk-mariana.py --help          
+$ python3 apk-mariana.py --help
 ******************* apk-mariana.py *******************
 usage: apk-mariana.py [-h] --apk APK
 
@@ -220,7 +220,7 @@ $ sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-quark.py --help          
+$ python3 apk-quark.py --help
 ******************** apk-quark.py ********************
 usage: apk-quark.py [-h] --apk APK
 
@@ -234,7 +234,7 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-exodus.py --help         
+$ python3 apk-exodus.py --help
 ******************* apk-exodus.py ********************
 usage: apk-exodus.py [-h] --apk APK
 
@@ -248,7 +248,7 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-cryptoguard.py --help         
+$ python3 apk-cryptoguard.py --help
 ***************** apk-cryptoguard.py *****************
 usage: apk-cryptoguard.py [-h] --apk APK
 
@@ -300,6 +300,20 @@ optional arguments:
 
 ```sh
 $ apk-mitm --debuggable <path-to-apk>
+```
+
+## bin-cwechecker.py
+
+使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析 SO/ELF 文件并生成报告。
+
+```sh
+$ python bin_cwechecker.py --help
+***************** bin-cwechecker.py ******************
+usage: bin_cwechecker.py [-h] --dir DIR
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --dir DIR   A directory containing bin files to run static analysis
 ```
 
 ## lib-cvescan.py
