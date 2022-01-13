@@ -3,7 +3,7 @@
 set -e
 
 sudo apt-get update && sudo apt-get -y install git python3-dev python3-pip python3-venv openjdk-11-jdk unzip npm graphviz dexdump simg2img meld
-python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1
+python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja
 sudo npm -g install js-beautify apk-mitm
 
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$HOME"/.profile
@@ -40,3 +40,6 @@ python3 -m venv ./tools/mariana-trench
 source ./tools/mariana-trench/bin/activate
 python3 -m pip install mariana-trench "graphene<3"
 deactivate
+
+git clone https://github.com/rizinorg/rizin
+cd rizin && meson --buildtype=release --prefix=~/.local build && ninja -C build && ninja -C build install

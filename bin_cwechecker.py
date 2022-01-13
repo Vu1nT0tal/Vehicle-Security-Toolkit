@@ -37,10 +37,9 @@ if __name__ == '__main__':
     if bin_dir:
         cmd = 'find '+bin_dir+' -type f ! -path "*jadx_java*" \
             ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" \
-            -exec file {} + | grep "ELF 32-bit" | cut -d ":" -f 1'
+            -exec file {} + | grep "ELF" | cut -d ":" -f 1'
         output, ret_code = shell_cmd_ret_code(cmd)
         elf_list = output.split('\n')[:-1]
-        print(elf_list, len(elf_list))
         for elf in elf_list:
             ret = analysis(Path(elf).absolute())
             if ret == 0:

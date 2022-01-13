@@ -49,7 +49,6 @@ if __name__ == '__main__':
     elif args.java and not args.apk:
         for java in Path(args.java).rglob('jadx_java'):
             ret = analysis(java, 'java', args.report)
-            ret = 0
             if ret == 0:
                 success_num += 1
             else:
