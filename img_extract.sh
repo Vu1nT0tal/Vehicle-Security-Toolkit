@@ -22,7 +22,6 @@ cp -rL ./data/system/system/app $APK_DIR/system 2>&1 | cut -d "'" -f 2 > $LIB_LI
 cp -rL ./data/system/system/priv-app $APK_DIR/system 2>&1 | cut -d "'" -f 2 >> $LIB_LIST
 cp -rL ./data/system/system/product/app $APK_DIR/system/product 2>&1 | cut -d "'" -f 2 >> $LIB_LIST
 cp -rL ./data/system/system/product/priv-app $APK_DIR/system/product 2>&1 | cut -d "'" -f 2 >> $LIB_LIST
-cp -rL ./data/system/system/product/overlay $APK_DIR/system/product 2>&1 | cut -d "'" -f 2 >> $LIB_LIST
 cp -rL ./data/vendor/app $APK_DIR/vendor 2>&1 | cut -d "'" -f 2 >> $LIB_LIST
 find $APK_DIR -name "*.apk" -exec md5sum {} + > $APK_LIST
 

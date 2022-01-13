@@ -16,11 +16,15 @@ def analysis(apk_path: Path):
     cmd = f'mariana-trench --system-jar-configuration-path `find ~ -name "android.jar" | grep Sdk | head -n1` \
         --apk-path {apk_path} --source-root-directory {source_dir} --output-directory {tmp_dir}'
     output, ret_code = shell_cmd_ret_code(cmd)
+    if ret_code != 0:
+        with open(f'{report_file}.error', 'w+') as f:
+            f.write(output)
+        shutil.rmtree(tmp_dir)
+        return ret_code
 
     cmd = f'sapp --tool mariana-trench --database-name {report_file} analyze {tmp_dir}'
     output, ret_code = shell_cmd_ret_code(cmd)
-
-    if not report_file.exists():
+    if ret_code != 0:
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
