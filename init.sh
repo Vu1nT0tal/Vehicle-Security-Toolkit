@@ -2,7 +2,7 @@
 
 set -e
 
-sudo apt-get update && sudo apt-get -y install git python3-dev python3-pip python3-venv openjdk-11-jdk unzip npm graphviz dexdump simg2img meld
+sudo apt-get update && sudo apt-get -y install git python3-dev python3-pip python3-venv openjdk-11-jdk unzip npm graphviz dexdump simg2img meld maven
 python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja
 sudo npm -g install js-beautify apk-mitm
 
@@ -24,6 +24,9 @@ unzip -q master.zip -d ./tools/ && rm master.zip
 
 wget -q https://github.com/cfig/Android_boot_image_editor/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
+
+wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip -O dependency-check.zip
+unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf

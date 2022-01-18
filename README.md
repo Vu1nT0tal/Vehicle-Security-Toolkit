@@ -27,7 +27,7 @@ $ ./frida.sh
 $ adb shell dumpsys window | grep mCurrentFocus
 ```
 
-## img_extract.sh
+## img-extract.sh
 
 Android ROM 解包：
 
@@ -51,7 +51,7 @@ $ find ./data -name "*.apk" 2>/dev/null
 也可以使用脚本自动化完成：
 
 ```sh
-$ ./img_extract.sh <original_super_image>
+$ ./img-extract.sh <original_super_image>
 ```
 
 解析和重打包镜像文件：
@@ -307,7 +307,7 @@ $ apk-mitm --debuggable <path-to-apk>
 使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析 SO/ELF 文件并生成报告。
 
 ```sh
-$ python bin_cwechecker.py --help
+$ python bin-cwechecker.py --help
 ***************** bin-cwechecker.py ******************
 usage: bin_cwechecker.py [-h] --dir DIR
 
@@ -343,6 +343,24 @@ optional arguments:
   - APK 第三方库(`.so`)识别。
 - Linux
   - `TODO: 动态链接库调用关系`
+
+## src-depcheck.py
+
+如果你在甲方有 APP 源码，编辑该脚本添加项目源码路径，或者创建一个配置文件，即可批量扫描第三方库 CVE 漏洞。
+
+```sh
+$ cat src.conf
+~/hmi/apps/BluetoothMusic
+~/hmi/android/vendor/abcd/services/Fota
+...
+$ python3 src-depcheck.py --help           
+****************** src-depcheck.py *******************
+usage: src-depcheck.py [-h] [--config CONFIG]
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --config CONFIG  A config file containing source code paths to run analysis
+```
 
 ## can-countid.py
 
