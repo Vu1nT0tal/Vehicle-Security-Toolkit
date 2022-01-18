@@ -30,6 +30,7 @@ unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf
+sudo docker pull opensecurity/mobsfscan
 sudo docker pull frantzme/cryptoguard
 sudo docker pull fkiecad/cwe_checker
 

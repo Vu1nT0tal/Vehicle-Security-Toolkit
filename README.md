@@ -344,18 +344,30 @@ optional arguments:
 - Linux
   - `TODO: 动态链接库调用关系`
 
-## src-depcheck.py
+## src-mobsf.py
 
-如果你在甲方有 APP 源码，编辑该脚本添加项目源码路径，或者创建一个配置文件，即可批量扫描第三方库 CVE 漏洞。
+如果你在甲方有 APP 源码，创建一个配置文件写入源码地址，即可批量静态分析并生成报告。
 
 ```sh
-$ cat src.conf
-~/hmi/apps/BluetoothMusic
-~/hmi/android/vendor/abcd/services/Fota
-...
-$ python3 src-depcheck.py --help           
+$ readlink -f ~/hmi/apps/* > src.conf
+$ python3 src-mobsf.py --help
+******************** src-mobsf.py ********************
+usage: src-mobsf.py [-h] --config CONFIG
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --config CONFIG  A config file containing source code paths to run analysis
+```
+
+## src-depcheck.py
+
+如果你在甲方有 APP 源码，创建一个配置文件写入源码地址，即可批量扫描第三方库 CVE 漏洞并生成报告。
+
+```sh
+$ readlink -f ~/hmi/apps/* > src.conf
+$ python3 src-depcheck.py --help
 ****************** src-depcheck.py *******************
-usage: src-depcheck.py [-h] [--config CONFIG]
+usage: src-depcheck.py [-h] --config CONFIG
 
 optional arguments:
   -h, --help       show this help message and exit

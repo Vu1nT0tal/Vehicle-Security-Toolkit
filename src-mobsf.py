@@ -4,23 +4,25 @@ import argparse
 from pathlib import Path
 from utils import shell_cmd_ret_code
 
-report_path = Path(__file__).parent.joinpath('data/scan/depcheck')
+report_path = Path(__file__).parent.joinpath('data/scan/mobsf')
 report_path.mkdir(parents=True, exist_ok=True)
 
 
 def analysis(src_path: Path):
     print(f'[+] {src_path}')
-    report_file = report_path.joinpath(f'{src_path.stem}-depcheck.html')
+    mobsf_file = src_path.joinpath('mobsf.json')
+    report_file = report_path.joinpath(f'{src_path.stem}-mobsf.json')
 
-    scanner = Path(__file__).parent.joinpath('tools/dependency-check/bin/dependency-check.sh')
-    cmd = f'{scanner} -s {src_path} -o {report_file}'
+    cmd = f'docker run --rm -v {src_path}:/src opensecurity/mobsfscan --json -o /src/mobsf.json /src'
     output, ret_code = shell_cmd_ret_code(cmd)
 
-    if not report_file.exists():
+    if mobsf_file.exists():
+        mobsf_file.replace(report_file)
+        return 0
+    else:
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
-
-    return ret_code
+        return 1
 
 
 def argument():
@@ -30,7 +32,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** src-depcheck.py *******************')
+    print('******************** src-mobsf.py ********************')
 
     failed = []
     success_num = 0
@@ -45,7 +47,7 @@ if __name__ == '__main__':
             else:
                 failed.append(src)
     else:
-        print('[!] 参数错误: python3 src-depcheck.py --help')
+        print('[!] 参数错误: python3 src-mobsf.py --help')
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))
