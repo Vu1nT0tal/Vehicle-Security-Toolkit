@@ -13,7 +13,7 @@ def analysis(apk_path: Path):
     report_file = apk_path.parent.joinpath(f'{apk_path.stem}-mariana.db')
     tmp_dir = tempfile.mkdtemp()
 
-    cmd = f'mariana-trench --system-jar-configuration-path `find ~ -name "android.jar" | grep Sdk | head -n1` \
+    cmd = f'mariana-trench --system-jar-configuration-path `find ~/Android/Sdk -name "android.jar" | head -n1` \
         --apk-path {apk_path} --source-root-directory {source_dir} --output-directory {tmp_dir}'
     output, ret_code = shell_cmd_ret_code(cmd)
     if ret_code != 0:
