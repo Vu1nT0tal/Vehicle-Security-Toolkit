@@ -4,23 +4,18 @@ import argparse
 from pathlib import Path
 from utils import shell_cmd_ret_code
 
-report_path = Path(__file__).parent.joinpath('data/scan/mobsf')
-report_path.mkdir(parents=True, exist_ok=True)
-
 
 def analysis(src_path: Path):
     print(f'[+] {src_path}')
     mobsf_file = src_path.joinpath('mobsf.json')
-    report_file = report_path.joinpath(f'{src_path.stem}-mobsf.json')
 
     cmd = f'docker run --rm -v {src_path}:/src opensecurity/mobsfscan --json -o /src/mobsf.json /src'
     output, ret_code = shell_cmd_ret_code(cmd)
 
     if mobsf_file.exists():
-        mobsf_file.replace(report_file)
         return 0
     else:
-        with open(f'{report_file}.error', 'w+') as f:
+        with open(f'{mobsf_file}.error', 'w+') as f:
             f.write(output)
         return 1
 

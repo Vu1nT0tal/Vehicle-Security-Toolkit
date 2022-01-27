@@ -47,7 +47,7 @@ class AnalysisHelper(StaticAnalysis):
 
 def analysis(apk_path: Path):
     print(f'[+] {apk_path}')
-    report_file = apk_path.parent.joinpath(f'{apk_path.stem}-exodus.txt')
+    report_file = apk_path.parent.joinpath(f'{apk_path.stem}-exodus.json')
 
     analysis = AnalysisHelper(str(apk_path))
     analysis.signatures = signature
