@@ -17,7 +17,7 @@ echo "[+] Extracting APK files"
 APK_DIR="./data/apk"
 APK_LIST=$APK_DIR/apk_list.txt
 LIB_LIST=$APK_DIR/lib_list.txt
-mkdir -p $APK_DIR/system/product $APK_DIR/vendor
+mkdir -p $APK_DIR/system/product $APK_DIR/vendor $APK_DIR/libjni
 cp -rL ./data/system/system/app $APK_DIR/system 2>&1 | cut -d "'" -f 2 > $LIB_LIST
 cp -rL ./data/system/system/priv-app $APK_DIR/system 2>&1 | cut -d "'" -f 2 >> $LIB_LIST
 cp -rL ./data/system/system/product/app $APK_DIR/system/product 2>&1 | cut -d "'" -f 2 >> $LIB_LIST
@@ -38,6 +38,14 @@ do
         echo "cannot found $line"
     fi
     cp $remote_path $local_path
+done < $LIB_LIST
+
+find ./data/system/ -type f -name "lib*jni*.so" 2>/dev/null > $LIB_LIST
+find ./data/vendor/ -type f -name "lib*jni*.so" 2>/dev/null >> $LIB_LIST
+while read -r line
+do
+    local_path=$APK_DIR/libjni/`echo $line | awk -F / '{print $(NF-2)"_"$(NF-1)"_"$NF}'`
+    cp $line $local_path
 done < $LIB_LIST
 find $APK_DIR -name "*.so" -exec md5sum {} + > $LIB_LIST
 
