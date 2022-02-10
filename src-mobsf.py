@@ -32,17 +32,15 @@ if __name__ == '__main__':
     failed = []
     success_num = 0
     config_file = argument().config
-    if config_file:
-        src_dirs = open(config_file, 'r').read().splitlines()
 
-        for src in src_dirs:
-            ret = analysis(Path(src))
-            if ret == 0:
-                success_num += 1
-            else:
-                failed.append(src)
-    else:
-        print('[!] 参数错误: python3 src-mobsf.py --help')
+    src_dirs = open(config_file, 'r').read().splitlines()
+
+    for src in src_dirs:
+        ret = analysis(Path(src))
+        if ret == 0:
+            success_num += 1
+        else:
+            failed.append(src)
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

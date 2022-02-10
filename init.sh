@@ -47,6 +47,10 @@ wget -q https://github.com/abhi-r3v0/Adhrit/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
 docker-compose -f ./tools/Adhrit-master/docker-compose.yml build -q
 
+wget -q https://github.com/mpast/mobileAudit/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
+docker-compose -f ./tools/mobileAudit-main/docker-compose.yml build -q
+
 python3 -m venv ./tools/qark
 source ./tools/qark/bin/activate
 python3 -m pip install wheel

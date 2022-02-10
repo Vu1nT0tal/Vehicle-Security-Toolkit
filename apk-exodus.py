@@ -69,12 +69,10 @@ if __name__ == '__main__':
 
     success_num = 0
     apk_dir = argument().apk
-    if apk_dir:
-        signature, compiled_signature = get_trackers()
-        for apk in Path(apk_dir).rglob('*.apk'):
-            analysis(apk)
-            success_num += 1
-    else:
-        print('[!] 参数错误: python3 apk-exodus.py --help')
+
+    signature, compiled_signature = get_trackers()
+    for apk in Path(apk_dir).rglob('*.apk'):
+        analysis(apk)
+        success_num += 1
 
     print(f'扫描完成: {success_num}')

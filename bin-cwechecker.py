@@ -34,20 +34,18 @@ if __name__ == '__main__':
     failed = []
     success_num = 0
     bin_dir = argument().dir
-    if bin_dir:
-        cmd = 'find '+bin_dir+' -type f ! -path "*jadx_java*" \
-            ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" \
-            -exec file {} + | grep "ELF" | cut -d ":" -f 1'
-        output, ret_code = shell_cmd_ret_code(cmd)
-        elf_list = output.split('\n')[:-1]
-        for elf in elf_list:
-            ret = analysis(Path(elf).absolute())
-            if ret == 0:
-                success_num += 1
-            else:
-                failed.append(elf)
-    else:
-        print('[!] 参数错误: python3 bin-cwechecker.py --help')
+
+    cmd = 'find '+bin_dir+' -type f ! -path "*jadx_java*" \
+        ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" \
+        -exec file {} + | grep "ELF" | cut -d ":" -f 1'
+    output, ret_code = shell_cmd_ret_code(cmd)
+    elf_list = output.split('\n')[:-1]
+    for elf in elf_list:
+        ret = analysis(Path(elf).absolute())
+        if ret == 0:
+            success_num += 1
+        else:
+            failed.append(elf)
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))
