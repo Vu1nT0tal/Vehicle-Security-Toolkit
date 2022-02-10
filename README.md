@@ -303,6 +303,14 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
+## apk-repack.sh
+
+使用 apktool 自动化重打包并签名：
+
+```sh
+$ ./apk_repack.sh <smali_folder> <apk_name>
+```
+
 ## HTTPS 抓包
 
 从 Android7 开始，系统不再信任用户 CA 证书，想要抓 HTTPS 数据，有三种方法：

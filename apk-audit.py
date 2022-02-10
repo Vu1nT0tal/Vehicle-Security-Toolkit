@@ -9,7 +9,6 @@ from pathlib import Path
 
 SERVER = 'http://127.0.0.1:8888'
 
-
 def app_list():
     """列出app"""
 
@@ -29,6 +28,7 @@ def app_create() -> int:
 
 def app_delete(app_id: int):
     """删除app"""
+
     headers = {'Authorization': f'Token {token}'}
     data = {'id': app_id}
     r = requests.delete(url=f'{SERVER}/api/v1/app/{app_id}', headers=headers, data=data)
@@ -107,7 +107,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* apk-audit.py ********************')
+    print('******************** apk-audit.py ********************')
 
     failed = []
     success_num = 0
