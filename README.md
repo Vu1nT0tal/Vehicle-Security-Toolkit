@@ -379,7 +379,7 @@ usage: src-mobsf.py [-h] --config CONFIG
 
 optional arguments:
   -h, --help       show this help message and exit
-  --config CONFIG  A config file containing source code paths to run analysis
+  --config CONFIG  A config file containing source code paths
 ```
 
 ## src-depcheck.py
@@ -394,7 +394,7 @@ usage: src-depcheck.py [-h] --config CONFIG
 
 optional arguments:
   -h, --help       show this help message and exit
-  --config CONFIG  A config file containing source code paths to run analysis
+  --config CONFIG  A config file containing source code paths
 ```
 
 ## can-countid.py

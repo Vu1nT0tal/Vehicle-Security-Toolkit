@@ -22,7 +22,7 @@ def analysis(src_path: Path):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing source code paths to run analysis", type=str, required=True)
+    parser.add_argument("--config", help="A config file containing source code paths", type=str, required=True)
     return parser.parse_args()
 
 

@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import json
-import hashlib
 import argparse
 import requests
 from pathlib import Path
@@ -9,14 +8,6 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
 DEFAULT_SERVER = 'http://127.0.0.1:8000'
-
-
-def get_md5(file_path: str):
-    md5 = hashlib.md5()
-    with open(file_path, 'rb') as f:
-        for chunk in iter(lambda: f.read(4096), b''):
-            md5.update(chunk)
-    return md5.hexdigest()
 
 
 class MobSF:
@@ -170,7 +161,6 @@ def analysis(apk_path: str):
     :param apk_path: APK路径
     :return: True or False
     """
-    # md5 = get_md5(apk_path)
     ret_code, data = init.upload(apk_path)
     if ret_code != 200:
         print(f"[!] 上传失败: {apk_path}")

@@ -35,12 +35,18 @@ def app_delete(app_id: int):
     return r.text
 
 
-def scan_list():
+def scan_list() -> list:
     """列出扫描"""
-
+    results = []
     headers = {'Authorization': f'Token {token}'}
-    r = requests.get(url=f'{SERVER}/api/v1/scan/', headers=headers)
-    return r.json()
+    for i in range(1, 50):
+        r = requests.get(url=f'{SERVER}/api/v1/scan/?page={i}', headers=headers)
+        if r.status_code == 404:
+            break
+        else:
+            apks = [i['description'] for i in r.json()['results']]
+            results += apks
+    return results
 
 
 def scan_create(apk: Path, app: int):
@@ -130,10 +136,9 @@ if __name__ == '__main__':
         app_id = r['results'][0]['id']
     print(f'[+] app_id: {app_id}')
 
-    results = scan_list()['results']
-    apks = [i['description'] for i in results]
+    results = scan_list()
     for apk in Path(apk_dir).rglob('*.apk'):
-        if str(apk) not in apks:
+        if str(apk) not in results:
             scan_id = scan_create(apk, app_id)['id']
             while True:
                 r = scan_read(scan_id)
@@ -144,6 +149,6 @@ if __name__ == '__main__':
                     failed.append(str(apk))
                     break
                 else:
-                    time.sleep(1)
+                    time.sleep(5)
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

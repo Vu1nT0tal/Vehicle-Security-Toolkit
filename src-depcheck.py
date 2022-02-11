@@ -52,7 +52,6 @@ def analysis_gradle(src_path: Path):
             output, _ = shell_cmd_ret_code(cmd, env=env)
 
             subdir = subproject.replace(':', '/')[1:] if subproject else '.'
-            #if Path(subdir)
             with open(src_path.joinpath(f'{subdir}/build/reports/dependency-check-graph.txt'), 'w+') as f:
                 f.write(output)
     else:
@@ -65,7 +64,7 @@ def analysis_gradle(src_path: Path):
     # 清理
     shutil.rmtree(src_path.joinpath('.gradle'), ignore_errors=True)
     #for i in list(Path(build1).parent.rglob('dependency-check-report.html')):
-    #    shutil.rmtree(i.parent.parent, ignore_errors=True)
+    #    shutil.rmtree(i.parent, ignore_errors=True)
     return output, ret_code
 
 
@@ -86,7 +85,7 @@ def analysis(src_path: Path, mode: str):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing source code paths to run analysis", type=str, required=True)
+    parser.add_argument("--config", help="A config file containing source code paths", type=str, required=True)
     return parser.parse_args()
 
 
