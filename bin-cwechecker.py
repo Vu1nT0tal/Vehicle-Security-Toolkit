@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-from utils import shell_cmd_ret_code
+from utils import shell_cmd
 
 
 def analysis(bin_path: Path):
@@ -10,7 +10,7 @@ def analysis(bin_path: Path):
     report_file = bin_path.parent.joinpath(f'{bin_path.stem}-cwechecker.txt')
 
     cmd = f'docker run --rm -v {bin_path}:/elf fkiecad/cwe_checker -q /elf'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
 
     if ret_code == 0:
         with open(report_file, 'w+') as f:
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     cmd = 'find '+bin_dir+' -type f ! -path "*jadx_java*" \
         ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" \
         -exec file {} + | grep "ELF" | cut -d ":" -f 1'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
     elf_list = output.split('\n')[:-1]
     for elf in elf_list:
         ret = analysis(Path(elf).absolute())

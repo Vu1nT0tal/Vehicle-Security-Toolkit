@@ -3,7 +3,7 @@
 import shutil
 import argparse
 from pathlib import Path
-from utils import shell_cmd_ret_code
+from utils import shell_cmd
 
 
 def analysis(apk_path: Path, mode: str, report: str = None):
@@ -14,7 +14,7 @@ def analysis(apk_path: Path, mode: str, report: str = None):
     new_report_file = apk_path.parent.joinpath(f'{apk_path.stem}-qark.{report_type}')
 
     cmd = f'qark --{mode} {apk_path} --report-type {report_type} --report-path {apk_path.parent}'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
 
     if report_file.exists():
         report_file.rename(new_report_file)

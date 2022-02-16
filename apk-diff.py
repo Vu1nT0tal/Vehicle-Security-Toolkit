@@ -5,7 +5,7 @@ import argparse
 import difflib
 from filecmp import dircmp
 from pathlib import Path
-from utils import shell_cmd_ret_code
+from utils import shell_cmd
 
 
 pwd = Path(__file__).parent
@@ -20,7 +20,7 @@ def diff_apk(apk1, apk2):
 
     diffuse = Path(__file__).parent.joinpath('tools/diffuse.jar')
     cmd = f'java -jar {diffuse} diff {apk1} {apk2} --text {report_file}'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
 
     if not report_file.exists():
         with open(f'{report_file}.error', 'w+') as f:

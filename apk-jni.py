@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-from utils import shell_cmd_ret_code
+from utils import shell_cmd
 
 
 def analysis(apk_path: Path):
@@ -11,7 +11,7 @@ def analysis(apk_path: Path):
 
     scanner = Path(__file__).parent.joinpath('tools/jni_helper-master/extract_jni.py')
     cmd = f'python3 {scanner} {apk_path} -o {report_file}'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
 
     if not report_file.exists():
         with open(f'{report_file}.error', 'w+') as f:

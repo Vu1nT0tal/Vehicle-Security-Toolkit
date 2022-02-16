@@ -1,11 +1,35 @@
 import socket
 import hashlib
+from pathlib import Path
 from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
 
 
-def shell_cmd_ret_code(cmd: str, timeout: int = None, env: dict = None, exe: str = '/bin/sh'):
+def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
     """执行shell命令，返回元组 (output, ret_code)，其中output包括STDOUT和STDERR。"""
-    pl = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT, env=env, executable=exe)
+    sdkman = f'source {Path("~").expanduser().joinpath(".sdkman/bin/sdkman-init.sh")}'
+    change_java = {
+        8: f'{sdkman} && sdk use java 8.0.312-tem',
+        11: f'{sdkman} && sdk use java 11.0.13-tem'
+    }
+    change_gradle = {
+        4: f'{sdkman} && sdk use gradle 4.10.3',
+        5: f'{sdkman} && sdk use gradle 5.6.4',
+        6: f'{sdkman} && sdk use gradle 6.9.2'
+    }
+
+    local_env = env.copy() if env else {}
+    cwd = local_env.pop('cwd', None)
+    exe = local_env.pop('exe', 'sh')
+    gradle = local_env.pop('gradle', None)
+    if gradle:
+        cmd = f'{change_gradle[gradle]} && {cmd}'
+        exe = 'zsh'
+    java = local_env.pop('java', None)
+    if java:
+        cmd = f'{change_java[java]} && {cmd}'
+        exe = 'zsh'
+
+    pl = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT, cwd=cwd, env=local_env, executable=f'/bin/{exe}')
     try:
         output = pl.communicate(timeout=timeout)[0].decode('utf-8', errors='replace')
         ret_code = pl.returncode

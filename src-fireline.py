@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import shutil
 import argparse
 from pathlib import Path
 from utils import shell_cmd
@@ -7,17 +8,19 @@ from utils import shell_cmd
 
 def analysis(src_path: Path):
     print(f'[+] {src_path}')
-    mobsf_file = secscan_path.joinpath('mobsf.json')
+    report_dir = secscan_path.joinpath('fireline')
+    if report_dir.exists():
+        shutil.rmtree(report_dir, ignore_errors=True)
+    report_dir.mkdir()
 
-    cmd = f'docker run --rm -v {src_path}:/src opensecurity/mobsfscan --json -o /src/SecScan/mobsf.json /src'
-    output, ret_code = shell_cmd(cmd)
+    fireline = Path(__file__).parent.joinpath('tools/fireline.jar')
+    cmd = f'java -jar {fireline} -s {src_path} -r {report_dir}'
+    output, ret_code = shell_cmd(cmd, {'java': 8})
 
-    if mobsf_file.exists():
-        return 0
-    else:
-        with open(f'{mobsf_file}.error', 'w+') as f:
+    if ret_code != 0:
+        with open(report_dir.joinpath('report.error'), 'w+') as f:
             f.write(output)
-        return 1
+    return ret_code
 
 
 def argument():
@@ -27,14 +30,13 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** src-mobsf.py ********************')
+    print('****************** src-fireline.py *******************')
 
     failed = []
     success_num = 0
     config_file = argument().config
 
     src_dirs = open(config_file, 'r').read().splitlines()
-
     for src in src_dirs:
         src_path = Path(src)
         secscan_path = src_path.joinpath('SecScan')

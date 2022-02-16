@@ -4,11 +4,14 @@ set -e
 
 curl -s https://get.sdkman.io | bash
 source "$HOME"/.sdkman/bin/sdkman-init.sh
+sdk install java 8.0.312-tem
 sdk install java 11.0.13-tem
+sdk install gradle 4.10.3
 sdk install gradle 5.6.4
+sdk install gradle 6.9.2
 
-sudo apt-get update && sudo apt-get -y install apt-transport-https git python3-dev python3-pip python3-venv unzip npm graphviz dexdump simg2img meld maven golang
-python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja docker-compose
+sudo apt-get update && sudo apt-get -y install zsh apt-transport-https git python3-dev python3-pip python3-venv unzip npm graphviz dexdump simg2img meld maven golang
+python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja docker-compose python-sonarqube-api
 sudo npm -g install js-beautify apk-mitm
 
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$HOME"/.profile
@@ -37,11 +40,18 @@ wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-pr
 sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb
 sudo apt-get update && sudo apt-get -y install dotnet-sdk-3.1
 
+wget -q https://github.com/facebook/infer/releases/download/v1.1.0/infer-linux64-v1.1.0.tar.xz -O infer.tar.xz
+tar -xf infer.tar.xz && mv infer-linux64-v1.1.0 ./tools/infer && rm infer.tar.xz
+
+wget -q http://magic.360.cn/fireline_1.7.3.jar -O ./tools/fireline.jar
+
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf
 sudo docker pull opensecurity/mobsfscan
 sudo docker pull frantzme/cryptoguard
 sudo docker pull fkiecad/cwe_checker
+sudo docker pull sonarqube:community
+sudo docker pull sonarsource/sonar-scanner-cli
 
 wget -q https://github.com/abhi-r3v0/Adhrit/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip

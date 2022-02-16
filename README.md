@@ -137,7 +137,7 @@ optional arguments:
 
 ## apk-mobsf.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告，可以打开 `http://localhost:8000/`。
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。打开 `http://localhost:8000/`。
 
 ```sh
 $ docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf
@@ -154,7 +154,7 @@ optional arguments:
 
 ## apk-audit.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析，可以打开 `http://localhost:8888/`，账号密码 auditor/audit123。
+使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析。打开 `http://localhost:8888/`，账号密码 auditor/audit123。
 
 ```sh
 $ docker-compose -f ./tools/mobileAudit-main/docker-compose.yaml up
@@ -373,28 +373,35 @@ optional arguments:
 
 ```sh
 $ readlink -f ~/hmi/apps/* > src.conf
-$ python3 src-mobsf.py --help
-******************** src-mobsf.py ********************
-usage: src-mobsf.py [-h] --config CONFIG
+$ python3 src-mobsf.py --config ./data/src.conf
+```
 
-optional arguments:
-  -h, --help       show this help message and exit
-  --config CONFIG  A config file containing source code paths
+## src-fireline.py
+
+如果你在甲方有 APP 源码，创建一个配置文件写入源码地址，即可批量静态分析并生成报告。
+
+```sh
+$ readlink -f ~/hmi/apps/* > src.conf
+$ python3 src-fireline.py --config ./data/src.conf
 ```
 
 ## src-depcheck.py
 
-如果你在甲方有 APP 源码，创建一个配置文件写入源码地址，即可批量扫描第三方库 CVE 漏洞并生成报告。
+如果你在甲方有 APP 源码，创建一个配置文件写入源码路径，即可批量扫描第三方库 CVE 漏洞并生成报告。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > src.conf
-$ python3 src-depcheck.py --help
-****************** src-depcheck.py *******************
-usage: src-depcheck.py [-h] --config CONFIG
+$ python3 src-depcheck.py --config ./data/src.conf
+```
 
-optional arguments:
-  -h, --help       show this help message and exit
-  --config CONFIG  A config file containing source code paths
+## src-sonarqube.py
+
+如果你在甲方有 APP 源码，创建一个配置文件写入源码路径，即可批量静态代码扫描。打开 `http://localhost:9000/`，默认密码 admin/admin，首次登录后请手动修改为 admin/admin123。
+
+```sh
+$ docker run -it --rm -p 9000:9000 sonarqube:community
+$ readlink -f ~/hmi/apps/* > src.conf
+$ python3 src-sonarqube.py --config ./data/src.conf [--key KEY]
 ```
 
 ## can-countid.py
@@ -407,12 +414,10 @@ $ python3 cantool.py log.asc
 c9: 1743
 128: 872
 12a: 174
-e1: 35
 please input id: c9
 0.009100: 84 0d 04 00 00 80 c0 d5
 0.019100: 84 0d 04 00 00 80 00 15
 0.029100: 84 0d 04 00 00 80 40 55
-0.039100: 84 0d 0e 00 00 80 80 9f
 ```
 
 ## idps-test
@@ -443,11 +448,7 @@ app 堆内存 dump，得到 hprof 文件，并使用 [MAT](https://www.eclipse.o
 ```sh
 $ ./app-heapdump.sh com.fce.fcesettings 
 ******************* mem-heapdump.sh ******************
-restarting adbd as root
-remount succeeded
-system        3912  2058 2 14:28:31 ?     00:00:01 com.fce.fcesettings
 [*] Dumping managed heap...
-/data/local/tmp/original.hprof: 1 file pulled. 7.0 MB/s (21028468 bytes in 2.871s)
 [*] Converting hprof format...
 [*] Executing MAT analysis...
 [*] Managed dump and analysis succeeded

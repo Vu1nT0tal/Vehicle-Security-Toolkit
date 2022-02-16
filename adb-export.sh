@@ -537,8 +537,8 @@ adb_backup () {
     mkdir -p "$BACKUP_DIR"
 
     echo -e "\n[+] Creating an Android Backup by using the command\n[+]"
-    echo "[*] adb backup -all -shared -system -keyvalue -apk -f backup.ab"
-    $BACKUP_CMD -all -shared -system -keyvalue -apk -f $BACKUP_DIR/backup.ab
+    echo "[*] adb backup -all -shared -system -keyvalue -apk -obb -f backup.ab"
+    $BACKUP_CMD -all -shared -system -keyvalue -apk -obb -f $BACKUP_DIR/backup.ab
 
     echo "[*] SHA1: "
     shasum ${BACKUP_DIR}/backup.ab >&1 | tee -a $BACKUP_DIR/backup_log.txt

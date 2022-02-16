@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-from utils import shell_cmd_ret_code
+from utils import shell_cmd
 
 
 def analysis(apk_path: Path):
@@ -10,7 +10,7 @@ def analysis(apk_path: Path):
     report_file = apk_path.parent.joinpath(f'{apk_path.stem}-androbugs.txt')
 
     cmd = f'docker run --rm -v {apk_path.parent}:/apk danmx/docker-androbugs -f /apk/{apk_path.name} -o /tmp'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
 
     if ret_code == 0:
         with open(report_file, 'w+') as f:

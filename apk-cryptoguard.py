@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-from utils import shell_cmd_ret_code
+from utils import shell_cmd
 
 
 def analysis(apk_path: Path):
@@ -10,10 +10,10 @@ def analysis(apk_path: Path):
     report_name = f'{apk_path.stem}-cryptoguard.json'
     report_file = apk_path.parent.joinpath(report_name)
 
-    cmd = f'export sdkman="/home/runner/.sdkman/candidates" && \
-        docker run --rm -v {apk_path.parent}:/apk frantzme/cryptoguard $sdkman/java/current/bin/java -jar /Notebook/cryptoguard.jar \
+    env = {'sdkman': '/home/runner/.sdkman/candidates'}
+    cmd = f'docker run --rm -v {apk_path.parent}:/apk frantzme/cryptoguard $sdkman/java/current/bin/java -jar /Notebook/cryptoguard.jar \
             -android $sdkman/android/current -java $sdkman/java/7.0.322-zulu/ -in apk -s /apk/{apk_path.name} -o /apk/{report_name} -n'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd, env)
 
     if not report_file.exists():
         with open(f'{report_file}.error', 'w+') as f:

@@ -4,7 +4,7 @@ import shutil
 import argparse
 import tempfile
 from pathlib import Path
-from utils import shell_cmd_ret_code
+from utils import shell_cmd
 
 
 def analysis(apk_path: Path):
@@ -15,7 +15,7 @@ def analysis(apk_path: Path):
 
     cmd = f'mariana-trench --system-jar-configuration-path `find ~/Android/Sdk -name "android.jar" | head -n1` \
         --apk-path {apk_path} --source-root-directory {source_dir} --output-directory {tmp_dir}'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
     if ret_code != 0:
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
@@ -23,7 +23,7 @@ def analysis(apk_path: Path):
         return ret_code
 
     cmd = f'sapp --tool mariana-trench --database-name {report_file} analyze {tmp_dir}'
-    output, ret_code = shell_cmd_ret_code(cmd)
+    output, ret_code = shell_cmd(cmd)
     if ret_code != 0:
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
