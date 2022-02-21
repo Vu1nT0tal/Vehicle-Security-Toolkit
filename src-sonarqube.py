@@ -124,7 +124,7 @@ def delete_projects():
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing source code paths", type=str, required=True)
+    parser.add_argument("--config", help="A config file containing source code path", type=str, required=True)
     parser.add_argument("--key", help="authentication token", type=str, required=False)
     return parser.parse_args()
 

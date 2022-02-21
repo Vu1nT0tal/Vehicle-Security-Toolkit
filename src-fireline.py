@@ -25,7 +25,7 @@ def analysis(src_path: Path):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing source code paths", type=str, required=True)
+    parser.add_argument("--config", help="A config file containing source code path", type=str, required=True)
     return parser.parse_args()
 
 
@@ -34,9 +34,8 @@ if __name__ == '__main__':
 
     failed = []
     success_num = 0
-    config_file = argument().config
+    src_dirs = open(argument().config, 'r').read().splitlines()
 
-    src_dirs = open(config_file, 'r').read().splitlines()
     for src in src_dirs:
         src_path = Path(src)
         secscan_path = src_path.joinpath('SecScan')

@@ -20,7 +20,7 @@ def analysis(apk_path: Path):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--apk", help="A directory containing APK to run static analysis", type=str, required=True)
+    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
     return parser.parse_args()
 
 
@@ -28,10 +28,10 @@ if __name__ == '__main__':
     print('******************** apk-quark.py ********************')
 
     success_num = 0
-    apk_dir = argument().apk
+    apk_dirs = open(argument().config, 'r').read().splitlines()
 
-    for apk in Path(apk_dir).rglob('*.apk'):
-        ret = analysis(apk)
+    for apk in apk_dirs:
+        ret = analysis(Path(apk))
         success_num += 1
 
     print(f'扫描完成: {success_num}')

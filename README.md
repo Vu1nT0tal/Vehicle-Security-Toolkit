@@ -90,13 +90,8 @@ Choose an option:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量检查加壳、混淆、反调试等保护情况。
 
 ```sh
-$ python3 apk-id.py --help
-********************* apk-id.py **********************
-usage: apk-id.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-id.py --config ./data/apk.conf
 ```
 
 ## apk-decompile.py
@@ -104,16 +99,9 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译为 smali 和 java，为后续分析做准备。
 
 ```sh
-$ python3 apk-decompile.py --help
-****************** apk-decompile.py ******************
-usage: apk-decompile.py [-h] [-a] [-j] -d DIR [-c]
-
-optional arguments:
-  -h, --help         show this help message and exit
-  -a, --apktool      Use apktool get smali
-  -j, --jadx         Use jadx get java
-  -d DIR, --dir DIR  Target directory
-  -c, --clean        Clean all file above
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-decompile.py --config ./data/apk.conf --apktool --jadx
+$ python3 apk-decompile.py --config ./data/apk.conf --clean   # 清理
 ```
 
 ## apk-leaks.py
@@ -121,18 +109,18 @@ optional arguments:
 使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量搜索 IP、URL、Key 等敏感信息。推荐把所有控制台输出转存一份 `>&1 | tee result.txt`。
 
 ```sh
-$ python3 apk-leaks.py --help
-******************** apk-leaks.py ********************
-usage: apk-leaks.py [-h] [-f FILE] [-d DECOMPILED] [-o OUTPUT] [-a ARGS]
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-leaks.py --config ./data/apk.conf
+```
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -f FILE, --file FILE  APK file to scanning
-  -d DECOMPILED, --decompiled DECOMPILED
-                        Path to decompiled files
-  -o OUTPUT, --output OUTPUT
-                        Write to file results
-  -a ARGS, --args ARGS  Disassembler arguments (e.g. --deobf)
+## apk-qark.py
+
+使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ source ./tools/qark/bin/activate
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-qark.py --config ./data/apk.conf --report html
 ```
 
 ## apk-mobsf.py
@@ -141,15 +129,8 @@ optional arguments:
 
 ```sh
 $ docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf
-$ python3 apk-mobsf.py --help
-******************* apk-mobsf.py *********************
-usage: apk-mobsf.py [-h] -k KEY [-f FILE] [-d DIR]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -k KEY, --key KEY     Mobsf REST API key
-  -f FILE, --file FILE  APK file to scanning
-  -d DIR, --dir DIR     Target directory
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-mobsf.py --config ./data/apk.conf --key [API_KEY]
 ```
 
 ## apk-audit.py
@@ -158,30 +139,8 @@ optional arguments:
 
 ```sh
 $ docker-compose -f ./tools/mobileAudit-main/docker-compose.yaml up
-$ python3 apk-audit.py --help
-******************* apk-audit.py ********************
-usage: apk-audit.py [-h] -d DIR
-
-optional arguments:
-  -h, --help         show this help message and exit
-  -d DIR, --dir DIR  A directory containing APK to run static analysis
-```
-
-## apk-qark.py
-
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
-
-```sh
-$ source ./tools/qark/bin/activate
-$ python3 apk-qark.py --help
-******************** apk-qark.py *********************
-usage: apk-qark.py [-h] [--apk APK] [--java JAVA] [--report REPORT]
-
-optional arguments:
-  -h, --help       show this help message and exit
-  --apk APK        A directory containing APK to decompile and run static analysis
-  --java JAVA      A directory containing Java code to run static analysis.
-  --report REPORT  Type of report to generate [html|xml|json|csv]
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-audit.py --config ./data/apk.conf
 ```
 
 ## apk-androbugs.py
@@ -189,13 +148,8 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-androbugs.py --help
-****************** apk-androbugs.py ******************
-usage: apk-androbugs.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-androbugs.py --config ./data/apk.conf
 ```
 
 ## apk-scanner.py
@@ -203,13 +157,8 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-scanner.py --help
-******************* apk-scanner.py *******************
-usage: apk-scanner.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-scanner.py --config ./data/apk.conf
 ```
 
 ## apk-mariana.py
@@ -218,13 +167,8 @@ optional arguments:
 
 ```sh
 $ source ./tools/mariana-trench/bin/activate
-$ python3 apk-mariana.py --help
-******************* apk-mariana.py *******************
-usage: apk-mariana.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-mariana.py --config ./data/apk.conf
 
 # 分析完成后查看报告。目前漏洞代码定位有问题: https://github.com/skylot/jadx/issues/476
 $ sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/sources}
@@ -235,13 +179,8 @@ $ sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-quark.py --help
-******************** apk-quark.py ********************
-usage: apk-quark.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-quark.py --config ./data/apk.conf
 ```
 
 ## apk-exodus.py
@@ -249,13 +188,8 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-exodus.py --help
-******************* apk-exodus.py ********************
-usage: apk-exodus.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-exodus.py --config ./data/apk.conf
 ```
 
 ## apk-cryptoguard.py
@@ -263,13 +197,8 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ python3 apk-cryptoguard.py --help
-***************** apk-cryptoguard.py *****************
-usage: apk-cryptoguard.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-cryptoguard.py --config ./data/apk.conf
 ```
 
 ## apk-jni.py
@@ -277,13 +206,8 @@ optional arguments:
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量提取 JNI 函数特征，可导入到 IDA 和 Ghidra，提升逆向效率。[JNI Helper](https://github.com/evilpan/jni_helper)
 
 ```sh
-$ python3 apk-jni.py --help
-********************* apk-jni.py *********************
-usage: apk-jni.py [-h] --apk APK
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --apk APK   A directory containing APK to run static analysis
+$ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
+$ python3 apk-jni.py --config ./data/apk.conf
 ```
 
 ## apk-diff.py
@@ -291,16 +215,7 @@ optional arguments:
 使用 `apk-decompile.py` 得到新旧版本 APK 的反编译代码后，使用该脚本进行包和 smali 代码的对比。
 
 ```sh
-$ python3 apk-diff.py --help
-******************** apk-diff.py *********************
-usage: apk-diff.py [-h] apk1 apk2
-
-positional arguments:
-  apk1        Location of the first APK.
-  apk2        Location of the second APK.
-
-optional arguments:
-  -h, --help  show this help message and exit
+$ python3 apk-diff.py <apk1> <apk2>
 ```
 
 ## apk-repack.sh

@@ -21,7 +21,7 @@ freshquark
 wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.0/apktool_2.6.0.jar -O ./tools/apktool.jar
 wget -q https://github.com/JakeWharton/diffuse/releases/download/0.1.0/diffuse-0.1.0-binary.jar -O ./tools/diffuse.jar
 
-wget -q https://github.com/skylot/jadx/releases/download/v1.3.2/jadx-1.3.2.zip -O jadx.zip
+wget -q https://github.com/skylot/jadx/releases/download/v1.3.3/jadx-1.3.3.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 wget -q https://github.com/paradiseduo/ApplicationScanner/archive/refs/heads/main.zip

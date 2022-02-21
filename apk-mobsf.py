@@ -25,7 +25,7 @@ class MobSF:
     def apikey(self):
         return self.__apikey
 
-    def upload(self, file_path: str):
+    def upload(self, file_path: Path):
         """上传一个文件
 
         :param file_path: 文件路径，支持apk, zip, ipa, appx
@@ -34,7 +34,7 @@ class MobSF:
         print(f"Uploading {file_path} to {self.__server}")
 
         multipart_data = MultipartEncoder(
-            fields={'file': (file_path, open(file_path, 'rb'), 'application/octet-stream')})
+            fields={'file': (str(file_path), open(file_path, 'rb'), 'application/octet-stream')})
         headers = {'Content-Type': multipart_data.content_type, 'Authorization': self.__apikey}
 
         r = requests.post(f'{self.__server}/api/v1/upload', data=multipart_data, headers=headers)
@@ -147,15 +147,7 @@ class MobSF:
         return r.status_code, r.json()
 
 
-def argument():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-k", "--key", help="Mobsf REST API key", type=str, required=True)
-    parser.add_argument("-f", "--file", help="APK file to scanning", type=str, required=False)
-    parser.add_argument("-d", "--dir", help="Target directory", type=str, required=False)
-    return parser.parse_args()
-
-
-def analysis(apk_path: str):
+def analysis(apk_path: Path):
     """一次完整的分析过程
     
     :param apk_path: APK路径
@@ -172,12 +164,11 @@ def analysis(apk_path: str):
             print(f"[!] 扫描失败: {apk_path}")
             return False
         else:
-            file_path = Path(apk_path)
-            json_path = file_path.parent.joinpath(f'{file_path.stem}-mobsf.json')
+            json_path = apk_path.parent.joinpath(f'{apk_path.stem}-mobsf.json')
             with open(json_path, 'w+') as f:
                 f.write(json.dumps(data, indent=4))
             
-            pdf_path = file_path.parent.joinpath(f'{file_path.stem}-mobsf.pdf')
+            pdf_path = apk_path.parent.joinpath(f'{apk_path.stem}-mobsf.pdf')
             ret_code, data = init.report_pdf(md5, str(pdf_path))
             if ret_code != 200:
                 print(f"[!] 下载报告失败: {apk_path}")
@@ -187,23 +178,28 @@ def analysis(apk_path: str):
                 return True
 
 
+def argument():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
+    parser.add_argument("--key", help="Mobsf REST API key", type=str, required=True)
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
     print('******************* apk-mobsf.py *********************')
 
     failed = []
+    success_num = 0
     args = argument()
+    apk_dirs = open(args.config, 'r').read().splitlines()
     init = MobSF(args.key)
-    if args.file and not args.dir:
-        analysis(args.file)
-    elif args.dir and not args.file:
-        success_num = 0
-        for apk in Path(args.dir).rglob('*.apk'):
-            ret = analysis(str(apk))
-            if ret:
-                success_num += 1
-            else:
-                failed.append(str(apk))
-        print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-        print('\n'.join(failed))
-    else:
-        print('[!] 参数错误（-f和-d只能有一个）: python3 apk-mobsf.py --help')
+
+    for apk in apk_dirs:
+        ret = analysis(Path(apk))
+        if ret:
+            success_num += 1
+        else:
+            failed.append(apk)
+
+    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
+    print('\n'.join(failed))

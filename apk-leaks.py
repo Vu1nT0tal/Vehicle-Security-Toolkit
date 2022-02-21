@@ -4,15 +4,11 @@ import json
 import logging.config
 import os
 import re
-import shutil
 import sys
-import tempfile
 import threading
 import argparse
 
 from pathlib import Path
-from pipes import quote
-from pyaxmlparser import APK
 
 
 notkeyhacks = {
@@ -134,40 +130,14 @@ class util:
 
 
 class APKLeaks:
-    def __init__(self, args):
-        self.apk = None
-        self.file = Path(args.file)
-        self.disarg = args.args 
-        self.tempdir = tempfile.mkdtemp()
-        self.output = self.file.parent.joinpath(self.file.stem+'-apkleaks.json') if not args.output else args.output
+    def __init__(self, apk_path: Path):
+        self.file = apk_path
+        self.tempdir = self.file.parent.joinpath("jadx_java")
+        self.output = self.file.parent.joinpath(self.file.stem+'-apkleaks.json')
         self.fileout = open(self.output, "w+")  
-        self.jadx = str(Path(__file__).parent.joinpath('tools/jadx/bin/jadx'))
         self.out_json = {}
         self.scanned = False
         logging.config.dictConfig({"version": 1, "disable_existing_loggers": True})
-
-    def integrity(self):
-        if self.file.is_file():
-            try:
-                self.apk = APK(self.file)
-            except Exception as error:
-                util.writeln(str(error), col.WARNING)
-                sys.exit()
-            else:
-                return self.apk
-        else:
-            sys.exit(util.writeln("It's not a valid file!", col.WARNING))
-
-    def decompile(self):
-        util.writeln("** Decompiling APK...", col.OKBLUE)
-        args = [self.jadx, str(self.file), "-d", self.tempdir]
-        try:
-            args.extend(re.split(r"\s|=", self.disarg))
-        except Exception:
-            pass
-        comm = "%s" % (" ".join(quote(arg) for arg in args))
-        comm = comm.replace("\'","\"")
-        os.system(comm)
 
     def extract(self, name, matches):
         if len(matches):
@@ -184,10 +154,7 @@ class APKLeaks:
             self.scanned = True
 
     def scanning(self):
-        if not self.apk:
-            sys.exit(util.writeln("** Undefined package. Exit!", col.FAIL))
-        util.writeln(f"\n** Scanning against '{self.apk.package}'", col.OKBLUE)
-        self.out_json["package"] = self.apk.package
+        util.writeln(f"\n** Scanning against '{self.file}'", col.OKBLUE)
         self.out_json["results"] = {}
 
         for name, pattern in regexes.items():
@@ -205,9 +172,7 @@ class APKLeaks:
                 except KeyboardInterrupt:
                     sys.exit(util.writeln("\n** Interrupted. Aborting...", col.FAIL))
 
-    def cleanup(self, rm_tempdir = True):
-        if rm_tempdir:
-            shutil.rmtree(self.tempdir)
+    def cleanup(self):
         if self.scanned:
             self.fileout.write("%s" % json.dumps(self.out_json, indent=4))
             self.fileout.close()
@@ -215,37 +180,21 @@ class APKLeaks:
         else:
             self.fileout.close()
             os.remove(self.output)
-            util.writeln("\n** Done with nothing. ¯\\_(ツ)_/¯", col.WARNING)
+            util.writeln("\n** Done with nothing.", col.WARNING)
 
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--file", help="APK file to scanning", type=str, required=False)
-    parser.add_argument("-d", "--decompiled", help="Path to decompiled files", type=str, required=False)
-    parser.add_argument("-o", "--output", help="Write to file results", type=str, required=False)
-    parser.add_argument("-a", "--args", help="Disassembler arguments (e.g. --deobf)", type=str, required=False)
+    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
     print('******************** apk-leaks.py ********************')
     args = argument()
-    if args.file and not args.decompiled:
-        init = APKLeaks(args)
-        try:
-            init.integrity()
-            init.decompile()
-            init.scanning()
-        finally:
-            init.cleanup()
-    elif args.decompiled and not args.file:
-        for apk in Path(args.decompiled).rglob("*.apk"):
-            args.file = apk
-            args.output = False
-            init = APKLeaks(args)
-            init.tempdir = apk.parent.joinpath("jadx_java")
-            init.integrity()
-            init.scanning()
-            init.cleanup(rm_tempdir=False)
-    else:
-        print('[!] 参数错误（-f和-d只能有一个）: python3 apk-leaks.py --help')
+    apk_dirs = open(args.config, 'r').read().splitlines()
+
+    for apk in apk_dirs:
+        init = APKLeaks(Path(apk))
+        init.scanning()
+        init.cleanup()

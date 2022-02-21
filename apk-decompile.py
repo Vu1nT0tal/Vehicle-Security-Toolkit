@@ -22,33 +22,29 @@ def jadx(apk_path: Path):
     print()
 
 
-def cleanup(target: Path):
-    for smali in target.rglob('apktool_smali'):
-        shutil.rmtree(smali, ignore_errors=True)
-    for java in target.rglob('jadx_java'):
-        shutil.rmtree(java, ignore_errors=True)
-    print('[+] 清理完成')
-
-
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-a", "--apktool", help="Use apktool get smali", action='store_true')
-    parser.add_argument("-j", "--jadx", help="Use jadx get java", action='store_true')
-    parser.add_argument("-d", "--dir", help="Target directory", type=str, required=True)
-    parser.add_argument("-c", "--clean", help="Clean all file above", action='store_true')
+    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
+    parser.add_argument("--apktool", help="Use apktool get smali", action='store_true')
+    parser.add_argument("--jadx", help="Use jadx get java", action='store_true')
+    parser.add_argument("--clean", help="Clean all file above", action='store_true')
     return parser.parse_args()
 
 
 if __name__ == '__main__':
     print('****************** apk-decompile.py ******************')
-    args = argument()
-    target = Path(args.dir)
 
-    if args.clean:
-        cleanup(target)
-    else:
-        for apk in target.rglob('*.apk'):
+    args = argument()
+    apk_dirs = open(args.config, 'r').read().splitlines()
+
+    for apk in apk_dirs:
+        apk_path = Path(apk)
+        if args.clean:
+            shutil.rmtree(apk_path.parent.joinpath('apktool_smali'), ignore_errors=True)
+            shutil.rmtree(apk_path.parent.joinpath('jadx_java'), ignore_errors=True)
+            print('[+] 清理完成')
+        else:
             if args.apktool:
-                apktool(apk)
+                apktool(apk_path)
             if args.jadx:
-                jadx(apk)
+                jadx(apk_path)

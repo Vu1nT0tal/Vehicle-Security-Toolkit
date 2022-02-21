@@ -108,7 +108,7 @@ def register(username: str, password: str) -> int:
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--dir", help="A directory containing APK to run static analysis", type=str, required=True)
+    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
     return parser.parse_args()
 
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     failed = []
     success_num = 0
-    apk_dir = argument().dir
+    apk_dirs = open(argument().config, 'r').read().splitlines()
 
     # 注册用户并获取token
     username = 'auditor'
@@ -137,18 +137,19 @@ if __name__ == '__main__':
     print(f'[+] app_id: {app_id}')
 
     results = scan_list()
-    for apk in Path(apk_dir).rglob('*.apk'):
-        if str(apk) not in results:
-            scan_id = scan_create(apk, app_id)['id']
+    for apk in apk_dirs:
+        if apk not in results:
+            scan_id = scan_create(Path(apk), app_id)['id']
             while True:
                 r = scan_read(scan_id)
                 if r['status'] == 'Finished':
                     success_num += 1
                     break
                 elif r['status'] == 'Error':
-                    failed.append(str(apk))
+                    failed.append(apk)
                     break
                 else:
                     time.sleep(5)
+
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

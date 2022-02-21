@@ -1,3 +1,4 @@
+import os
 import socket
 import hashlib
 from pathlib import Path
@@ -17,7 +18,8 @@ def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
         6: f'{sdkman} && sdk use gradle 6.9.2'
     }
 
-    local_env = env.copy() if env else {}
+    os.environ['PATH'] += ':'+str(Path('~/.local/bin').expanduser())
+    local_env = env.copy() if env else os.environ
     cwd = local_env.pop('cwd', None)
     exe = local_env.pop('exe', 'sh')
     gradle = local_env.pop('gradle', None)
