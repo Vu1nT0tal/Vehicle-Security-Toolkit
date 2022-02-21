@@ -45,9 +45,8 @@ class AnalysisHelper(StaticAnalysis):
         }
 
 
-def analysis(apk_path: Path):
-    print(f'[+] {apk_path}')
-    report_file = apk_path.parent.joinpath(f'{apk_path.stem}-exodus.json')
+def analysis(apk_path: Path, signature: list, compiled_signature: list):
+    report_file = apk_path.parent.joinpath('SecScan/exodus.json')
 
     analysis = AnalysisHelper(str(apk_path))
     analysis.signatures = signature
@@ -60,19 +59,26 @@ def analysis(apk_path: Path):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
+    parser.add_argument('--config', help='A config file containing APK path', type=str, required=True)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    print('******************* apk-exodus.py ********************')
+    print('******************* apk_exodus.py ********************')
 
     success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     signature, compiled_signature = get_trackers()
     for apk in apk_dirs:
-        analysis(Path(apk))
+        print(f'[+] [exodus] {apk}')
+
+        apk_path = Path(apk)
+        report_path = apk_path.parent.joinpath('SecScan')
+        if not report_path.exists():
+            report_path.mkdir()
+
+        analysis(apk_path, signature, compiled_signature)
         success_num += 1
 
     print(f'扫描完成: {success_num}')

@@ -11,7 +11,7 @@ sdk install gradle 5.6.4
 sdk install gradle 6.9.2
 
 sudo apt-get update && sudo apt-get -y install zsh apt-transport-https git python3-dev python3-pip python3-venv unzip npm graphviz dexdump simg2img meld maven golang
-python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja docker-compose python-sonarqube-api
+python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja docker-compose python-sonarqube-api colorama
 sudo npm -g install js-beautify apk-mitm
 
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$HOME"/.profile

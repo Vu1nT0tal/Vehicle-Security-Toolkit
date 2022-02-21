@@ -1,18 +1,19 @@
 #!/usr/bin/python3
 
+import sys
 import argparse
 from pathlib import Path
+
+sys.path.append('..')
 from utils import shell_cmd
 
 
-def analysis(apk_path: Path):
-    print(f'[+] {apk_path}')
-    report_name = f'{apk_path.stem}-cryptoguard.json'
-    report_file = apk_path.parent.joinpath(report_name)
+def analysis(apk_path: Path,):
+    report_file = apk_path.parent.joinpath('SecScan/cryptoguard.json')
 
     env = {'sdkman': '/home/runner/.sdkman/candidates'}
     cmd = f'docker run --rm -v {apk_path.parent}:/apk frantzme/cryptoguard $sdkman/java/current/bin/java -jar /Notebook/cryptoguard.jar \
-            -android $sdkman/android/current -java $sdkman/java/7.0.322-zulu/ -in apk -s /apk/{apk_path.name} -o /apk/{report_name} -n'
+            -android $sdkman/android/current -java $sdkman/java/7.0.322-zulu/ -in apk -s /apk/{apk_path.name} -o /apk/SecScan/cryptoguard.json -n'
     output, ret_code = shell_cmd(cmd, env)
 
     if not report_file.exists():
@@ -24,23 +25,30 @@ def analysis(apk_path: Path):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
+    parser.add_argument('--config', help='A config file containing APK path', type=str, required=True)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    print('***************** apk-cryptoguard.py *****************')
+    print('***************** apk_cryptoguard.py *****************')
 
     failed = []
     success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        ret = analysis(Path(apk).absolute())
-        if ret == 0:
-            success_num += 1
-        else:
+        print(f'[+] [cryptoguard] {apk}')
+        apk_path = Path(apk)
+
+        report_path = apk_path.parent.joinpath('SecScan')
+        if not report_path.exists():
+            report_path.mkdir()
+
+        ret = analysis(apk_path)
+        if ret:
             failed.append(apk)
+        else:
+            success_num += 1
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

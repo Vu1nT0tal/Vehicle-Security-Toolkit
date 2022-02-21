@@ -42,10 +42,10 @@ if __name__ == '__main__':
     elf_list = output.split('\n')[:-1]
     for elf in elf_list:
         ret = analysis(Path(elf).absolute())
-        if ret == 0:
-            success_num += 1
-        else:
+        if ret:
             failed.append(elf)
+        else:
+            success_num += 1
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

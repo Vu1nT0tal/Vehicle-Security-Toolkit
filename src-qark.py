@@ -9,10 +9,10 @@ def analysis(src_path: Path, report: str = None):
     print(f'[+] {src_path}')
 
     report_type = 'html' if report is None else report
-    report_file = secscan_path.joinpath(f'report.{report_type}')
-    new_report_file = secscan_path.joinpath(f'qark.{report_type}')
+    report_file = report_path.joinpath(f'report.{report_type}')
+    new_report_file = report_path.joinpath(f'qark.{report_type}')
 
-    cmd = f'qark --java {src_path} --report-type {report_type} --report-path {secscan_path}'
+    cmd = f'qark --java {src_path} --report-type {report_type} --report-path {report_path}'
     output, ret_code = shell_cmd(cmd)
 
     if report_file.exists():
@@ -26,7 +26,7 @@ def analysis(src_path: Path, report: str = None):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
+    parser.add_argument('--config', help='A config file containing APK path', type=str, required=True)
     parser.add_argument("--report", help="Type of report to generate [html|xml|json|csv]", type=str, required=False)
     return parser.parse_args()
 
@@ -41,15 +41,15 @@ if __name__ == '__main__':
 
     for src in src_dirs:
         src_path = Path(src)
-        secscan_path = src_path.joinpath('SecScan')
-        if not secscan_path.exists():
-            secscan_path.mkdir()
+        report_path = src_path.joinpath('SecScan')
+        if not report_path.exists():
+            report_path.mkdir()
 
         ret = analysis(src_path, args.report)
-        if ret == 0:
-            success_num += 1
-        else:
+        if ret:
             failed.append(src)
+        else:
+            success_num += 1
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

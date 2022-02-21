@@ -1,6 +1,7 @@
 import os
 import socket
 import hashlib
+from colorama import Fore
 from pathlib import Path
 from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
 
@@ -61,3 +62,17 @@ def get_md5(file_path: str) -> str:
         for chunk in iter(lambda: f.read(4096), b''):
             md5.update(chunk)
     return md5.hexdigest()
+
+
+class Color:
+    @staticmethod
+    def print_focus(data: str):
+        print(Fore.YELLOW+data+Fore.RESET)
+
+    @staticmethod
+    def print_success(data: str):
+        print(Fore.LIGHTGREEN_EX+data+Fore.RESET)
+
+    @staticmethod
+    def print_failed(data: str):
+        print(Fore.LIGHTRED_EX+data+Fore.RESET)

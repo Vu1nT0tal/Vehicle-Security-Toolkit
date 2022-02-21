@@ -1,14 +1,18 @@
 #!/usr/bin/python3
 
 import re
+import sys
 import argparse
 import difflib
 from filecmp import dircmp
 from pathlib import Path
+
+sys.path.append('..')
 from utils import shell_cmd
 
 
 pwd = Path(__file__).parent
+tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 ignore_name = 'R\$|.*(align|apktool.yml|pak|MF|RSA|SF|bin|so)'
 ignore_file = '.*(google|androidx|kotlin|apktool_smali/res|apktool_smali/original)'
 count = 0
@@ -18,7 +22,7 @@ result = ''
 def diff_apk(apk1, apk2):
     report_file = pwd.joinpath('diff_apk.txt')
 
-    diffuse = Path(__file__).parent.joinpath('tools/diffuse.jar')
+    diffuse = tools_path.joinpath('diffuse.jar')
     cmd = f'java -jar {diffuse} diff {apk1} {apk2} --text {report_file}'
     output, ret_code = shell_cmd(cmd)
 

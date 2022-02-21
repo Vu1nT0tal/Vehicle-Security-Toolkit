@@ -8,7 +8,7 @@ from sonarqube import SonarQubeClient
 from utils import shell_cmd, get_host_ip
 
 
-url = f'http://{get_host_ip()}:9000'
+DEFAULT_SERVER = f'http://{get_host_ip()}:9000'
 env = {
     'ANDROID_HOME': Path('~').expanduser().joinpath('Android/Sdk'),
     'ANDROID_SDK_ROOT': Path('~').expanduser().joinpath('Android/Sdk')
@@ -57,7 +57,7 @@ def gradle_build(src_path: Path):
 def analysis_cli(src_path: Path):
     print(f'[+] {src_path} - cli')
 
-    cmd = f'docker run --rm -e SONAR_HOST_URL={url} -e SONAR_LOGIN={token} -v {src_path}:/usr/src sonarsource/sonar-scanner-cli -Dsonar.projectKey={src_path.name} -Dsonar.java.binaries=/usr/src'
+    cmd = f'docker run --rm -e SONAR_HOST_URL={DEFAULT_SERVER} -e SONAR_LOGIN={token} -v {src_path}:/usr/src sonarsource/sonar-scanner-cli -Dsonar.projectKey={src_path.name} -Dsonar.java.binaries=/usr/src'
     output, ret_code = shell_cmd(cmd)
     if ret_code != 0:
         print(f'[-] {src_path} cli 失败')
@@ -83,7 +83,7 @@ def analysis_gradle(src_path: Path, java: int = 11):
     shell_cmd(f'{sed1} && {sed2} && {sed3}')
 
     # 运行
-    cmd = f'chmod +x gradlew && ./gradlew sonarqube -Dsonar.projectKey={src_path.name} -Dsonar.host.url={url} -Dsonar.login={token}'
+    cmd = f'chmod +x gradlew && ./gradlew sonarqube -Dsonar.projectKey={src_path.name} -Dsonar.host.url={DEFAULT_SERVER} -Dsonar.login={token}'
     output, ret_code = shell_cmd(cmd, local_env)
 
     # 恢复
@@ -109,7 +109,7 @@ def analysis(src_path: Path, mode: str):
         print(f'[-] {src_path} gradle build 失败')
 
     if ret_code != 0:
-        with open(secscan_path.joinpath('sonarqube.error'), 'w+') as f:
+        with open(report_path.joinpath('sonarqube.error'), 'w+') as f:
             f.write(output)
 
     return ret_code
@@ -124,7 +124,7 @@ def delete_projects():
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing source code path", type=str, required=True)
+    parser.add_argument('--config', help='A config file containing source code path', type=str, required=True)
     parser.add_argument("--key", help="authentication token", type=str, required=False)
     return parser.parse_args()
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     success_num = 0
     args = argument()
 
-    sonar = SonarQubeClient(url, username='admin', password='admin123')
+    sonar = SonarQubeClient(DEFAULT_SERVER, username='admin', password='admin123')
 
     # 设置token
     if not args.key:
@@ -150,15 +150,15 @@ if __name__ == '__main__':
                 with open('./data/sonarqube.token', 'r') as f:
                     token = f.read()
             except Exception as e:
-                token = input('请输入token: ')
+                token = input('请输入token：')
             print(f'[+] token: {token}')
 
     src_dirs = open(args.config, 'r').read().splitlines()
     for src in src_dirs:
         src_path = Path(src)
-        secscan_path = src_path.joinpath('SecScan')
-        if not secscan_path.exists():
-            secscan_path.mkdir()
+        report_path = src_path.joinpath('SecScan')
+        if not report_path.exists():
+            report_path.mkdir()
 
         try:
             sonar.projects.create_project(project=src_path.name, name=src_path.name)
@@ -171,10 +171,10 @@ if __name__ == '__main__':
         # else:
         ret = analysis(src_path, 'cli')
 
-        if ret == 0:
-            success_num += 1
-        else:
+        if ret:
             failed.append(src)
+        else:
+            success_num += 1
 
     print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
     print('\n'.join(failed))

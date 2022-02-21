@@ -7,7 +7,7 @@ app=$2
 keytool -genkey -keyalg RSA -keysize 2048 -validity 700 -noprompt -alias apkpatcheralias1 -dname "CN=apk.patcher.com, OU=ID, O=APK, L=Patcher, S=Patch, C=BR" -keystore apkpatcherkeystore -storepass password -keypass password 2>/dev/null
 
 # 重打包
-java -jar ./tools/apktool.jar b -f $folder -o $app
+java -jar ../tools/apktool.jar b -f $folder -o $app
 
 # 签名
 jarsigner=`find ~/Android/Sdk -name "apksigner" | tail -1`

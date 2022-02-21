@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 
-import json
-import logging.config
 import os
 import re
-import sys
+import json
 import threading
 import argparse
 
@@ -90,111 +88,74 @@ regexes = {
 }
 
 
-
-class col:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-
-class util:
-    @staticmethod
-    def write(message, color):
-        sys.stdout.write("%s%s%s" % (color, message, col.ENDC))
-
-    @staticmethod
-    def writeln(message, color):
-        util.write(message + "\n", color)
-
-    @staticmethod
-    def finder(pattern, path):
-        matcher = re.compile(pattern)
-        found = []
-        for fp, _, files in os.walk(path):
-            for fn in files:
-                filepath = os.path.join(fp, fn)
-                with open(filepath) as f:
-                    try:
-                        for line in f.readlines():
-                            mo = matcher.search(line)
-                            if mo:
-                                found.append(mo.group())
-                    except Exception:
-                        pass
-        return sorted(list(set(found)))
-
-
-class APKLeaks:
-    def __init__(self, apk_path: Path):
-        self.file = apk_path
-        self.tempdir = self.file.parent.joinpath("jadx_java")
-        self.output = self.file.parent.joinpath(self.file.stem+'-apkleaks.json')
-        self.fileout = open(self.output, "w+")  
-        self.out_json = {}
-        self.scanned = False
-        logging.config.dictConfig({"version": 1, "disable_existing_loggers": True})
-
-    def extract(self, name, matches):
-        if len(matches):
-            self.out_json["results"][name] = []
-            util.writeln(f'\n[{name}]', col.OKGREEN)
-            regexe = r"^.(L[a-z]|application|audio|fonts|image|kotlin|layout|multipart|plain|text|video|java).*\/.+"
-            for secret in matches:
-                if name == "LinkFinder":
-                    if re.match(regexe, secret) is not None:
-                        continue
-                    secret = secret[len("'"):-len("'")]
-                print(f'- {secret}')
-                self.out_json["results"][name].append(secret)
-            self.scanned = True
-
-    def scanning(self):
-        util.writeln(f"\n** Scanning against '{self.file}'", col.OKBLUE)
-        self.out_json["results"] = {}
-
-        for name, pattern in regexes.items():
-            if isinstance(pattern, list):
-                for p in pattern:
-                    try:
-                        thread = threading.Thread(target=self.extract, args=(name, util.finder(p, self.tempdir)))
-                        thread.start()
-                    except KeyboardInterrupt:
-                        sys.exit(util.writeln("\n** Interrupted. Aborting...", col.FAIL))
-            else:
+def finder(pattern, path):
+    matcher = re.compile(pattern)
+    found = []
+    for fp, _, files in os.walk(path):
+        for fn in files:
+            filepath = os.path.join(fp, fn)
+            with open(filepath) as f:
                 try:
-                    thread = threading.Thread(target=self.extract, args=(name, util.finder(pattern, self.tempdir)))
-                    thread.start()
-                except KeyboardInterrupt:
-                    sys.exit(util.writeln("\n** Interrupted. Aborting...", col.FAIL))
+                    for line in f.readlines():
+                        mo = matcher.search(line)
+                        if mo:
+                            found.append(mo.group())
+                except Exception:
+                    pass
+    return sorted(list(set(found)))
 
-    def cleanup(self):
-        if self.scanned:
-            self.fileout.write("%s" % json.dumps(self.out_json, indent=4))
-            self.fileout.close()
-            print(f"{col.HEADER}\n** Results saved into '{col.ENDC}{col.OKGREEN}{self.output}{col.HEADER}'{col.ENDC}.")
+
+def extract(results, name, matches):
+    if len(matches):
+        results[name] = []
+        regexe = r'^.(L[a-z]|application|audio|fonts|image|kotlin|layout|multipart|plain|text|video).*\/.+'
+        for secret in matches:
+            if name == 'LinkFinder':
+                if re.match(regexe, secret) is not None:
+                    continue
+                secret = secret[len("'"):-len("'")]
+            results[name].append(secret)
+
+
+def analysis(apk_path: Path):
+    jadx_java = apk_path.parent.joinpath('jadx_java')
+    report_file = apk_path.parent.joinpath('SecScan/leaks.json')
+
+    results = {}
+    for name, pattern in regexes.items():
+        if isinstance(pattern, list):
+            for p in pattern:
+                thread = threading.Thread(target=extract, args=(results, name, finder(p, jadx_java)))
+                thread.start()
         else:
-            self.fileout.close()
-            os.remove(self.output)
-            util.writeln("\n** Done with nothing.", col.WARNING)
+            thread = threading.Thread(target=extract, args=(results, name, finder(pattern, jadx_java)))
+            thread.start()
+
+    with open(report_file, 'w+') as f:
+        f.write(json.dumps(results, indent=4))
 
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="A config file containing APK path", type=str, required=True)
+    parser.add_argument('--config', help='A config file containing APK path', type=str, required=True)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    print('******************** apk-leaks.py ********************')
-    args = argument()
-    apk_dirs = open(args.config, 'r').read().splitlines()
+    print('******************** apk_leaks.py ********************')
+
+    success_num = 0
+    apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        init = APKLeaks(Path(apk))
-        init.scanning()
-        init.cleanup()
+        print(f'[+] [leaks] {apk}')
+
+        apk_path = Path(apk)
+        report_path = apk_path.parent.joinpath('SecScan')
+        if not report_path.exists():
+            report_path.mkdir()
+
+        analysis(apk_path)
+        success_num += 1
+
+    print(f'扫描完成: {success_num}')
