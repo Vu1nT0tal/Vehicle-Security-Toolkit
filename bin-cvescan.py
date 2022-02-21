@@ -79,7 +79,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* lib-cvescan.py *******************')
+    print('******************* bin-cvescan.py *******************')
 
     args = argument()
     init = CVEScan(args)

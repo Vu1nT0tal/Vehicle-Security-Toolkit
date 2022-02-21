@@ -2,6 +2,45 @@
 
 汽车安全测试工具集（持续更新）
 
+- [Vehicle-Security-Toolkit](#vehicle-security-toolkit)
+  - [安装](#安装)
+    - [img-extract.sh](#img-extractsh)
+    - [adb-export.sh](#adb-exportsh)
+  - [APK 测试](#apk-测试)
+    - [apk-id.py](#apk-idpy)
+    - [apk-decompile.py](#apk-decompilepy)
+    - [apk-leaks.py](#apk-leakspy)
+    - [apk-qark.py](#apk-qarkpy)
+    - [apk-mobsf.py](#apk-mobsfpy)
+    - [apk-audit.py](#apk-auditpy)
+    - [apk-androbugs.py](#apk-androbugspy)
+    - [apk-scanner.py](#apk-scannerpy)
+    - [apk-mariana.py](#apk-marianapy)
+    - [apk-quark.py](#apk-quarkpy)
+    - [apk-exodus.py](#apk-exoduspy)
+    - [apk-cryptoguard.py](#apk-cryptoguardpy)
+    - [apk-jni.py](#apk-jnipy)
+    - [apk-diff.py](#apk-diffpy)
+    - [apk-repack.sh](#apk-repacksh)
+  - [二进制测试](#二进制测试)
+    - [bin-cwechecker.py](#bin-cwecheckerpy)
+    - [bin-cvescan.py](#bin-cvescanpy)
+  - [源码测试](#源码测试)
+    - [src-qark.py](#src-qarkpy)
+    - [src-mobsf.py](#src-mobsfpy)
+    - [src-fireline.py](#src-firelinepy)
+    - [src-depcheck.py](#src-depcheckpy)
+    - [src-sonarqube.py](#src-sonarqubepy)
+  - [其他](#其他)
+    - [top-activity.sh](#top-activitysh)
+    - [HTTPS 抓包](#https-抓包)
+    - [can-countid.py](#can-countidpy)
+    - [idps-test](#idps-test)
+    - [mem-heapdump.sh](#mem-heapdumpsh)
+    - [进程间通信抓取](#进程间通信抓取)
+  - [开源协议](#开源协议)
+  - [Stargazers over time](#stargazers-over-time)
+
 ## 安装
 
 首先安装 Android SDK，然后执行 `init.sh`。
@@ -19,15 +58,7 @@ $ cd Vehicle-Security-Toolkit && ./init.sh
 $ ./frida.sh
 ```
 
-## top-activity.sh
-
-连接 ADB，获取顶层 App 及 Activity：
-
-```sh
-$ adb shell dumpsys window | grep mCurrentFocus
-```
-
-## img-extract.sh
+### img-extract.sh
 
 Android ROM 解包：
 
@@ -63,7 +94,7 @@ $ ./gradlew unpack
 $ ./gradlew pack
 ```
 
-## adb-export.sh
+### adb-export.sh
 
 当拿到一个车机不知道该下载或查看哪些东西的时候，使用该脚本一键搞定。
 
@@ -85,7 +116,9 @@ $ ./adb-export.sh
 Choose an option: 
 ```
 
-## apk-id.py
+## APK 测试
+
+### apk-id.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量检查加壳、混淆、反调试等保护情况。
 
@@ -94,7 +127,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-id.py --config ./data/apk.conf
 ```
 
-## apk-decompile.py
+### apk-decompile.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译为 smali 和 java，为后续分析做准备。
 
@@ -104,7 +137,7 @@ $ python3 apk-decompile.py --config ./data/apk.conf --apktool --jadx
 $ python3 apk-decompile.py --config ./data/apk.conf --clean   # 清理
 ```
 
-## apk-leaks.py
+### apk-leaks.py
 
 使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量搜索 IP、URL、Key 等敏感信息。推荐把所有控制台输出转存一份 `>&1 | tee result.txt`。
 
@@ -113,7 +146,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-leaks.py --config ./data/apk.conf
 ```
 
-## apk-qark.py
+### apk-qark.py
 
 使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析并生成报告。
 
@@ -123,7 +156,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-qark.py --config ./data/apk.conf --report html
 ```
 
-## apk-mobsf.py
+### apk-mobsf.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。打开 `http://localhost:8000/`。
 
@@ -133,7 +166,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-mobsf.py --config ./data/apk.conf --key [API_KEY]
 ```
 
-## apk-audit.py
+### apk-audit.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析。打开 `http://localhost:8888/`，账号密码 auditor/audit123。
 
@@ -143,7 +176,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-audit.py --config ./data/apk.conf
 ```
 
-## apk-androbugs.py
+### apk-androbugs.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
@@ -152,7 +185,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-androbugs.py --config ./data/apk.conf
 ```
 
-## apk-scanner.py
+### apk-scanner.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
@@ -161,7 +194,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-scanner.py --config ./data/apk.conf
 ```
 
-## apk-mariana.py
+### apk-mariana.py
 
 使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析并生成报告。
 
@@ -174,7 +207,7 @@ $ python3 apk-mariana.py --config ./data/apk.conf
 $ sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/sources}
 ```
 
-## apk-quark.py
+### apk-quark.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
@@ -183,7 +216,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-quark.py --config ./data/apk.conf
 ```
 
-## apk-exodus.py
+### apk-exodus.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
@@ -192,7 +225,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-exodus.py --config ./data/apk.conf
 ```
 
-## apk-cryptoguard.py
+### apk-cryptoguard.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
@@ -201,7 +234,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-cryptoguard.py --config ./data/apk.conf
 ```
 
-## apk-jni.py
+### apk-jni.py
 
 使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量提取 JNI 函数特征，可导入到 IDA 和 Ghidra，提升逆向效率。[JNI Helper](https://github.com/evilpan/jni_helper)
 
@@ -210,7 +243,7 @@ $ find ~/apks -name "*.apk" | xargs realpath > ./data/apk.conf
 $ python3 apk-jni.py --config ./data/apk.conf
 ```
 
-## apk-diff.py
+### apk-diff.py
 
 使用 `apk-decompile.py` 得到新旧版本 APK 的反编译代码后，使用该脚本进行包和 smali 代码的对比。
 
@@ -218,7 +251,7 @@ $ python3 apk-jni.py --config ./data/apk.conf
 $ python3 apk-diff.py <apk1> <apk2>
 ```
 
-## apk-repack.sh
+### apk-repack.sh
 
 使用 apktool 自动化重打包并签名：
 
@@ -226,21 +259,9 @@ $ python3 apk-diff.py <apk1> <apk2>
 $ ./apk_repack.sh <smali_folder> <apk_name>
 ```
 
-## HTTPS 抓包
+## 二进制测试
 
-从 Android7 开始，系统不再信任用户 CA 证书，想要抓 HTTPS 数据，有三种方法：
-
-1. 使用旧版本Android；
-2. 使用已root的设备，将 BurpSuite 的 CA 证书安装到系统证书目录；
-3. 修改目标 APK 文件，重新启用用户证书目录。
-
-这里使用第三种方法：
-
-```sh
-$ apk-mitm --debuggable <path-to-apk>
-```
-
-## bin-cwechecker.py
+### bin-cwechecker.py
 
 使用 `apk-decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析 SO/ELF 文件并生成报告。
 
@@ -254,14 +275,14 @@ optional arguments:
   --dir DIR   A directory containing bin files to run static analysis
 ```
 
-## lib-cvescan.py
+### bin-cvescan.py
 
 使用 `adb-export.sh` 导出 system 目录后，使用该脚本批量扫描开源组件并获取 CVE 详情。
 
 ```sh
-$ python3 lib-cvescan.py --help
-******************* lib-cvescan.py *******************
-usage: lib-cvescan.py [-h] -f FILE [-o OUTPUT]
+$ python3 bin-cvescan.py --help
+******************* bin-cvescan.py *******************
+usage: bin-cvescan.py [-h] -f FILE [-o OUTPUT]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -282,36 +303,47 @@ optional arguments:
 - Linux
   - `TODO: 动态链接库调用关系`
 
-## src-mobsf.py
+## 源码测试
 
-如果你在甲方有 APP 源码，创建一个配置文件写入源码地址，即可批量静态分析并生成报告。
+### src-qark.py
+
+批量扫描 Android 源码并生成报告。
+
+```sh
+$ readlink -f ~/hmi/apps/* > src.conf
+$ python3 src-qark.py --config ./data/src.conf
+```
+
+### src-mobsf.py
+
+批量扫描 Android 源码并生成报告。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > src.conf
 $ python3 src-mobsf.py --config ./data/src.conf
 ```
 
-## src-fireline.py
+### src-fireline.py
 
-如果你在甲方有 APP 源码，创建一个配置文件写入源码地址，即可批量静态分析并生成报告。
+批量扫描 Android 源码并生成报告。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > src.conf
 $ python3 src-fireline.py --config ./data/src.conf
 ```
 
-## src-depcheck.py
+### src-depcheck.py
 
-如果你在甲方有 APP 源码，创建一个配置文件写入源码路径，即可批量扫描第三方库 CVE 漏洞并生成报告。
+批量扫描第三方库 CVE 漏洞并生成报告。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > src.conf
 $ python3 src-depcheck.py --config ./data/src.conf
 ```
 
-## src-sonarqube.py
+### src-sonarqube.py
 
-如果你在甲方有 APP 源码，创建一个配置文件写入源码路径，即可批量静态代码扫描。打开 `http://localhost:9000/`，默认密码 admin/admin，首次登录后请手动修改为 admin/admin123。
+批量扫描 Android 源码。打开 `http://localhost:9000/`，默认密码 admin/admin，首次登录后请手动修改为 admin/admin123。
 
 ```sh
 $ docker run -it --rm -p 9000:9000 sonarqube:community
@@ -319,7 +351,31 @@ $ readlink -f ~/hmi/apps/* > src.conf
 $ python3 src-sonarqube.py --config ./data/src.conf [--key KEY]
 ```
 
-## can-countid.py
+## 其他
+
+### top-activity.sh
+
+连接 ADB，获取顶层 App 及 Activity：
+
+```sh
+$ adb shell dumpsys window | grep mCurrentFocus
+```
+
+### HTTPS 抓包
+
+从 Android7 开始，系统不再信任用户 CA 证书，想要抓 HTTPS 数据，有三种方法：
+
+1. 使用旧版本Android；
+2. 使用已root的设备，将 BurpSuite 的 CA 证书安装到系统证书目录；
+3. 修改目标 APK 文件，重新启用用户证书目录。
+
+这里使用第三种方法：
+
+```sh
+$ apk-mitm --debuggable <path-to-apk>
+```
+
+### can-countid.py
 
 统计 CAN ID 出现次数，并过滤数据。`TODO：将有变化的数据高亮显示`
 
@@ -335,7 +391,7 @@ please input id: c9
 0.029100: 84 0d 04 00 00 80 40 55
 ```
 
-## idps-test
+### idps-test
 
 制造系统网络异常状况，看是否会触发 IDSP 告警。
 
@@ -356,7 +412,7 @@ MemFree: 190 M
 MemAvailable: 829 M
 ```
 
-## mem-heapdump.sh
+### mem-heapdump.sh
 
 app 堆内存 dump，得到 hprof 文件，并使用 [MAT](https://www.eclipse.org/mat) 进行后续分析：
 
@@ -369,7 +425,7 @@ $ ./app-heapdump.sh com.fce.fcesettings
 [*] Managed dump and analysis succeeded
 ```
 
-## 进程间通信抓取
+### 进程间通信抓取
 
 - [Frida Android libbinder](https://bhamza.me/2019/04/24/Frida-Android-libbinder.html)
 - Man-In-The-Binder: He Who Controls IPC Controls The Droid. [slides](https://www.blackhat.com/docs/eu-14/materials/eu-14-Artenstein-Man-In-The-Binder-He-Who-Controls-IPC-Controls-The-Droid.pdf) | [wp](https://sc1.checkpoint.com/downloads/Man-In-The-Binder-He-Who-Controls-IPC-Controls-The-Droid-wp.pdf)
