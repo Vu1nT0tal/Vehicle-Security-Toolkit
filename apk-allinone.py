@@ -20,6 +20,7 @@ from apk_scan.apk_mobsf import analysis as mobsf
 from apk_scan.apk_qark import analysis as qark
 from apk_scan.apk_quark import analysis as quark
 from apk_scan.apk_scanner import analysis as scanner
+from apk_scan.apk_speck import analysis as speck
 
 
 # 配置项
@@ -39,6 +40,10 @@ if __name__ == '__main__':
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 
     plugin = {
+        # 必选插件
+        'decompile': defaultdict(list),
+
+        # 可选插件
         'androbugs': defaultdict(list),
         'audit': defaultdict(list),
         'cryptoguard': defaultdict(list),
@@ -50,7 +55,8 @@ if __name__ == '__main__':
         'mobsf': defaultdict(list),
         #'qark': defaultdict(list),         # 需要环境
         'quark': defaultdict(list),
-        'scanner': defaultdict(list)
+        'scanner': defaultdict(list),
+        'speck': defaultdict(list)
     }
     apk_dirs = open(args.config, 'r').read().splitlines()
 
@@ -69,8 +75,14 @@ if __name__ == '__main__':
         # apk_decompile
         if args.decompile:
             print(f'[+] Decompiling ...')
-            apktool(apk_path, tools_path)
-            jadx(apk_path, tools_path)
+            ret1 = apktool(apk_path, tools_path)
+            ret2 = jadx(apk_path, tools_path)
+            if ret1 or ret2:
+                plugin['decompile']['failed'].append(apk)
+                Color.print_failed('[-] [decompile] failed')
+            else:
+                plugin['decompile']['success'].append(apk)
+                Color.print_success('[+] [decompile] success')
 
         # apk_androbugs
         if 'androbugs' in plugin:
@@ -198,5 +210,15 @@ if __name__ == '__main__':
             else:
                 plugin['scanner']['success'].append(apk)
                 Color.print_success('[+] [scanner] success')
+
+        # apk_speck
+        if 'speck' in plugin:
+            ret = speck(apk_path, tools_path)
+            if ret:
+                plugin['speck']['failed'].append(apk)
+                Color.print_failed('[-] [speck] failed')
+            else:
+                plugin['speck']['success'].append(apk)
+                Color.print_success('[+] [speck] success')
 
     print(plugin)

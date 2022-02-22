@@ -1,35 +1,36 @@
 #!/usr/bin/python3
 
-import shutil
 import argparse
 from pathlib import Path
+
 from utils import shell_cmd
 
 
 def analysis(src_path: Path, tools_path: Path):
-    report_dir = report_path.joinpath('fireline')
-    if report_dir.exists():
-        shutil.rmtree(report_dir, ignore_errors=True)
-    report_dir.mkdir()
+    report_file = src_path.joinpath('SecScan/speck.txt')
 
-    fireline = tools_path.joinpath('fireline.jar')
-    cmd = f'java -jar {fireline} -s {src_path} -r {report_dir}'
-    output, ret_code = shell_cmd(cmd, {'java': 8})
+    scanner = tools_path.joinpath('SPECK-main/server/Scan.py')
+    cmd = f'python3 {scanner} -g -s {src_path} | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g"'
+    output, ret_code = shell_cmd(cmd, {'cwd': scanner.parent})
 
-    if ret_code != 0:
-        with open(report_dir.joinpath('report.error'), 'w+') as f:
+    if ret_code == 0:
+        with open(report_file, 'w+') as f:
             f.write(output)
+    else:
+        with open(f'{report_file}.error', 'w+') as f:
+            f.write(output)
+
     return ret_code
 
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', help='A config file containing source code path', type=str, required=True)
+    parser.add_argument('--config', help='A config file containing APK path', type=str, required=True)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    print('****************** src-fireline.py *******************')
+    print('******************** src-speck.py ********************')
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 
     failed = []
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     src_dirs = open(argument().config, 'r').read().splitlines()
 
     for src in src_dirs:
-        print(f'[+] [fireline] {src}')
+        print(f'[+] [speck] {src}')
         src_path = Path(src)
 
         report_path = src_path.joinpath('SecScan')

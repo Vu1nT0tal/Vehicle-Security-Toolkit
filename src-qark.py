@@ -6,8 +6,6 @@ from utils import shell_cmd
 
 
 def analysis(src_path: Path, report: str = None):
-    print(f'[+] {src_path}')
-
     report_type = 'html' if report is None else report
     report_file = report_path.joinpath(f'report.{report_type}')
     new_report_file = report_path.joinpath(f'qark.{report_type}')
@@ -40,7 +38,9 @@ if __name__ == '__main__':
     src_dirs = open(args.config, 'r').read().splitlines()
 
     for src in src_dirs:
+        print(f'[+] [qark] {src}')
         src_path = Path(src)
+
         report_path = src_path.joinpath('SecScan')
         if not report_path.exists():
             report_path.mkdir()

@@ -1,6 +1,6 @@
 # Vehicle-Security-Toolkit
 
-汽车安全测试工具集（持续更新）
+汽车/安卓/固件安全测试工具集
 
 - [Vehicle-Security-Toolkit](#vehicle-security-toolkit)
   - [安装](#安装)
@@ -15,6 +15,7 @@
     - [src-qark.py](#src-qarkpy)
     - [src-mobsf.py](#src-mobsfpy)
     - [src-fireline.py](#src-firelinepy)
+    - [src-speck.py](#src-speckpy)
     - [src-depcheck.py](#src-depcheckpy)
     - [src-sonarqube.py](#src-sonarqubepy)
   - [其他工具](#其他工具)
@@ -179,6 +180,15 @@ $ python3 src-mobsf.py --config ./data/src.list
 ```sh
 $ readlink -f ~/hmi/apps/* > src.list
 $ python3 src-fireline.py --config ./data/src.list
+```
+
+### src-speck.py
+
+批量扫描 Android 源码并生成报告。
+
+```sh
+$ readlink -f ~/hmi/apps/* > src.list
+$ python3 src-speck.py --config ./data/src.list
 ```
 
 ### src-depcheck.py

@@ -45,6 +45,9 @@ tar -xf infer.tar.xz && mv infer-linux64-v1.1.0 ./tools/infer && rm infer.tar.xz
 
 wget -q http://magic.360.cn/fireline_1.7.3.jar -O ./tools/fireline.jar
 
+wget -q https://github.com/SPRITZ-Research-Group/SPECK/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
+
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf
 sudo docker pull opensecurity/mobsfscan
@@ -53,9 +56,9 @@ sudo docker pull fkiecad/cwe_checker
 sudo docker pull sonarqube:community
 sudo docker pull sonarsource/sonar-scanner-cli
 
-wget -q https://github.com/abhi-r3v0/Adhrit/archive/refs/heads/master.zip
-unzip -q master.zip -d ./tools/ && rm master.zip
-docker-compose -f ./tools/Adhrit-master/docker-compose.yml build -q
+# wget -q https://github.com/abhi-r3v0/Adhrit/archive/refs/heads/master.zip
+# unzip -q master.zip -d ./tools/ && rm master.zip
+# docker-compose -f ./tools/Adhrit-master/docker-compose.yml build -q
 
 wget -q https://github.com/mpast/mobileAudit/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip

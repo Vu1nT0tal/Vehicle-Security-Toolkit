@@ -5,6 +5,7 @@
   - [apk_id.py](#apk_idpy)
   - [apk_leaks.py](#apk_leakspy)
   - [apk_qark.py](#apk_qarkpy)
+  - [apk_speck.py](#apk_speckpy)
   - [apk_mobsf.py](#apk_mobsfpy)
   - [apk_audit.py](#apk_auditpy)
   - [apk_androbugs.py](#apk_androbugspy)
@@ -53,6 +54,15 @@ $ python3 apk_leaks.py --config ../data/apk.list
 $ source ./tools/qark/bin/activate
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
 $ python3 apk_qark.py --config ../data/apk.list --report html
+```
+
+## apk_speck.py
+
+使用 `apk_decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
+$ python3 apk_speck.py --config ../data/apk.list
 ```
 
 ## apk_mobsf.py

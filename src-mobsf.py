@@ -6,7 +6,6 @@ from utils import shell_cmd
 
 
 def analysis(src_path: Path):
-    print(f'[+] {src_path}')
     mobsf_file = report_path.joinpath('mobsf.json')
 
     cmd = f'docker run --rm -v {src_path}:/src opensecurity/mobsfscan --json -o /src/SecScan/mobsf.json /src'
@@ -34,7 +33,9 @@ if __name__ == '__main__':
     src_dirs = open(argument().config, 'r').read().splitlines()
 
     for src in src_dirs:
+        print(f'[+] [mobsf] {src}')
         src_path = Path(src)
+
         report_path = src_path.joinpath('SecScan')
         if not report_path.exists():
             report_path.mkdir()
