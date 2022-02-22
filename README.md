@@ -9,15 +9,9 @@
   - [APK 测试](#apk-测试)
     - [apk-allinone.py](#apk-allinonepy)
   - [二进制测试](#二进制测试)
-    - [bin-cwechecker.py](#bin-cwecheckerpy)
-    - [bin-cvescan.py](#bin-cvescanpy)
+    - [bin-allinone.py](#bin-allinonepy)
   - [源码测试](#源码测试)
-    - [src-qark.py](#src-qarkpy)
-    - [src-mobsf.py](#src-mobsfpy)
-    - [src-fireline.py](#src-firelinepy)
-    - [src-speck.py](#src-speckpy)
-    - [src-depcheck.py](#src-depcheckpy)
-    - [src-sonarqube.py](#src-sonarqubepy)
+    - [src-allinone.py](#src-allinonepy)
   - [其他工具](#其他工具)
   - [开源协议](#开源协议)
   - [Stargazers over time](#stargazers-over-time)
@@ -98,7 +92,6 @@ Choose an option:
 ```
 
 ## APK 测试
-
 ### apk-allinone.py
 
 一站式调用所有 APK 工具进行单个或批量扫描。[apk_scan](./apk_scan) 目录下的工具作为库被调用，也可以独立使用。
@@ -112,102 +105,23 @@ $ python3 apk-allinone.py --config ./data/apk.list --decompile
 ```
 
 ## 二进制测试
-### bin-cwechecker.py
+### bin-allinone.py
 
-使用 `apk_decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析 SO/ELF 文件并生成报告。
-
-```sh
-$ python bin-cwechecker.py --help
-***************** bin-cwechecker.py ******************
-usage: bin_cwechecker.py [-h] --dir DIR
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --dir DIR   A directory containing bin files to run static analysis
-```
-
-### bin-cvescan.py
-
-使用 `adb-export.sh` 导出 system 目录后，使用该脚本批量扫描开源组件并获取 CVE 详情。
+一站式调用所有二进制工具进行单个或批量扫描。[bin_scan](./bin_scan) 目录下的工具作为库被调用，也可以独立使用。
 
 ```sh
-$ python3 bin-cvescan.py --help
-******************* bin-cvescan.py *******************
-usage: bin-cvescan.py [-h] -f FILE [-o OUTPUT]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -f FILE, --file FILE  File or directory to scanning
-  -o OUTPUT, --output OUTPUT
-                        Write to file results
+$ find ~/apks -type f | xargs file | grep "ELF" | cut -d ":" -f 1 | xargs realpath > ./data/bin.list
+$ python3 bin-allinone.py --config ./data/bin.list
 ```
-
-- 开源组件漏洞扫描，得到CVE号：[cve-bin-tool](https://github.com/intel/cve-bin-tool)
-- 已知版本号查找 CVE：[cve-search](https://github.com/cve-search/cve-search)
-- Android
-  - APK 第三方库(`.jar`)识别。[paper](https://arxiv.org/pdf/2108.01964.pdf)
-    - [LibDetect](https://sites.google.com/view/libdetect/)
-    - [LibScout](https://github.com/reddr/LibScout)
-    - [LibRadar](https://github.com/pkumza/LibRadar)
-    - [LibPecker](https://github.com/yuanxzhang/LibPecker)
-  - APK 第三方库(`.so`)识别。
-- Linux
-  - `TODO: 动态链接库调用关系`
 
 ## 源码测试
-### src-qark.py
+### src-allinone.py
 
-批量扫描 Android 源码并生成报告。
-
-```sh
-$ readlink -f ~/hmi/apps/* > src.list
-$ python3 src-qark.py --config ./data/src.list
-```
-
-### src-mobsf.py
-
-批量扫描 Android 源码并生成报告。
+一站式调用所有源码工具进行单个或批量扫描。[src_scan](./src_scan) 目录下的工具作为库被调用，也可以独立使用。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > src.list
-$ python3 src-mobsf.py --config ./data/src.list
-```
-
-### src-fireline.py
-
-批量扫描 Android 源码并生成报告。
-
-```sh
-$ readlink -f ~/hmi/apps/* > src.list
-$ python3 src-fireline.py --config ./data/src.list
-```
-
-### src-speck.py
-
-批量扫描 Android 源码并生成报告。
-
-```sh
-$ readlink -f ~/hmi/apps/* > src.list
-$ python3 src-speck.py --config ./data/src.list
-```
-
-### src-depcheck.py
-
-批量扫描第三方库 CVE 漏洞并生成报告。
-
-```sh
-$ readlink -f ~/hmi/apps/* > src.list
-$ python3 src-depcheck.py --config ./data/src.list
-```
-
-### src-sonarqube.py
-
-批量扫描 Android 源码。打开 `http://localhost:9000/`，默认密码 admin/admin，首次登录后请手动修改为 admin/admin123。
-
-```sh
-$ docker run -it --rm -p 9000:9000 sonarqube:community
-$ readlink -f ~/hmi/apps/* > src.list
-$ python3 src-sonarqube.py --config ./data/src.list [--key KEY]
+$ python3 src-allinone.py --config ./data/src.list --build
 ```
 
 ## 其他工具

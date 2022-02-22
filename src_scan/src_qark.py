@@ -1,16 +1,19 @@
 #!/usr/bin/python3
 
+import sys
 import argparse
 from pathlib import Path
+
+sys.path.append('..')
 from utils import shell_cmd
 
 
-def analysis(src_path: Path, report: str = None):
+def analysis(src_path: Path, report: str=None):
     report_type = 'html' if report is None else report
-    report_file = report_path.joinpath(f'report.{report_type}')
-    new_report_file = report_path.joinpath(f'qark.{report_type}')
+    report_file = src_path.joinpath(f'report.{report_type}')
+    new_report_file = src_path.joinpath(f'SecScan/qark.{report_type}')
 
-    cmd = f'qark --java {src_path} --report-type {report_type} --report-path {report_path}'
+    cmd = f'qark --java {src_path} --report-type {report_type} --report-path {src_path}'
     output, ret_code = shell_cmd(cmd)
 
     if report_file.exists():
@@ -30,7 +33,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** src-qark.py *********************')
+    print('******************** src_qark.py *********************')
 
     failed = []
     success_num = 0

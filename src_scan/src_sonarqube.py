@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
 import re
+import sys
 import shutil
 import argparse
 from pathlib import Path
 from sonarqube import SonarQubeClient
+
+sys.path.append('..')
 from utils import shell_cmd, get_host_ip
 
 
@@ -16,7 +19,6 @@ env = {
 
 
 def cleanup(src_path: Path):
-    """清理"""
     local_env = env.copy()
     local_env.update({'cwd': src_path})
     shell_cmd('./gradlew clean', local_env)
@@ -130,7 +132,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** src-sonarqube.py *******************')
+    print('****************** src_sonarqube.py *******************')
 
     failed = []
     success_num = 0

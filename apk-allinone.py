@@ -65,7 +65,7 @@ if __name__ == '__main__':
     compiled_signature = ''
 
     for apk in apk_dirs:
-        Color.print_focus(f'\n[+] {apk}')
+        Color.print_focus(f'[+] {apk}')
 
         apk_path = Path(apk)
         report_path = apk_path.parent.joinpath('SecScan')

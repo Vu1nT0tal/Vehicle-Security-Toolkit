@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
+import sys
 import argparse
 from pathlib import Path
 
+sys.path.append('..')
 from utils import shell_cmd
 
 
@@ -30,8 +32,8 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** src-speck.py ********************')
-    tools_path = Path(__file__).absolute().parent.joinpath('tools')
+    print('******************** src_speck.py ********************')
+    tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 
     failed = []
     success_num = 0

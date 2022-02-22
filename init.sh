@@ -11,7 +11,7 @@ sdk install gradle 5.6.4
 sdk install gradle 6.9.2
 
 sudo apt-get update && sudo apt-get -y install zsh apt-transport-https git python3-dev python3-pip python3-venv unzip npm graphviz dexdump simg2img meld maven golang
-python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool tqdm lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja docker-compose python-sonarqube-api colorama
+python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja docker-compose python-sonarqube-api colorama
 sudo npm -g install js-beautify apk-mitm
 
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$HOME"/.profile
@@ -66,13 +66,13 @@ docker-compose -f ./tools/mobileAudit-main/docker-compose.yml build -q
 
 python3 -m venv ./tools/qark
 source ./tools/qark/bin/activate
-python3 -m pip install wheel
+python3 -m pip install wheel colorama
 python3 -m pip install git+https://github.com/linkedin/qark.git
 deactivate
 
 python3 -m venv ./tools/mariana-trench
 source ./tools/mariana-trench/bin/activate
-python3 -m pip install mariana-trench "graphene<3"
+python3 -m pip install colorama mariana-trench "graphene<3"
 deactivate
 
 git clone https://github.com/rizinorg/rizin

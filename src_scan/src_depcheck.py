@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 
+import sys
 import shutil
 import argparse
 from pathlib import Path
+
+sys.path.append('..')
 from utils import shell_cmd
 
 
@@ -14,16 +17,16 @@ env = {
 }
 
 
-def analysis_cli(src_path: Path):
+def analysis_cli(src_path: Path, tools_path: Path):
     print(f'[+] {src_path} - cli')
 
-    scanner = Path(__file__).parent.joinpath('tools/dependency-check/bin/dependency-check.sh')
-    report = report_path.joinpath('dependency-check-report.html')
+    scanner = tools_path.joinpath('dependency-check/bin/dependency-check.sh')
+    report = src_path.joinpath('dependency-check-report.html')
     cmd = f'{scanner} -s {src_path} -o {report}'
     return shell_cmd(cmd)
 
 
-def analysis_gradle(src_path: Path):
+def analysis_gradle(src_path: Path, tools_path: Path):
     print(f'[+] {src_path} - gradle')
     local_env = env.copy()
     local_env.update({'cwd': src_path})
@@ -63,7 +66,7 @@ def analysis_gradle(src_path: Path):
                 f.write(output)
     else:
         print(f'[-] {src_path} gradlew 运行失败，尝试 cli')
-        output, ret_code = analysis_cli(src_path)
+        output, ret_code = analysis_cli(src_path, tools_path)
 
     # 恢复
     shutil.move(build1+'.bak', build1)
@@ -76,16 +79,16 @@ def analysis_gradle(src_path: Path):
     return output, ret_code
 
 
-def analysis(src_path: Path, mode: str):
+def analysis(src_path: Path, tools_path: Path, mode: str):
     if mode == 'cli':
-        output, ret_code = analysis_cli(src_path)
+        output, ret_code = analysis_cli(src_path, tools_path)
     elif mode == 'gradle':
-        output, ret_code = analysis_gradle(src_path)
+        output, ret_code = analysis_gradle(src_path, tools_path)
     else:
         return False
 
     if ret_code != 0:
-        with open(report_path.joinpath(f'dependency-check-report.html.error'), 'w+') as f:
+        with open(src_path.joinpath(f'dependency-check-report.html.error'), 'w+') as f:
             f.write(output)
 
     return ret_code
@@ -98,7 +101,8 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** src-depcheck.py *******************')
+    print('****************** src_depcheck.py *******************')
+    tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 
     failed = []
     success_num = 0
@@ -106,14 +110,11 @@ if __name__ == '__main__':
 
     for src in src_dirs:
         src_path = Path(src)
-        report_path = src_path.joinpath('SecScan')
-        if not report_path.exists():
-            report_path.mkdir()
 
         if src_path.joinpath('gradlew').exists():
-            ret = analysis(src_path, 'gradle')
+            ret = analysis(src_path, tools_path, 'gradle')
         else:
-            ret = analysis(src_path, 'cli')
+            ret = analysis(src_path, tools_path, 'cli')
 
         if ret:
             failed.append(src)

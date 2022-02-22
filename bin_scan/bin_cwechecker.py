@@ -6,8 +6,7 @@ from utils import shell_cmd
 
 
 def analysis(bin_path: Path):
-    print(f'[+] {bin_path}')
-    report_file = bin_path.parent.joinpath(f'{bin_path.stem}-cwechecker.txt')
+    report_file = bin_path.parent.joinpath(f'SecScan/{bin_path.stem}-cwechecker.txt')
 
     cmd = f'docker run --rm -v {bin_path}:/elf fkiecad/cwe_checker -q /elf'
     output, ret_code = shell_cmd(cmd)
@@ -24,24 +23,26 @@ def analysis(bin_path: Path):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dir", help="A directory containing bin files to run static analysis", type=str, required=True)
+    parser.add_argument('--config', help='A config file containing ELF path', type=str, required=True)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    print('***************** bin-cwechecker.py ******************')
+    print('***************** bin_cwechecker.py ******************')
 
     failed = []
     success_num = 0
-    bin_dir = argument().dir
+    elf_dirs = open(argument().config, 'r').read().splitlines()
 
-    cmd = 'find '+bin_dir+' -type f ! -path "*jadx_java*" \
-        ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" \
-        -exec file {} + | grep "ELF" | cut -d ":" -f 1'
-    output, ret_code = shell_cmd(cmd)
-    elf_list = output.split('\n')[:-1]
-    for elf in elf_list:
-        ret = analysis(Path(elf).absolute())
+    for elf in elf_dirs:
+        print(f'[+] [cwechecker] {elf}')
+        elf_path = Path(elf)
+
+        report_path = elf_path.parent.joinpath('SecScan')
+        if not report_path.exists():
+            report_path.mkdir()
+
+        ret = analysis(elf_path)
         if ret:
             failed.append(elf)
         else:
