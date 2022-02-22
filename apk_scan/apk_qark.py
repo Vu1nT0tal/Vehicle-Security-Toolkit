@@ -28,7 +28,7 @@ def analysis(apk_path: Path, report_type: str=None):
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='A config file containing APK path', type=str, required=True)
-    parser.add_argument("--report", help="Type of report to generate [html|xml|json|csv]", type=str, required=False)
+    parser.add_argument('--report', help='Type of report to generate [html|xml|json|csv]', type=str, required=False)
     return parser.parse_args()
 
 

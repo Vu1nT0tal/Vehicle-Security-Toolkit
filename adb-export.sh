@@ -565,7 +565,7 @@ all () {
 }
 
 menu () {
-    echo "***************** adb-export script *****************
+    echo "******************* adb-export.sh ********************
     1. Collect basic information, init and selinux
     2. Execute live commands
     3. Execute package manager commands
