@@ -11,7 +11,7 @@
 
 ## src_build.py
 
-APK 源码编译，需要提供环境配置文件。
+APK 源码编译，可选择提供环境配置文件。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > ../data/src.list
@@ -56,7 +56,7 @@ $ python3 src_speck.py --config ../data/src.list
 
 ## src_depcheck.py
 
-批量扫描第三方库 CVE 漏洞并生成报告。
+批量扫描 Android 源码，得到第三方库 CVE 漏洞并生成报告。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > ../data/src.list
@@ -65,7 +65,7 @@ $ python3 src_depcheck.py --config ../data/src.list
 
 ## src_sonarqube.py
 
-批量扫描 Android 源码。打开 `http://localhost:9000/`，默认密码 admin/admin，首次登录后请手动修改为 admin/admin123。
+使用 `src_build.py` 编译代码后，批量扫描程序仓库。打开 `http://localhost:9000/`，默认密码 admin/admin，首次登录后请手动修改为 admin/admin123。
 
 ```sh
 $ docker run -it --rm -p 9000:9000 sonarqube:community

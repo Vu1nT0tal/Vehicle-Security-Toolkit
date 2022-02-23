@@ -122,8 +122,8 @@ $ python3 bin-allinone.py --config ./data/bin.list
 一站式调用所有源码工具进行单个或批量扫描。[src_scan](./src_scan) 目录下的工具作为库被调用，也可以独立使用。
 
 ```sh
-$ readlink -f ~/hmi/apps/* > src.list
-$ python3 src-allinone.py --config ./data/src.list --build
+$ readlink -f ~/hmi/apps/* > ./data/src.list
+$ python3 src-allinone.py --config ./data/src.list --build_config ./demo/build_config.json --build
 ```
 
 ## 其他工具

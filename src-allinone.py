@@ -6,14 +6,17 @@ from pathlib import Path
 from collections import defaultdict
 
 from utils import Color
-from src_scan.src_build import build
+from src_scan.src_build import build, build2
 from src_scan.src_fireline import analysis as fireline
 from src_scan.src_mobsf import analysis as mobsf
 from src_scan.src_qark import analysis as qark
 from src_scan.src_speck import analysis as speck
 from src_scan.src_depcheck import analysis as depcheck
+from src_scan.src_sonarqube import analysis as sonarqube
+from src_scan.src_sonarqube import init_sonarqube, create_project
 
-
+# 配置项
+sonarqube_key = ''
 env = {
     'ANDROID_HOME': Path('~').expanduser().joinpath('Android/Sdk'),
     'ANDROID_SDK_ROOT': Path('~').expanduser().joinpath('Android/Sdk'),
@@ -23,7 +26,7 @@ env = {
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='A config file containing source code path', type=str, required=True)
-    parser.add_argument("--build_config", help="A build config file", type=str, required=True)
+    parser.add_argument("--build_config", help="A build config file", type=str, required=False)
     parser.add_argument('--build', help='Build the APK before analysis', action='store_true')
     return parser.parse_args()
 
@@ -38,15 +41,19 @@ if __name__ == '__main__':
         'build': defaultdict(list),
 
         # 可选插件
-        'depcheck': defaultdict(list),
         'fireline': defaultdict(list),
         'mobsf': defaultdict(list),
         #'qark': defaultdict(list),          # 需要环境
         'speck': defaultdict(list),
+        'depcheck': defaultdict(list),
+        'sonarqube': defaultdict(list)
     }
     src_dirs = open(args.config, 'r').read().splitlines()
-    with open(args.build_config, 'r') as f:
-        build_config = json.load(f)
+    if args.build_config:
+        with open(args.build_config, 'r') as f:
+            build_config = json.load(f)
+    else:
+        build_config = {}
 
     for src in src_dirs:
         Color.print_focus(f'[+] {src}')
@@ -70,19 +77,13 @@ if __name__ == '__main__':
                     Color.print_success('[+] [build] success')
             else:
                 Color.print_focus(f'[-] [build] 发现新APK：{src}')
-
-        # src_depcheck
-        if 'depcheck' in plugin:
-            if src_path.joinpath('gradlew').exists():
-                ret = depcheck(src_path, tools_path, 'gradle')
-            else:
-                ret = depcheck(src_path, tools_path, 'cli')
-            if ret:
-                plugin['depcheck']['failed'].append(src)
-                Color.print_failed('[-] [depcheck] failed')
-            else:
-                plugin['depcheck']['success'].append(src)
-                Color.print_success('[-] [depcheck] success')
+                ret, _, data = build2(src_path)
+                if ret:
+                    plugin['build']['faild'].append(src)
+                    Color.print_failed('[-] [build2] failed')
+                else:
+                    plugin['build']['success'].append(src)
+                    Color.print_success(f'[+] [build2] success java:{data.get("java")} gradle:{data.get("gradle")}')
 
         # src_fireline
         if 'fireline' in plugin:
@@ -123,5 +124,32 @@ if __name__ == '__main__':
             else:
                 plugin['speck']['success'].append(src)
                 Color.print_success('[+] [speck] success')
+
+        # src_depcheck
+        if 'depcheck' in plugin:
+            if src_path.joinpath('gradlew').exists():
+                ret = depcheck(src_path, tools_path, 'gradle')
+            else:
+                ret = depcheck(src_path, tools_path, 'cli')
+            if ret:
+                plugin['depcheck']['failed'].append(src)
+                Color.print_failed('[-] [depcheck] failed')
+            else:
+                plugin['depcheck']['success'].append(src)
+                Color.print_success('[-] [depcheck] success')
+
+        # src_sonarqube
+        if 'sonarqube' in plugin:
+            sonar, sonarqube_key = init_sonarqube(sonarqube_key)
+            if create_project(sonar):
+                ret = sonarqube(src_path, 'cli', sonarqube_key)
+                if ret:
+                    plugin['sonarqube']['failed'].append(src)
+                    Color.print_failed('[-] [sonarqube] failed')
+                else:
+                    plugin['sonarqube']['success'].append(src)
+                    Color.print_success('[+] [sonarqube] success')
+            else:
+                Color.print_focus('[+] [sonarqube] pass')
 
     print(plugin)

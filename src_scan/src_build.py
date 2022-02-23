@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import re
 import sys
 import json
 import argparse
@@ -8,10 +9,11 @@ from pathlib import Path
 sys.path.append('..')
 from utils import shell_cmd, Color
 
-
+stop_flag = 0
 env = {
     'ANDROID_HOME': Path('~').expanduser().joinpath('Android/Sdk'),
     'ANDROID_SDK_ROOT': Path('~').expanduser().joinpath('Android/Sdk'),
+    'java': 11
 }
 
 
@@ -61,6 +63,8 @@ def make(src_path: Path, java: int, clean: bool=False):
 
 
 def build(src_path: Path, item: dict, clean: bool=False):
+    """有 build_config 输入时"""
+
     if item['build'] == 'gradlew':
         ret = gradlew(src_path, item['java'], clean)
     elif item['build'] == 'gradle':
@@ -72,10 +76,63 @@ def build(src_path: Path, item: dict, clean: bool=False):
     return ret
 
 
+def check_output(output: str, local_env: dict):
+    """检查错误输出，返回正确的环境参数"""
+    global stop_flag
+
+    # gradle 版本低
+    if 'Minimum supported Gradle version is 6' in output:
+        local_env.update({'gradle': 6})
+    elif 'Minimum supported Gradle version is 7' in output:
+        local_env.update({'gradle': 7})
+
+    # 没有合适的 NDK
+    elif 'No version of NDK matched' in output:
+        ndk_version = ''
+        for line in output.splitlines():
+            if 'No version of NDK matched' in line:
+                ndk_version = re.search(r'\d+\.(?:\d+\.)*\d+', line).group()
+
+        if ndk_version:
+            sdkmanager = Path('~').expanduser().joinpath('Android/Sdk/cmdline-tools/latest/bin/sdkmanager')
+            cmd = f'{sdkmanager} --install "ndk;{ndk_version}'
+            output, ret_code = shell_cmd(cmd, local_env)
+
+    # java 版本，只允许切换一次
+    else:
+        stop_flag += 1
+        if local_env['java'] == 11:
+            local_env.update({'java': 8})
+        else:
+            local_env.update({'java': 11})
+
+    return local_env if stop_flag != 2 else None
+
+
+def build2(src_path: Path, clean: bool=False, local_env: dict=env.copy()):
+    """没有 build_config 输入时"""
+    local_env.update({'cwd': src_path})
+    print(local_env)
+
+    if src_path.joinpath('gradlew').exists():
+        cmd = 'chmod +x gradlew && ./gradlew clean' if clean else 'chmod +x gradlew && ./gradlew clean build'
+    elif src_path.joinpath('build.gradle').exists():
+        cmd = 'gradle clean' if clean else 'gradle clean build'
+    else:
+        Color.print_focus('Android.mk')
+    output, ret_code = shell_cmd(cmd, local_env)
+    if ret_code != 0:
+        local_env = check_output(output, local_env)
+        if local_env:
+            return build2(src_path, clean, local_env)
+
+    return ret_code, clean, local_env
+
+
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='A config file containing source code path', type=str, required=True)
-    parser.add_argument("--build_config", help="A build config file", type=str, required=True)
+    parser.add_argument("--build_config", help="A build config file", type=str, required=False)
     parser.add_argument("--clean", help="Clean all file above", action='store_true')
     return parser.parse_args()
 
@@ -83,21 +140,31 @@ def argument():
 if __name__ == '__main__':
     print('******************** src_build.py ********************')
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
-
     args = argument()
     src_dirs = open(args.config, 'r').read().splitlines()
-    with open(args.build_config, 'r') as f:
-        build_config = json.load(f)
 
     for src in src_dirs:
         Color.print_focus(f'[+] [build] {src}')
         src_path = Path(src)
-        item = build_config.get(src_path.name)
-        if item:
-            ret = build(src_path, item, args.clean)
-            if ret:
-                Color.print_failed('[-] [build] failed')
+
+        # 有build_config
+        if args.build_config:
+            with open(args.build_config, 'r') as f:
+                build_config = json.load(f)
+            item = build_config.get(src_path.name)
+            if item:
+                ret = build(src_path, item, args.clean)
+                if ret:
+                    Color.print_failed('[-] [build] failed')
+                else:
+                    Color.print_success('[+] [build] success')
+                continue
             else:
-                Color.print_success('[+] [build] success')
+                Color.print_focus(f'[-] [build] 发现新APK：{src}')
+
+        # 没有build_config或发现新APK
+        ret, _, data = build2(src_path, args.clean)
+        if ret:
+            Color.print_failed('[-] [build2] failed')
         else:
-            Color.print_focus(f'[-] [build] 发现新APK：{src}')
+            Color.print_success(f'[+] [build2] success java:{data.get("java")} gradle:{data.get("gradle")}')
