@@ -7,7 +7,7 @@ from pathlib import Path
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 sys.path.append('..')
-from utils import get_host_ip
+from utils import get_host_ip, Color
 
 DEFAULT_SERVER = f'http://{get_host_ip()}:8000'
 
@@ -112,14 +112,11 @@ def argument():
 
 if __name__ == '__main__':
     print('******************* apk_mobsf.py *********************')
-
-    failed = []
-    success_num = 0
     args = argument()
     apk_dirs = open(args.config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        print(f'[+] [mobsf] {apk}')
+        Color.print_focus(f'[+] [mobsf] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
@@ -128,9 +125,6 @@ if __name__ == '__main__':
 
         ret = analysis(args.key, apk_path)
         if ret:
-            failed.append(apk)
+            Color.print_failed('[-] [mobsf] failed')
         else:
-            success_num += 1
-
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))
+            Color.print_success('[+] [mobsf] success')

@@ -1,12 +1,22 @@
 # src_scan
 
 - [src_scan](#src_scan)
+  - [src_build.py](#src_buildpy)
   - [src_qark.py](#src_qarkpy)
   - [src_mobsf.py](#src_mobsfpy)
   - [src_fireline.py](#src_firelinepy)
   - [src_speck.py](#src_speckpy)
   - [src_depcheck.py](#src_depcheckpy)
   - [src_sonarqube.py](#src_sonarqubepy)
+
+## src_build.py
+
+APK 源码编译，需要提供环境配置文件。
+
+```sh
+$ readlink -f ~/hmi/apps/* > ../data/src.list
+$ python3 src_build.py --config ../data/src.list --build_config ../demo/build_config.json
+```
 
 ## src_qark.py
 

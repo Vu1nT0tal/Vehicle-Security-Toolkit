@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
+import json
 import argparse
 from pathlib import Path
 from collections import defaultdict
-from apk_scan.apk_androbugs import analysis
 
 from utils import Color
+from src_scan.src_build import build
 from src_scan.src_fireline import analysis as fireline
 from src_scan.src_mobsf import analysis as mobsf
 from src_scan.src_qark import analysis as qark
@@ -13,9 +14,16 @@ from src_scan.src_speck import analysis as speck
 from src_scan.src_depcheck import analysis as depcheck
 
 
+env = {
+    'ANDROID_HOME': Path('~').expanduser().joinpath('Android/Sdk'),
+    'ANDROID_SDK_ROOT': Path('~').expanduser().joinpath('Android/Sdk'),
+}
+
+
 def argument():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='A config file containing source code path', type=str, required=True)
+    parser.add_argument("--build_config", help="A build config file", type=str, required=True)
     parser.add_argument('--build', help='Build the APK before analysis', action='store_true')
     return parser.parse_args()
 
@@ -26,6 +34,10 @@ if __name__ == '__main__':
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 
     plugin = {
+        # 必选插件
+        'build': defaultdict(list),
+
+        # 可选插件
         'depcheck': defaultdict(list),
         'fireline': defaultdict(list),
         'mobsf': defaultdict(list),
@@ -33,6 +45,8 @@ if __name__ == '__main__':
         'speck': defaultdict(list),
     }
     src_dirs = open(args.config, 'r').read().splitlines()
+    with open(args.build_config, 'r') as f:
+        build_config = json.load(f)
 
     for src in src_dirs:
         Color.print_focus(f'[+] {src}')
@@ -41,6 +55,21 @@ if __name__ == '__main__':
         report_path = src_path.joinpath('SecScan')
         if not report_path.exists():
             report_path.mkdir()
+
+        # src_build
+        if args.build:
+            print(f'[+] Building ...')
+            item = build_config.get(src_path.name)
+            if item:
+                ret = build(src_path, item)
+                if ret:
+                    plugin['build']['faild'].append(src)
+                    Color.print_failed('[-] [build] faild')
+                else:
+                    plugin['build']['success'].append(src)
+                    Color.print_success('[+] [build] success')
+            else:
+                Color.print_focus(f'[-] [build] 发现新APK：{src}')
 
         # src_depcheck
         if 'depcheck' in plugin:

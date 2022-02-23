@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd
+from utils import shell_cmd, Color
 
 
 def analysis(src_path: Path):
@@ -30,13 +30,10 @@ def argument():
 
 if __name__ == '__main__':
     print('******************** src_mobsf.py ********************')
-
-    failed = []
-    success_num = 0
     src_dirs = open(argument().config, 'r').read().splitlines()
 
     for src in src_dirs:
-        print(f'[+] [mobsf] {src}')
+        Color.print_focus(f'[+] [mobsf] {src}')
         src_path = Path(src)
 
         report_path = src_path.joinpath('SecScan')
@@ -45,9 +42,6 @@ if __name__ == '__main__':
 
         ret = analysis(src_path)
         if ret:
-            failed.append(src)
+            Color.print_failed('[-] [mobsf] failed')
         else:
-            success_num += 1
-
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))
+            Color.print_success('[+] [mobsf] success')

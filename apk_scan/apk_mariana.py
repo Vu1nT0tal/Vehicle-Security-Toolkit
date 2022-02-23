@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd
+from utils import shell_cmd, Color
 
 
 def analysis(apk_path: Path):
@@ -42,13 +42,10 @@ def argument():
 
 if __name__ == '__main__':
     print('******************* apk_mariana.py *******************')
-
-    failed = []
-    success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        print(f'[+] [mariana] {apk}')
+        Color.print_focus(f'[+] [mariana] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
@@ -57,10 +54,8 @@ if __name__ == '__main__':
 
         ret = analysis(apk_path)
         if ret:
-            failed.append(apk)
+            Color.print_failed('[-] [mariana] failed')
         else:
-            success_num += 1
+            Color.print_success('[+] [mariana] success')
 
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))
     print('查看报告：sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/sources}')

@@ -16,7 +16,8 @@ def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
     change_gradle = {
         4: f'{sdkman} && sdk use gradle 4.10.3',
         5: f'{sdkman} && sdk use gradle 5.6.4',
-        6: f'{sdkman} && sdk use gradle 6.9.2'
+        6: f'{sdkman} && sdk use gradle 6.9.2',
+        7: f'{sdkman} && sdk use gradle 7.4'
     }
 
     os.environ['PATH'] += ':'+str(Path('~/.local/bin').expanduser())

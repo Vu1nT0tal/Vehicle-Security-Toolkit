@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd
+from utils import shell_cmd, Color
 
 
 def apktool(apk_path: Path, tools_path: Path):
@@ -47,13 +47,11 @@ if __name__ == '__main__':
     print('****************** apk_decompile.py ******************')
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 
-    failed = []
-    success_num = 0
     args = argument()
     apk_dirs = open(args.config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        print(f'[+] [decompile] {apk}')
+        Color.print_focus(f'[+] [decompile] {apk}')
         apk_path = Path(apk)
 
         if args.clean:
@@ -66,9 +64,6 @@ if __name__ == '__main__':
                 ret2 = jadx(apk_path, tools_path)
 
             if ret1 or ret2:
-                failed.append(apk)
+                Color.print_failed('[-] [decompile] failed')
             else:
-                success_num += 1
-
-    print(f'反编译完成: {success_num}, 反编译失败: {len(failed)}')
-    print('\n'.join(failed))
+                Color.print_success('[+] [decompile] success')

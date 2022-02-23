@@ -2,7 +2,7 @@ data/
 tools/
 .dccache
 .vscode/
-x01/
+X01/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

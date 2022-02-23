@@ -4,6 +4,7 @@
 
 - [Vehicle-Security-Toolkit](#vehicle-security-toolkit)
   - [安装](#安装)
+    - [init.sh](#initsh)
     - [img-extract.sh](#img-extractsh)
     - [adb-export.sh](#adb-exportsh)
   - [APK 测试](#apk-测试)
@@ -17,6 +18,7 @@
   - [Stargazers over time](#stargazers-over-time)
 
 ## 安装
+### init.sh
 
 首先安装 Android SDK，然后执行 `init.sh`。
 

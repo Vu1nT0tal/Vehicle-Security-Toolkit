@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-from utils import shell_cmd
+from utils import shell_cmd, Color
 
 
 def analysis(bin_path: Path):
@@ -29,13 +29,10 @@ def argument():
 
 if __name__ == '__main__':
     print('***************** bin_cwechecker.py ******************')
-
-    failed = []
-    success_num = 0
     elf_dirs = open(argument().config, 'r').read().splitlines()
 
     for elf in elf_dirs:
-        print(f'[+] [cwechecker] {elf}')
+        Color.print_focus(f'[+] [cwechecker] {elf}')
         elf_path = Path(elf)
 
         report_path = elf_path.parent.joinpath('SecScan')
@@ -44,9 +41,6 @@ if __name__ == '__main__':
 
         ret = analysis(elf_path)
         if ret:
-            failed.append(elf)
+            Color.print_failed('[-] [cwechecker] failed')
         else:
-            success_num += 1
-
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))
+            Color.print_success('[+] [cwechecker] success')

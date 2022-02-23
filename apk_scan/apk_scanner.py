@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd
+from utils import shell_cmd, Color
 
 
 def analysis(apk_path: Path, tools_path: Path):
@@ -32,12 +32,10 @@ if __name__ == '__main__':
     print('******************* apk_scanner.py *******************')
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 
-    failed = []
-    success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        print(f'[+] [scanner] {apk}')
+        Color.print_focus(f'[+] [scanner] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
@@ -46,9 +44,6 @@ if __name__ == '__main__':
 
         ret = analysis(apk_path, tools_path)
         if ret:
-            failed.append(apk)
+            Color.print_failed('[-] [scanner] failed')
         else:
-            success_num += 1
-
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))
+            Color.print_success('[+] [scanner] success')

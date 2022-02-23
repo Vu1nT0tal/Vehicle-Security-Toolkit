@@ -8,7 +8,8 @@ from lxml import etree
 from pathlib import Path
 
 sys.path.append('..')
-from utils import get_host_ip
+from utils import get_host_ip, Color
+
 
 DEFAULT_SERVER = f'http://{get_host_ip()}:8888'
 
@@ -136,9 +137,6 @@ def argument():
 
 if __name__ == '__main__':
     print('******************** apk_audit.py ********************')
-
-    failed = []
-    success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     # 初始化 Audit
@@ -146,25 +144,18 @@ if __name__ == '__main__':
 
     success_list, error_list = audit.scan_list()
     for apk in apk_dirs:
-        print(f'[+] [audit] {apk}')
+        Color.print_focus(f'[+] [audit] {apk}')
 
         # 避免重复
-        if apk in success_list:
-            success_num += 1
-        elif apk in error_list:
-            failed.append(apk)
-        else:
+        if apk not in success_list+error_list:
             scan_id = audit.scan_create(Path(apk), app_id)['id']
             while True:
                 r = audit.scan_read(scan_id)
                 if r['status'] == 'Finished':
-                    success_num += 1
+                    Color.print_success('[+] [audit] success')
                     break
                 elif r['status'] == 'Error':
-                    failed.append(apk)
+                    Color.print_failed('[-] [audit] failed')
                     break
                 else:
                     time.sleep(5)
-
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))

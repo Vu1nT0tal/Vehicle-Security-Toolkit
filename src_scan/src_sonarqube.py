@@ -8,7 +8,7 @@ from pathlib import Path
 from sonarqube import SonarQubeClient
 
 sys.path.append('..')
-from utils import shell_cmd, get_host_ip
+from utils import shell_cmd, get_host_ip, Color
 
 
 DEFAULT_SERVER = f'http://{get_host_ip()}:9000'
@@ -133,9 +133,6 @@ def argument():
 
 if __name__ == '__main__':
     print('****************** src_sonarqube.py *******************')
-
-    failed = []
-    success_num = 0
     args = argument()
 
     sonar = SonarQubeClient(DEFAULT_SERVER, username='admin', password='admin123')
@@ -174,9 +171,6 @@ if __name__ == '__main__':
         ret = analysis(src_path, 'cli')
 
         if ret:
-            failed.append(src)
+            Color.print_failed('[-] [sonarqube] failed')
         else:
-            success_num += 1
-
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))
+            Color.print_success('[+] [sonarqube] success')

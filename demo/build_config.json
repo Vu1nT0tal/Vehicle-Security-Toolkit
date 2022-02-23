@@ -1,0 +1,17 @@
+{
+    "apk1": {
+        "java": 11,
+        "gradle": 6,
+        "build": "gradlew"
+    },
+    "apk2": {
+        "java": 8,
+        "gradle": 4,
+        "build": "gradle"
+    },
+    "apk3": {
+        "java": 11,
+        "gradle": 0,
+        "build": "make"
+    }
+}

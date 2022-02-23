@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd
+from utils import shell_cmd, Color
 
 
 def analysis(src_path: Path, report: str=None):
@@ -34,14 +34,11 @@ def argument():
 
 if __name__ == '__main__':
     print('******************** src_qark.py *********************')
-
-    failed = []
-    success_num = 0
     args = argument()
     src_dirs = open(args.config, 'r').read().splitlines()
 
     for src in src_dirs:
-        print(f'[+] [qark] {src}')
+        Color.print_focus(f'[+] [qark] {src}')
         src_path = Path(src)
 
         report_path = src_path.joinpath('SecScan')
@@ -50,9 +47,6 @@ if __name__ == '__main__':
 
         ret = analysis(src_path, args.report)
         if ret:
-            failed.append(src)
+            Color.print_failed('[-] [qark] failed')
         else:
-            success_num += 1
-
-    print(f'扫描完成: {success_num}, 扫描失败: {len(failed)}')
-    print('\n'.join(failed))
+            Color.print_success('[+] [qark] success')
