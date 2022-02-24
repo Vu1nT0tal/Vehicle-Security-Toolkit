@@ -1,15 +1,16 @@
 # demo
 
 - [demo](#demo)
-  - [download_app.sh](#download_appsh)
+  - [download.sh](#downloadsh)
   - [build_config.json](#build_configjson)
 
-## download_app.sh
+## download.sh
 
-下载或更新代码仓库。
+下载或更新镜像或代码仓库。
 
 ```sh
-$ ./download_app.sh [clone|pull] ~/hmi/app
+$ ./download.sh src [clone|pull] PATH
+$ ./download.sh apk [X01|W01] PATH
 ```
 
 ## build_config.json

@@ -44,7 +44,7 @@ $ ./frida.sh
 一键从 Android ROM 提取固件。
 
 ```sh
-$ ./img-extract.sh <original_super_image>
+$ ./img-extract.sh [super.img|fastboot.zip]
 ```
 
 ### adb-extract.sh
