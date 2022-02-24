@@ -15,7 +15,7 @@ $ python bin_cwechecker.py --config ../data/elf.list
 
 ## bin_cvescan.py
 
-使用 `adb-export.sh` 导出 system 目录后，使用该脚本批量扫描开源组件并获取 CVE 详情。
+使用 `adb-extract.sh` 导出 system 目录后，使用该脚本批量扫描开源组件并获取 CVE 详情。
 
 ```sh
 $ python3 bin_cvescan.py --config ../data/elf.list

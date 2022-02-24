@@ -20,7 +20,7 @@
 
 ## apk_decompile.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译为 smali 和 java，为后续分析做准备。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量解码资源文件并反编译为 smali 和 java，为后续分析做准备。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
@@ -30,7 +30,7 @@ $ python3 apk_decompile.py --config ../data/apk.list --clean   # 清理
 
 ## apk_id.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量检查加壳、混淆、反调试等保护情况。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量检查加壳、混淆、反调试等保护情况。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
@@ -67,7 +67,7 @@ $ python3 apk_speck.py --config ../data/apk.list
 
 ## apk_mobsf.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。打开 `http://localhost:8000/`。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。打开 `http://localhost:8000/`。
 
 ```sh
 $ docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf
@@ -77,7 +77,7 @@ $ python3 apk_mobsf.py --config ../data/apk.list --key [API_KEY]
 
 ## apk_audit.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析。打开 `http://localhost:8888/`，账号密码 auditor/audit123。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量静态分析。打开 `http://localhost:8888/`，账号密码 auditor/audit123。
 
 ```sh
 $ docker-compose -f ./tools/mobileAudit-main/docker-compose.yaml up
@@ -87,7 +87,7 @@ $ python3 apk_audit.py --config ../data/apk.list
 
 ## apk_androbugs.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
@@ -96,7 +96,7 @@ $ python3 apk_androbugs.py --config ../data/apk.list
 
 ## apk_scanner.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
@@ -118,7 +118,7 @@ $ sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/
 
 ## apk_quark.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
@@ -127,7 +127,7 @@ $ python3 apk_quark.py --config ../data/apk.list
 
 ## apk_exodus.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
@@ -136,7 +136,7 @@ $ python3 apk_exodus.py --config ../data/apk.list
 
 ## apk_cryptoguard.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量静态分析并生成报告。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
@@ -145,7 +145,7 @@ $ python3 apk_cryptoguard.py --config ../data/apk.list
 
 ## apk_jni.py
 
-使用 `adb-export.sh` 导出所有 APK 后，使用该脚本批量提取 JNI 函数特征，可导入到 IDA 和 Ghidra，提升逆向效率。[JNI Helper](https://github.com/evilpan/jni_helper)
+使用 `adb-extract.sh` 导出所有 APK 后，使用该脚本批量提取 JNI 函数特征，可导入到 IDA 和 Ghidra，提升逆向效率。[JNI Helper](https://github.com/evilpan/jni_helper)
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list

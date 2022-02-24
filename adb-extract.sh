@@ -10,7 +10,7 @@ check_tools() {
         if [[ -f "./$TOOL" ]]; then
             ADB="./$TOOL"
         else
-            echo "[!] $TOOL NOT FOUND! It's not be able to use adb-export script"
+            echo "[!] $TOOL NOT FOUND! It's not be able to use adb-extract script"
             exit
         fi
     fi
@@ -565,7 +565,7 @@ all () {
 }
 
 menu () {
-    echo "******************* adb-export.sh ********************
+    echo "******************* adb-extract.sh ********************
     1. Collect basic information, init and selinux
     2. Execute live commands
     3. Execute package manager commands
@@ -623,7 +623,7 @@ menu () {
     esac
 }
 
-### adb-export main ###
+### adb-extract main ###
 check_tools
 set_var
 check_device

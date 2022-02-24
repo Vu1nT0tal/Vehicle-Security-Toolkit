@@ -5,8 +5,9 @@
 - [Vehicle-Security-Toolkit](#vehicle-security-toolkit)
   - [安装](#安装)
     - [init.sh](#initsh)
+  - [固件提取](#固件提取)
     - [img-extract.sh](#img-extractsh)
-    - [adb-export.sh](#adb-exportsh)
+    - [adb-extract.sh](#adb-extractsh)
   - [APK 测试](#apk-测试)
     - [apk-allinone.py](#apk-allinonepy)
   - [二进制测试](#二进制测试)
@@ -23,61 +24,36 @@
 首先安装 Android SDK，然后执行 `init.sh`。
 
 ```sh
-$ sudo snap install android-studio --classic  # 安装完成后打开android-studio进行设置
+$ sudo snap install android-studio --classic  # 完成后打开android-studio进行设置
 
 $ git clone https://github.com/firmianay/Vehicle-Security-Toolkit.git
 $ cd Vehicle-Security-Toolkit && ./init.sh
 ```
 
-连接 ADB 后安装 frida：
+可选，Android 设备连接 ADB 后安装 frida：
 
 ```sh
 $ ./frida.sh
 ```
 
+注：Android 设备只有板子没有屏幕时可以使用 scrcpy 投屏。
+
+## 固件提取
 ### img-extract.sh
 
-Android ROM 解包：
-
-```sh
-# 将 Android sparse image 转换成 raw image
-$ cp <original_super_image> ./data
-$ simg2img ./data/super.img ./data/super.img_raw
-
-# 从 raw image 提取分区镜像文件
-$ mkdir ./data/system ./data/vendor
-$ ./tools/lpunpack ./data/super.img_raw ./data
-
-# 挂载镜像文件
-$ sudo mount -o ro ./data/system_a.img ./data/system
-$ sudo mount -o ro ./data/vendor_a.img ./data/vendor
-
-# 搜索所有 APK
-$ find ./data -name "*.apk" 2>/dev/null
-```
-
-也可以使用脚本自动化完成：
+一键从 Android ROM 提取固件。
 
 ```sh
 $ ./img-extract.sh <original_super_image>
 ```
 
-解析和重打包镜像文件：
+### adb-extract.sh
+
+一键从 Android 设备提取固件。
 
 ```sh
-$ cd ./tools/Android_boot_image_editor-master
-$ cp <original_boot_image> boot.img
-$ ./gradlew unpack
-$ ./gradlew pack
-```
-
-### adb-export.sh
-
-当拿到一个车机不知道该下载或查看哪些东西的时候，使用该脚本一键搞定。
-
-```sh
-$ ./adb-export.sh
-******************* adb-export.sh ********************
+$ ./adb-extract.sh
+******************* adb-extract.sh ********************
     1. Collect basic information, init and selinux
     2. Execute live commands
     3. Execute package manager commands

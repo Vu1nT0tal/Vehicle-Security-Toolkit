@@ -1,5 +1,27 @@
 #!/bin/bash
 
+# 将 Android sparse image 转换成 raw image
+# $ cp <original_super_image> ./data
+# $ simg2img ./data/super.img ./data/super.img_raw
+#
+# 从 raw image 提取分区镜像文件
+# $ mkdir ./data/system ./data/vendor
+# $ ./tools/lpunpack ./data/super.img_raw ./data
+#
+# 挂载镜像文件
+# $ sudo mount -o ro ./data/system_a.img ./data/system
+# $ sudo mount -o ro ./data/vendor_a.img ./data/vendor
+#
+# 搜索所有 APK
+# $ find ./data -name "*.apk" 2>/dev/null
+#
+# 解析和重打包镜像文件
+# $ cd ./tools/Android_boot_image_editor-master
+# $ cp <original_boot_image> boot.img
+# $ ./gradlew unpack
+# $ ./gradlew pack
+
+
 echo "[+] Converting Android sparse images to raw images"
 cp $1 ./data
 simg2img ./data/super.img ./data/super.img_raw
