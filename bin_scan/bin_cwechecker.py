@@ -36,8 +36,7 @@ if __name__ == '__main__':
         elf_path = Path(elf)
 
         report_path = elf_path.parent.joinpath('SecScan')
-        if not report_path.exists():
-            report_path.mkdir()
+        report_path.mkdir(parents=True, exist_ok=True)
 
         ret = analysis(elf_path)
         if ret:

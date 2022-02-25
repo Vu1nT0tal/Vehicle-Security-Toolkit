@@ -42,8 +42,7 @@ if __name__ == '__main__':
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
-        if not report_path.exists():
-            report_path.mkdir()
+        report_path.mkdir(parents=True, exist_ok=True)
 
         ret = analysis(apk_path, args.report)
         if ret:

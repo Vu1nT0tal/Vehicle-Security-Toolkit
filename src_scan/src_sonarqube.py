@@ -122,8 +122,7 @@ if __name__ == '__main__':
 
         src_path = Path(src)
         report_path = src_path.joinpath('SecScan')
-        if not report_path.exists():
-            report_path.mkdir()
+        report_path.mkdir(parents=True, exist_ok=True)
 
         key = args.key if args.key else ''
         sonar, token = init_sonarqube(key)

@@ -41,6 +41,8 @@ $ ./frida.sh
 ## 固件提取
 ### img-extract.sh
 
+下载 fastboot.zip 包，解压后从 images 目录下取出 super.img。
+
 一键从 Android ROM 提取固件。
 
 ```sh
