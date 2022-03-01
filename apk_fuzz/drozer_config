@@ -1,0 +1,5 @@
+[remotes]
+https|//raw.github.com/mwrlabs/drozer-modules/repository/ = https://raw.github.com/mwrlabs/drozer-modules/repository/
+
+[repositories]
+./apk_fuzz = ./apk_fuzz

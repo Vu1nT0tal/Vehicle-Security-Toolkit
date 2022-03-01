@@ -4,7 +4,8 @@
 
 - [Vehicle-Security-Toolkit](#vehicle-security-toolkit)
   - [安装](#安装)
-    - [init.sh](#initsh)
+    - [init_local.sh](#init_localsh)
+    - [init_remote.sh](#init_remotesh)
   - [固件提取](#固件提取)
     - [img-extract.sh](#img-extractsh)
     - [adb-extract.sh](#adb-extractsh)
@@ -14,26 +15,29 @@
     - [bin-allinone.py](#bin-allinonepy)
   - [源码测试](#源码测试)
     - [src-allinone.py](#src-allinonepy)
+  - [APK Fuzz 测试](#apk-fuzz-测试)
   - [其他工具](#其他工具)
   - [开源协议](#开源协议)
   - [Stargazers over time](#stargazers-over-time)
 
 ## 安装
-### init.sh
+### init_local.sh
 
-首先安装 Android SDK，然后执行 `init.sh`。
+本地 Linux 设备安装 Android SDK，然后执行 `init_local.sh`。
 
 ```sh
 $ sudo snap install android-studio --classic  # 完成后打开android-studio进行设置
 
 $ git clone https://github.com/firmianay/Vehicle-Security-Toolkit.git
-$ cd Vehicle-Security-Toolkit && ./init.sh
+$ cd Vehicle-Security-Toolkit && ./init_local.sh
 ```
 
-可选，Android 设备连接 ADB 后安装 frida：
+### init_remote.sh
+
+远程 Android 设备连接 ADB，然后执行 `init_remote.sh`：
 
 ```sh
-$ ./frida.sh
+$ ./init_remote.sh
 ```
 
 注：Android 设备只有板子没有屏幕时可以使用 scrcpy 投屏。
@@ -103,6 +107,10 @@ $ python3 bin-allinone.py --config ./data/bin.list
 $ readlink -f ~/hmi/apps/* > ./data/src.list
 $ python3 src-allinone.py --config ./data/src.list --build_config ./demo/build_config.json --build
 ```
+
+## APK Fuzz 测试
+
+基于 drozer 实现的 Fuzz 工具。[apk_fuzz](./apk_fuzz)
 
 ## 其他工具
 

@@ -13,13 +13,14 @@ sdk install gradle 7.4
 
 sudo apt-get update && sudo apt-get -y install zsh apt-transport-https git python3-dev python3-pip python3-venv unzip npm graphviz dexdump simg2img meld maven golang scrcpy
 python3 -m pip install wheel pyaxmlparser requests_toolbelt apkid cve-bin-tool lief rich quark-engine future exodus-core androguard==3.4.0a1 meson ninja docker-compose python-sonarqube-api colorama
+python3 -m pip install virtualenv frida frida-tools
 sudo npm -g install js-beautify apk-mitm
 
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> "$HOME"/.profile
 source "$HOME"/.profile
 freshquark
 
-wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.0/apktool_2.6.0.jar -O ./tools/apktool.jar
+wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.1/apktool_2.6.1.jar -O ./tools/apktool.jar
 wget -q https://github.com/JakeWharton/diffuse/releases/download/0.1.0/diffuse-0.1.0-binary.jar -O ./tools/diffuse.jar
 
 wget -q https://github.com/skylot/jadx/releases/download/v1.3.3/jadx-1.3.3.zip -O jadx.zip
@@ -49,6 +50,13 @@ wget -q http://magic.360.cn/fireline_1.7.3.jar -O ./tools/fireline.jar
 wget -q https://github.com/SPRITZ-Research-Group/SPECK/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 
+mkdir -p ./tools/drozer && cd ./tools/drozer
+wget -q https://github.com/FSecureLABS/drozer-agent/releases/download/2.5.0/drozer-2.5.0.apk -O drozer.apk
+wget -q https://github.com/FSecureLABS/drozer/releases/download/2.4.4/drozer-2.4.4-py2-none-any.whl
+cd ../../
+
+wget -q https://github.com/RikkaApps/WADB/releases/download/v5.1.1/wadb-v5.1.1.r161.b5b65a7-release.apk -O ./tools/wadb.apk
+
 sudo docker pull danmx/docker-androbugs
 sudo docker pull opensecurity/mobile-security-framework-mobsf
 sudo docker pull opensecurity/mobsfscan
@@ -56,6 +64,7 @@ sudo docker pull frantzme/cryptoguard
 sudo docker pull fkiecad/cwe_checker
 sudo docker pull sonarqube:community
 sudo docker pull sonarsource/sonar-scanner-cli
+#sudo docker pull fsecurelabs/drozer
 
 # wget -q https://github.com/abhi-r3v0/Adhrit/archive/refs/heads/master.zip
 # unzip -q master.zip -d ./tools/ && rm master.zip
@@ -74,6 +83,13 @@ deactivate
 python3 -m venv ./tools/mariana-trench
 source ./tools/mariana-trench/bin/activate
 python3 -m pip install colorama mariana-trench "graphene<3"
+deactivate
+
+virtualenv -p /usr/bin/python2 ./tools/drozer/drozer-env
+source ./tools/drozer/drozer-env/bin/activate
+pip install protobuf pyopenssl twisted service_identity
+pip install ./tools/drozer/drozer-2.4.4-py2-none-any.whl
+cp ./fuzz/drozer_config ~/.drozer_config
 deactivate
 
 git clone https://github.com/rizinorg/rizin
