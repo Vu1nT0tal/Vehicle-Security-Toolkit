@@ -55,11 +55,16 @@ class Fuzz:
         os.popen(cmd2)
         os.popen(cmd3)
 
-    def analysis(self, packageName="all"):
-        if packageName == "all":
-            self.getAllPackage()
-        else:
-            self.scopPackage(packageName)
+    def analysis(self, package_list):
+        # 获取所有应用的组件信息
+        curred_app_num = 1
+        for package_name in package_list:
+            print("+ 总共"+str(len(package_list))+"个应用，正在处理第"+ str(curred_app_num) +"个：" + package_name)
+
+            for components_type in self.components_types:
+                self.getComponentsInfo(package_name, components_type)
+                time.sleep(5)
+            curred_app_num += 1
 
         # 拉取所有截图文件
         screencap_path = os.path.join(self.report_path, "screencap")
@@ -68,37 +73,6 @@ class Fuzz:
 
         cmd = "adb pull /sdcard/tempimg/ %s && adb shell rm -rf /sdcard/tempimg" % screencap_path
         os.popen(cmd)
-
-    # 查看指定应用的组件信息
-    def scopPackage(self, packageName):
-        print("+ 正在处理应用：" + packageName)
-        for components_type in self.components_types:
-            self.getComponentsInfo(packageName, components_type)
-            time.sleep(5)
-
-    # 获取所有应用的组件信息
-    def getAllPackage(self):
-        package_path = os.path.join(self.report_path, "package")
-        if not os.path.exists(package_path):
-            with open(package_path, "w+") as f:
-                self.session.stdout = f
-                self.session.do_run("app.package.list")
-                time.sleep(2)
-
-        curred_app_num = 1
-        with open(package_path, "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                package_name = line[:line.rfind(' (')]
-                app_name = line[line.rfind('('):line.rfind(')')].replace("(", "").replace(")", "")
-                new_app_name = package_name + "(" + app_name +")"
-                print("+ 总共"+str(len(lines))+"个应用，正在处理第"+ str(curred_app_num) +"个：" + new_app_name)
-
-                for components_type in self.components_types:
-                    self.getComponentsInfo(package_name, components_type)
-                    time.sleep(5)
-
-                curred_app_num += 1
 
     # 获取应用的组件信息
     def getComponentsInfo(self, package_name, components_type):
@@ -272,22 +246,25 @@ class Fuzz:
 
 def argument():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--config', help='A config file containing APK package name', type=str, required=True)
     parser.add_argument('--ip', help='Ip of drozer device [default 127.0.0.1]', type=str, required=False)
     parser.add_argument('--port', help='Port of drozer device [default 31415]', type=str, required=False)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
+    print('****************** drozer_scan.py ********************')
     args = argument()
+    package_list = open(args.config, 'r').read().splitlines()
+
     ip = args.ip if args.ip else "127.0.0.1"
     port = args.port if args.port else "31415"
-    package_name = "com.lixiang.neteasemusic"
 
-    report_path = "./data/drozer_scan"
+    report_path = "./drozer_data"
     if not os.path.exists(report_path):
         os.makedirs(report_path)
 
     scanner_types = ["traversal", "injection"]
     components_types = ["provider", "activity", "service", "broadcast"]
 
-    Fuzz(ip, port, scanner_types, components_types, report_path).analysis(package_name)
+    Fuzz(ip, port, scanner_types, components_types, report_path).analysis(package_list)

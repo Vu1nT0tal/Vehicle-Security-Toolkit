@@ -36,9 +36,11 @@ $ adb logcat | grep java.lang.RuntimeException
 
 ## drozer_scan.py
 
-使用该脚本批量扫描目录遍历和注入漏洞，结果存放在 `../data/drozer_scan/`
+使用该脚本批量扫描目录遍历和注入漏洞，结果存放在 `./drozer_data`
 
 ```sh
+$ adb shell pm list packages | grep -E "example" | cut -d ":" -f 2 > ../data/package.list
+
 $ source ../tools/drozer/drozer-env/bin/activate
-$ python2 drozer_scan.py [--ip 127.0.0.1] [--port 31415]
+$ python2 drozer_scan.py --config ../data/package.list [--ip 127.0.0.1] [--port 31415]
 ```
