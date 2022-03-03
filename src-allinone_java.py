@@ -32,7 +32,8 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* src-allinone.py ******************')
+    print('**************** src-allinone_java.py ****************')
+
     args = argument()
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 

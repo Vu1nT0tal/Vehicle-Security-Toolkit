@@ -27,7 +27,7 @@ def analysis(src_path: Path, tools_path: Path):
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', help='A config file containing APK path', type=str, required=True)
+    parser.add_argument('--config', help='A config file containing source code path', type=str, required=True)
     return parser.parse_args()
 
 

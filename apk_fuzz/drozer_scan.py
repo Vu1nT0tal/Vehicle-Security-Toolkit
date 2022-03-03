@@ -48,8 +48,8 @@ class Fuzz:
         self.report_path = report_path
 
     def initConfig(self, ip, port):
-        cmd1 = "adb connect %s" % ip
-        cmd2 = "adb forward tcp:%s tcp:%s" % (port, port)
+        cmd1 = "adb forward tcp:%s tcp:%s" % (port, port)
+        cmd2 = "adb connect %s:%s" % (ip, port)
         cmd3 = 'adb shell "rm -rf /sdcard/tempimg && mkdir -p /sdcard/tempimg"'
         os.popen(cmd1)
         os.popen(cmd2)

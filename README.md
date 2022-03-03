@@ -14,7 +14,8 @@
   - [二进制测试](#二进制测试)
     - [bin-allinone.py](#bin-allinonepy)
   - [源码测试](#源码测试)
-    - [src-allinone.py](#src-allinonepy)
+    - [src-allinone_java.py](#src-allinone_javapy)
+    - [src-allinone_c.py](#src-allinone_cpy)
   - [APK Fuzz 测试](#apk-fuzz-测试)
   - [其他工具](#其他工具)
   - [开源协议](#开源协议)
@@ -99,13 +100,21 @@ $ python3 bin-allinone.py --config ./data/bin.list
 ```
 
 ## 源码测试
-### src-allinone.py
+### src-allinone_java.py
 
-一站式调用所有源码工具进行单个或批量扫描。[src_scan](./src_scan) 目录下的工具作为库被调用，也可以独立使用。
+一站式调用所有 Java/Android 源码工具进行单个或批量扫描。[src_scan](./src_scan) 目录下的工具作为库被调用，也可以独立使用。
 
 ```sh
 $ readlink -f ~/hmi/apps/* > ./data/src.list
-$ python3 src-allinone.py --config ./data/src.list --build_config ./demo/build_config.json --build
+$ python3 src-allinone_java.py --config ./data/src.list --build_config ./demo/build_config.json --build
+```
+
+### src-allinone_c.py
+
+一站式调用所有 C/Cpp 源码工具进行批量扫描。
+
+```sh
+$ python3 src-allinone_c.py --src ~/source
 ```
 
 ## APK Fuzz 测试

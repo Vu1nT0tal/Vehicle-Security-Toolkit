@@ -51,7 +51,7 @@ $ python3 apk_leaks.py --config ../data/apk.list
 使用 `apk_decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ source ./tools/qark/bin/activate
+$ source ./tools/qark-env/bin/activate
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
 $ python3 apk_qark.py --config ../data/apk.list --report html
 ```
@@ -108,7 +108,7 @@ $ python3 apk_scanner.py --config ../data/apk.list
 使用 `apk_decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析并生成报告。
 
 ```sh
-$ source ./tools/mariana-trench/bin/activate
+$ source ./tools/mariana-trench-env/bin/activate
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
 $ python3 apk_mariana.py --config ../data/apk.list
 
