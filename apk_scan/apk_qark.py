@@ -8,12 +8,13 @@ sys.path.append('..')
 from utils import shell_cmd, Color
 
 
-def analysis(apk_path: Path, report_type: str=None):
+def analysis(apk_path: Path, tools_path: Path, report_type: str=None):
     report_type = 'html' if report_type is None else report_type
     report_file = apk_path.parent.joinpath(f'report.{report_type}')
     new_report_file = apk_path.parent.joinpath(f'SecScan/qark.{report_type}')
 
-    cmd = f'qark --java {apk_path.parent.joinpath("jadx_java")} --report-type {report_type} --report-path {apk_path.parent}'
+    scanner = tools_path.joinpath('qark-env/bin/qark')
+    cmd = f'{scanner} --java {apk_path.parent.joinpath("jadx_java")} --report-type {report_type} --report-path {apk_path.parent}'
     output, ret_code = shell_cmd(cmd)
 
     if report_file.exists():
@@ -34,6 +35,8 @@ def argument():
 
 if __name__ == '__main__':
     print('******************** apk_qark.py *********************')
+    tools_path = Path(__file__).absolute().parent.joinpath('tools')
+
     args = argument()
     apk_dirs = open(args.config, 'r').read().splitlines()
 

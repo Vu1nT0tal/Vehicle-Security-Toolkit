@@ -1,6 +1,6 @@
 # Vehicle-Security-Toolkit
 
-汽车/安卓/固件安全测试工具集
+汽车/安卓/固件/代码安全测试工具集
 
 - [Vehicle-Security-Toolkit](#vehicle-security-toolkit)
   - [安装](#安装)
@@ -16,12 +16,16 @@
   - [源码测试](#源码测试)
     - [src-allinone_java.py](#src-allinone_javapy)
     - [src-allinone_c.py](#src-allinone_cpy)
+  - [系统测试](#系统测试)
   - [APK Fuzz 测试](#apk-fuzz-测试)
   - [其他工具](#其他工具)
   - [开源协议](#开源协议)
   - [Stargazers over time](#stargazers-over-time)
 
 ## 安装
+
+完整安装可能需要几个小时。如果担心破坏本地环境，可以使用虚拟机，具体请看 [dev](./dev)。
+
 ### init_local.sh
 
 本地 Linux 设备安装 Android SDK，然后执行 `init_local.sh`。
@@ -116,6 +120,10 @@ $ python3 src-allinone_java.py --config ./data/src.list --build_config ./demo/bu
 ```sh
 $ python3 src-allinone_c.py --src ~/source
 ```
+
+## 系统测试
+
+检查内核配置、安全启动、SELinux等。
 
 ## APK Fuzz 测试
 

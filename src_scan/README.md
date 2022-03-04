@@ -13,6 +13,10 @@
     - [flawfinder](#flawfinder)
     - [TscanCode](#tscancode)
     - [cppcheck](#cppcheck)
+  - [Python](#python)
+    - [bandit](#bandit)
+  - [Go](#go)
+    - [gosec](#gosec)
 
 ## Java/Android
 ### src_build.py
@@ -85,8 +89,7 @@ $ python3 src_sonarqube.py --config ../data/src.list [--key KEY]
 依据可能的漏洞标记（例如函数名）快速扫描。
 
 ```sh
-$ source ../tools/flawfinder-env/bin/activate
-$ flawfinder --context --quiet --html [--minlevel=4] ~/source > flawfinder.html
+$ ../tools/flawfinder-env/bin/flawfinder --context --quiet --html [--minlevel=4] ~/source > flawfinder.html
 ```
 
 ### TscanCode
@@ -106,4 +109,22 @@ TODO: 后续集成 Sonarqube。
 
 ```
 $ ./tools/cppcheck/bin/cppcheck --bug-hunting ~/source 2>&1 | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" > cppcheck.txt
+```
+
+## Python
+### bandit
+
+Python AST 安全问题扫描。
+
+```
+$ bandit -r ~/source [-n 3] [-lll]
+```
+
+## Go
+### gosec
+
+Go AST 安全问题扫描。
+
+```sh
+$ gosec ~/source [-fmt=html] [-out=gosec.html]
 ```

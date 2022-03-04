@@ -9,16 +9,15 @@ from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
 
 def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
     """执行shell命令，返回元组 (output, ret_code)，其中output包括STDOUT和STDERR。"""
-    sdkman = f'source {Path("~").expanduser().joinpath(".sdkman/bin/sdkman-init.sh")}'
     change_java = {
-        8: f'{sdkman} && sdk use java 8.0.312-tem',
-        11: f'{sdkman} && sdk use java 11.0.13-tem'
+        8: 'sdk use java 8.0.322-tem',
+        11: 'sdk use java 11.0.14-tem'
     }
     change_gradle = {
-        4: f'{sdkman} && sdk use gradle 4.10.3',
-        5: f'{sdkman} && sdk use gradle 5.6.4',
-        6: f'{sdkman} && sdk use gradle 6.9.2',
-        7: f'{sdkman} && sdk use gradle 7.4'
+        4: 'sdk use gradle 4.10.3',
+        5: 'sdk use gradle 5.6.4',
+        6: 'sdk use gradle 6.9.2',
+        7: 'sdk use gradle 7.4'
     }
 
     os.environ['PATH'] += ':'+str(Path('~/.local/bin').expanduser())

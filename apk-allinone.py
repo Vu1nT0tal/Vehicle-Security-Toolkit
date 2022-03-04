@@ -51,9 +51,9 @@ if __name__ == '__main__':
         'apkid': defaultdict(list),
         'jni': defaultdict(list),
         'leaks': defaultdict(list),
-        #'mariana': defaultdict(list),      # 需要环境
+        'mariana': defaultdict(list),
         'mobsf': defaultdict(list),
-        #'qark': defaultdict(list),         # 需要环境
+        'qark': defaultdict(list),
         'quark': defaultdict(list),
         'scanner': defaultdict(list),
         'speck': defaultdict(list)
@@ -164,7 +164,7 @@ if __name__ == '__main__':
 
         # apk_mariana
         if 'mariana' in plugin:
-            ret = mariana(apk_path)
+            ret = mariana(apk_path, tools_path)
             if ret:
                 plugin['mariana']['failed'].append(apk)
                 Color.print_failed('[-] [mariana] failed')
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 
         # apk_qark
         if 'qark' in plugin:
-            ret = qark(apk_path)
+            ret = qark(apk_path, tools_path)
             if ret:
                 plugin['qark']['failed'].append(apk)
                 Color.print_failed('[-] [qark] failed')

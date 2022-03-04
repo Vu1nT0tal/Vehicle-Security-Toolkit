@@ -10,7 +10,8 @@ def flawfinder(src_path: Path):
     Color.print_focus('[+] flawfinder ...')
     report_file = report_path.joinpath('flawfinder.html')
 
-    cmd = f'flawfinder --context --quiet --html {src_path} > {report_file}'
+    scanner = tools_path.joinpath('flawfinder-env/bin/flawfinder')
+    cmd = f'{scanner} --context --quiet --html {src_path} > {report_file}'
     shell_cmd(cmd)
 
 
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     report_path.mkdir(parents=True, exist_ok=True)
 
     plugin = {
-        #'flawfinder': 1,    # 需要环境
+        'flawfinder': 1,
         'tscancode': 1,
         'cppcheck': 1
     }

@@ -10,12 +10,13 @@ sys.path.append('..')
 from utils import shell_cmd, Color
 
 
-def analysis(apk_path: Path):
+def analysis(apk_path: Path, tools_path: Path):
     source_dir = apk_path.parent.joinpath('jadx_java/sources')
     report_file = apk_path.parent.joinpath('SecScan/mariana.db')
     tmp_dir = tempfile.mkdtemp()
 
-    cmd = f'mariana-trench --system-jar-configuration-path `find ~/Android/Sdk -name "android.jar" | head -n1` \
+    scanner = tools_path.joinpath('mariana-trench-env/bin/mariana-trench')
+    cmd = f'{scanner} --system-jar-configuration-path `find ~/Android/Sdk -name "android.jar" | head -n1` \
         --apk-path {apk_path} --source-root-directory {source_dir} --output-directory {tmp_dir}'
     output, ret_code = shell_cmd(cmd)
     if ret_code != 0:
@@ -24,7 +25,8 @@ def analysis(apk_path: Path):
         shutil.rmtree(tmp_dir)
         return ret_code
 
-    cmd = f'sapp --tool mariana-trench --database-name {report_file} analyze {tmp_dir}'
+    scanner = tools_path.joinpath('mariana-trench/bin/sapp')
+    cmd = f'{scanner} --tool mariana-trench --database-name {report_file} analyze {tmp_dir}'
     output, ret_code = shell_cmd(cmd)
     if ret_code != 0:
         with open(f'{report_file}.error', 'w+') as f:
@@ -42,6 +44,7 @@ def argument():
 
 if __name__ == '__main__':
     print('******************* apk_mariana.py *******************')
+    tools_path = Path(__file__).absolute().parent.joinpath('tools')
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:

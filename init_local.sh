@@ -1,31 +1,52 @@
 #!/bin/bash
 
 set -e
+export PATH=$HOME/.local/bin:$PATH
 root_path=$PWD
 mkdir -p ~/github
 
 echo "################# Vehicle-Security-Toolkit #################"
 
-sudo apt-get update && sudo apt-get -y install python3-dev python3-pip python3-venv unzip npm graphviz simg2img meld maven golang scrcpy
+cat /dev/null | sudo tee /etc/apt/sources.list
+sudo tee /etc/apt/sources.list >/dev/null << EOF
+deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+EOF
+sudo apt-get update && sudo apt-get -y upgrade
+
+sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
 python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future
 
 echo "[+] Installing zsh ..."
-sudo apt-get -y install apt-transport-https git zsh expect
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sudo apt-get -y install git zsh expect
+echo Y | sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-sed -i "/^plugins/c\plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" ~/.zshrc | grep autosuggestions
-echo "export PATH=\$HOME/.local/bin:\$PATH" | tee -a $HOME/.profile $HOME/.zshrc && zsh
+sed -i "/^plugins/c\plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" ~/.zshrc
+echo "export PATH=\$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
+
+echo "[+] Installing golang"
+sudo add-apt-repository -y ppa:longsleep/golang-backports
+sudo apt-get update && sudo apt-get -y install golang-go
+echo "export PATH=\$HOME/go/bin:\$PATH" >> $HOME/.zshrc
 
 echo "[+] Installing sdkman ..."
 curl -s https://get.sdkman.io | bash
 source $HOME/.sdkman/bin/sdkman-init.sh
-sdk install java 8.0.312-tem
-sdk install java 11.0.13-tem
+sdk install java 8.0.322-tem
+echo Y | sdk install java 11.0.14-tem
 sdk install gradle 4.10.3
-sdk install gradle 5.6.4
-sdk install gradle 6.9.2
-sdk install gradle 7.4
+echo n | sdk install gradle 5.6.4
+echo Y | sdk install gradle 6.9.2
+echo n | sdk install gradle 7.4
 
 echo "[+] Installing docker ..."
 sudo apt-get -y install apt-transport-https ca-certificates curl gnupg lsb-release
@@ -33,7 +54,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 echo \
   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+sudo apt-get update && sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 python3 -m pip install docker-compose
 sudo gpasswd -a $USER docker
 newgrp docker
@@ -51,13 +72,13 @@ unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 echo "[+] Installing apkid ..."
 python3 -m pip install apkid
 
-echo "[+] Installing quark ..."
-python3 -m pip install quark-engine
-freshquark
-
 echo "[+] Installing exodus-core ..."
 sudo apt-get -y install dexdump
 python3 -m pip install exodus-core
+
+echo "[+] Installing quark ..."
+python3 -m pip install androguard==3.4.0a1 quark-engine
+freshquark
 
 echo "[+] Installing ApplicationScanner ..."
 python3 -m pip install lief rich
@@ -81,13 +102,13 @@ wget -q https://github.com/SPRITZ-Research-Group/SPECK/archive/refs/heads/main.z
 unzip -q main.zip -d ./tools/ && rm main.zip
 
 echo "[+] Installing androbugs ..."
-docker pull danmx/docker-androbugs
+sudo docker pull danmx/docker-androbugs
 
 echo "[+] Installing MobSF ..."
-docker pull opensecurity/mobile-security-framework-mobsf
+sudo docker pull opensecurity/mobile-security-framework-mobsf
 
 echo "[+] Installing cryptoguard ..."
-docker pull frantzme/cryptoguard
+sudo docker pull frantzme/cryptoguard
 
 # wget -q https://github.com/abhi-r3v0/Adhrit/archive/refs/heads/master.zip
 # unzip -q master.zip -d ./tools/ && rm master.zip
@@ -95,26 +116,22 @@ docker pull frantzme/cryptoguard
 
 echo "[+] Installing qark ..."
 python3 -m venv ./tools/qark-env
-source ./tools/qark-env/bin/activate
-python3 -m pip install wheel colorama
-python3 -m pip install git+https://github.com/linkedin/qark.git
-deactivate
+./tools/qark-env/bin/pip install wheel colorama
+./tools/qark-env/bin/pip install git+https://github.com/linkedin/qark.git
 
 echo "[+] Installing mariana-trench ..."
 python3 -m venv ./tools/mariana-trench-env
-source ./tools/mariana-trench-env/bin/activate
-python3 -m pip install colorama mariana-trench "graphene<3"
-deactivate
+./tools/mariana-trench-env/bin/pip install colorama mariana-trench "graphene<3"
 
 echo "[+] Installing mobileAudit ..."
 wget -q https://github.com/mpast/mobileAudit/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
-docker-compose -f ./tools/mobileAudit-main/docker-compose.yml build -q
+docker-compose -f ./tools/mobileAudit-main/docker-compose.yaml build -q
 
 echo "######################## src_scan ########################"
 
 echo "[+] Installing mobsfscan ..."
-docker pull opensecurity/mobsfscan
+sudo docker pull opensecurity/mobsfscan
 
 echo "[+] Installing DependencyCheck ..."
 wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip -O dependency-check.zip
@@ -127,8 +144,8 @@ sudo apt-get update && sudo apt-get -y install dotnet-sdk-3.1
 echo "[+] Installing sonarqube ..."
 python3 -m pip install python-sonarqube-api
 
-docker pull sonarqube:community
-docker pull sonarsource/sonar-scanner-cli
+sudo docker pull sonarqube:community
+sudo docker pull sonarsource/sonar-scanner-cli
 
 mkdir -p ./tools/sonarqube_extensions/plugins && cd ./tools/sonarqube_extensions/plugins
 wget -q https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.1.x-beta1/sonar-cxx-plugin-2.0.6.2921.jar
@@ -141,9 +158,7 @@ cd $root_path
 echo "[+] Installing flawfinder ..."
 # 使用 python2 避免 utf8 编码问题
 virtualenv -p /usr/bin/python2 ./tools/flawfinder-env
-source ./tools/flawfinder-env/bin/activate
-pip install flawfinder
-deactivate
+./tools/flawfinder-env/bin/pip install flawfinder
 
 echo "[+] Installing TscanCode ..."
 wget -q https://github.com/Tencent/TscanCode/archive/refs/heads/master.zip
@@ -158,10 +173,21 @@ unzip -q 2.7.zip && mkdir -p ./tools/cppcheck && cd ./tools/cppcheck
 cmake -DHAVE_RULES=ON -DUSE_MATCHCOMPILER=ON ../../cppcheck-2.7 && cmake --build .
 cd $root_path && rm -rf 2.7.zip cppcheck-2.7
 
+echo "[+] Installing bandit ..."
+python3 -m pip install bandit
+
+echo "[+] Installing gosec"
+go install github.com/securego/gosec/v2/cmd/gosec@latest
+
+# echo "[+] Installing scanmycode-ce"
+# wget -q https://github.com/marcinguy/scanmycode-ce/archive/refs/heads/master.zip
+# unzip -q master.zip -d ./tools/ && rm master.zip
+# cd ./tools/scanmycode-ce-master/dockerhub && ./start.sh && cd $root_path
+
 echo "######################### bin_scan #########################"
 
 echo "[+] Installing cwe_checker ..."
-docker pull fkiecad/cwe_checker
+sudo docker pull fkiecad/cwe_checker
 
 echo "[+] Installing cve-bin-tool ..."
 python3 -m pip install cve-bin-tool
@@ -180,7 +206,7 @@ echo "[+] Installing SnoopSnitch.apk ..."
 wget -q https://opensource.srlabs.de/attachments/download/185/SnoopSnitch-2.0.11.apk -O ./tools/SnoopSnitch.apk
 
 echo "Installing drozer ..."
-# docker pull fsecurelabs/drozer
+# sudo docker pull fsecurelabs/drozer
 
 mkdir -p ./tools/drozer && cd ./tools/drozer
 wget -q https://github.com/FSecureLABS/drozer-agent/releases/download/2.5.0/drozer-2.5.0.apk -O drozer.apk
@@ -188,11 +214,9 @@ wget -q https://github.com/FSecureLABS/drozer/releases/download/2.4.4/drozer-2.4
 cd $root_path
 
 virtualenv -p /usr/bin/python2 ./tools/drozer/drozer-env
-source ./tools/drozer/drozer-env/bin/activate
-pip install protobuf pyopenssl twisted service_identity
-pip install ./tools/drozer/drozer-2.4.4-py2-none-any.whl
+./tools/drozer/drozer-env/bin/pip install protobuf pyopenssl twisted service_identity
+./tools/drozer/drozer-env/bin/pip install ./tools/drozer/drozer-2.4.4-py2-none-any.whl
 cp ./fuzz/drozer_config ~/.drozer_config
-deactivate
 
 echo "########################## others ##########################"
 

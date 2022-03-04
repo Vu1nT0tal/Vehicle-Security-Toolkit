@@ -3,6 +3,7 @@ tools/
 .dccache
 .vscode/
 X01/
+.vagrant/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
