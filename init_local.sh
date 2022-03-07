@@ -33,7 +33,7 @@ git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${Z
 sed -i "/^plugins/c\plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" ~/.zshrc
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
 
-echo "[+] Installing golang"
+echo "[+] Installing golang ..."
 sudo add-apt-repository -y ppa:longsleep/golang-backports
 sudo apt-get update && sudo apt-get -y install golang-go
 echo "export PATH=\$HOME/go/bin:\$PATH" >> $HOME/.zshrc
@@ -97,7 +97,7 @@ tar -xf infer.tar.xz && mv infer-linux64-v1.1.0 ./tools/infer && rm infer.tar.xz
 echo "[+] Installing fireline ..."
 wget -q http://magic.360.cn/fireline_1.7.3.jar -O ./tools/fireline.jar
 
-echo "[+] Installing SPECK"
+echo "[+] Installing SPECK ..."
 wget -q https://github.com/SPRITZ-Research-Group/SPECK/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 
@@ -176,15 +176,20 @@ cd $root_path && rm -rf 2.7.zip cppcheck-2.7
 echo "[+] Installing bandit ..."
 python3 -m pip install bandit
 
-echo "[+] Installing gosec"
+echo "[+] Installing gosec ..."
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 
 # echo "[+] Installing scanmycode-ce"
 # wget -q https://github.com/marcinguy/scanmycode-ce/archive/refs/heads/master.zip
 # unzip -q master.zip -d ./tools/ && rm master.zip
-# cd ./tools/scanmycode-ce-master/dockerhub && ./start.sh && cd $root_path
+# cd ./tools/scanmycode-ce-master/dockerhub && mkdir -p data1 data2/tasks && docker-compose build && cd $root_path
 
 echo "######################### bin_scan #########################"
+
+echo "[+] Installing stacs ..."
+git clone https://github.com/stacscan/stacs-rules.git ./tools/stacs-rules
+sudo apt install libarchive-dev
+python3 -m pip install stacs
 
 echo "[+] Installing cwe_checker ..."
 sudo docker pull fkiecad/cwe_checker

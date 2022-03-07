@@ -5,6 +5,7 @@ from pathlib import Path
 from collections import defaultdict
 
 from utils import Color
+from bin_scan.bin_stacs import analysis as stacs
 from bin_scan.bin_cvescan import analysis as cvescan
 from bin_scan.bin_cwechecker import analysis as cwechecker
 
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 
     plugin = {
+        'stacs': defaultdict(list),
         'cvescan': defaultdict(list),
         'cwechecker': defaultdict(list)
     }
@@ -32,6 +34,15 @@ if __name__ == '__main__':
         elf_path = Path(elf)
         report_path = elf_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
+
+        # bin_stacs
+        if 'stacs' in plugin:
+            if ret:
+                plugin['stacs']['failed'].append(elf)
+                Color.print_failed['[-] [stacs] failed']
+            else:
+                plugin['stacs']['success'].append(elf)
+                Color.print_success('[+] [stacs] success')
 
         # bin_cvescan
         if 'cvescan' in plugin:

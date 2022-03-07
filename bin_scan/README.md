@@ -1,12 +1,21 @@
 # bin_scan
 
 - [bin_scan](#bin_scan)
+  - [bin_stacs.py](#bin_stacspy)
   - [bin_cwechecker.py](#bin_cwecheckerpy)
   - [bin_cvescan.py](#bin_cvescanpy)
 
+## bin_stacs.py
+
+使用该脚本批量扫描静态凭证等敏感数据。
+
+```sh
+$ python3 bin_stacs.py --config ../data/elf.list
+```
+
 ## bin_cwechecker.py
 
-使用 `apk_decompile.py` 得到所有反编译代码后，使用该脚本批量静态分析 SO/ELF 文件并生成报告。
+使用该脚本批量静态分析 SO/ELF 文件并生成报告。
 
 ```sh
 $ find ~/apks -type f ! -path "*jadx_java*" ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" | xargs file | grep "ELF" | cut -d ":" -f 1 | xargs realpath > ../data/elf.list
