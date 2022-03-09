@@ -179,6 +179,9 @@ python3 -m pip install bandit
 echo "[+] Installing gosec ..."
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 
+echo "[+] Installing snyk ..."
+wget -q https://github.com/snyk/cli/releases/download/v1.864.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
+
 # echo "[+] Installing scanmycode-ce"
 # wget -q https://github.com/marcinguy/scanmycode-ce/archive/refs/heads/master.zip
 # unzip -q master.zip -d ./tools/ && rm master.zip

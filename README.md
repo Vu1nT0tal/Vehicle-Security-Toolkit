@@ -123,7 +123,11 @@ $ python3 src-allinone_c.py --src ~/source
 
 ## 系统测试
 
-检查内核配置、安全启动、SELinux等。
+一站式对 Android 内核配置、安全启动、SELinux 等进行扫描。
+
+```sh
+$ python3 sys-allinone.py --sys ~/source
+```
 
 ## APK Fuzz 测试
 

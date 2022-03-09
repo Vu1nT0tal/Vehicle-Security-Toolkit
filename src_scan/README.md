@@ -13,6 +13,7 @@
     - [flawfinder](#flawfinder)
     - [TscanCode](#tscancode)
     - [cppcheck](#cppcheck)
+    - [snyk](#snyk)
   - [Python](#python)
     - [bandit](#bandit)
   - [Go](#go)
@@ -94,9 +95,9 @@ $ ../tools/flawfinder-env/bin/flawfinder --context --quiet --html [--minlevel=4]
 
 ### TscanCode
 
-支持 C/Cpp、C# 和 Lua 代码扫描。
+支持 C/Cpp、C# 和 Lua 语言扫描。
 
-```
+```sh
 $ ./tools/TscanCode/TscanCode/tscancode --enable=all --xml ~/source 2>tscancode.xml >/dev/null
 
 $ ./tools/TscanCode/TscLua/tsclua --help
@@ -107,8 +108,17 @@ $ ./tools/TscanCode/TscSharp/TscSharp --help
 
 TODO: 后续集成 Sonarqube。
 
+```sh
+$ ./tools/cppcheck/bin/cppcheck [--bug-hunting] ~/source 2>&1 | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" > cppcheck.txt
 ```
-$ ./tools/cppcheck/bin/cppcheck --bug-hunting ~/source 2>&1 | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" > cppcheck.txt
+
+### snyk
+
+支持 Java、C/Cpp、Python、Go 等多种语言扫描。[生成 API_TOKEN](https://app.snyk.io/)
+
+```sh
+$ ./tools/snyk auth [<API_TOKEN>]
+$ ./tools/snyk code test --json-file-output=snky.json ~/source
 ```
 
 ## Python
@@ -116,7 +126,7 @@ $ ./tools/cppcheck/bin/cppcheck --bug-hunting ~/source 2>&1 | sed "s,\x1B\[[0-9;
 
 Python AST 安全问题扫描。
 
-```
+```sh
 $ bandit -r ~/source [-n 3] [-lll]
 ```
 

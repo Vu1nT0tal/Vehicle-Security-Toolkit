@@ -26,12 +26,15 @@ def tscancode(src_path: Path):
 
 def cppcheck(src_path: Path):
     Color.print_focus('[+] cppcheck ...')
-    report_file = report_path.joinpath('cppcheck.txt')
+    report_file1 = report_path.joinpath('cppcheck.txt')
+    report_file2 = report_path.joinpath('cppcheck-bug.txt')
 
     scanner = tools_path.joinpath('cppcheck/bin/cppcheck')
-    cmd = f'{scanner} --bug-hunting {src_path} 2>&1 | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" > {report_file}'
-    shell_cmd(cmd)
+    cmd1 = f'{scanner} {src_path} 2>&1 | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" > {report_file1}'
+    shell_cmd(cmd1)
 
+    cmd2 = f'{scanner} --bug-hunting {src_path} 2>&1 | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" > {report_file2}'
+    shell_cmd(cmd2)
 
 def argument():
     parser = argparse.ArgumentParser()
