@@ -1,19 +1,19 @@
 # poc_scan
 
 - [poc_scan](#poc_scan)
-  - [linux-exploit-suggester.sh](#linux-exploit-suggestersh)
-  - [poc_dirtycow.py](#poc_dirtycowpy)
+  - [poc_suggester.py](#poc_suggesterpy)
+  - [poc_dirtypipe.py](#poc_dirtypipepy)
 
-## linux-exploit-suggester.sh
+## poc_suggester.py
 
 ```sh
-$ ../tools/linux-exploit-suggester.sh -f -d -u "$(uname -a)"
+$ python3 poc_suggester.py --connect [adb|ssh] --device ip:port
 ```
 
-## poc_dirtycow.py
+## poc_dirtypipe.py
 
 CVE-2022-0847：https://dirtypipe.cm4all.com/
 
 ```sh
-$ python3 poc_dirtycow.py --arch [x64|arm|aarch64] --connect [adb|ssh] --device ip:port
+$ python3 poc_dirtypipe.py --arch [x64|arm|aarch64] --connect [adb|ssh] --device ip:port
 ```

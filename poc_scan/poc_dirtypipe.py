@@ -151,15 +151,14 @@ int main(int argc, char **argv)
 
 def argument():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--connect', help='adb|ssh', type=str, required=True)
-    parser.add_argument('--arch', help='arm|aarch64|x64', type=str, required=True)
+    parser.add_argument('--arch', help='arm | aarch64 | x64', type=str, required=True)
+    parser.add_argument('--connect', help='adb | ssh', type=str, required=True)
     parser.add_argument('--device', help='ip:port', type=str, required=True)
     return parser, parser.parse_args()
 
 
 if __name__ == '__main__':
-    print('******************* poc_dirtycow.py ******************')
-    tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
+    print('******************* poc_dirtypipe.py ******************')
     parser, args = argument()
     if ':' in args.device:
         ip, port = args.device.split(':')
