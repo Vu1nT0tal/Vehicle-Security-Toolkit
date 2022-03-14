@@ -23,7 +23,7 @@ EOF
 sudo apt-get update && sudo apt-get -y upgrade
 
 sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
-python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future
+python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko
 
 echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect
@@ -32,6 +32,14 @@ git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTO
 git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 sed -i "/^plugins/c\plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" ~/.zshrc
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
+
+echo "[+] Installing vscode ..."
+sudo apt-get -y install wget gpg apt-transport-https
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+rm -f packages.microsoft.gpg
+sudo apt-get update && sudo apt-get -y install code
 
 echo "[+] Installing golang ..."
 sudo add-apt-repository -y ppa:longsleep/golang-backports
@@ -137,7 +145,7 @@ echo "[+] Installing DependencyCheck ..."
 wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip -O dependency-check.zip
 unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
-wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
 sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb
 sudo apt-get update && sudo apt-get -y install dotnet-sdk-3.1
 
@@ -180,7 +188,15 @@ echo "[+] Installing gosec ..."
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 
 echo "[+] Installing snyk ..."
-wget -q https://github.com/snyk/cli/releases/download/v1.864.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
+wget -q https://github.com/snyk/cli/releases/download/v1.870.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
+
+echo "[+] Installing codeql ..."
+mkdir -p ~/github/codeql-home && cd ~/github/codeql-home
+wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.8.2/codeql-linux64.zip && unzip -q codeql-linux64.zip
+export PATH=$HOME/github/codeql-home/codeql:$PATH && echo "export PATH=\$HOME/github/codeql-home/codeql:\$PATH" >> $HOME/.zshrc
+git clone --depth=1 https://github.com/github/codeql.git codeql-repo
+git clone --depth=1 https://github.com/github/codeql-go.git && ./codeql-go/scripts/install-deps.sh
+rm codeql-linux64.zip && cd $root_path
 
 # echo "[+] Installing scanmycode-ce"
 # wget -q https://github.com/marcinguy/scanmycode-ce/archive/refs/heads/master.zip
@@ -190,7 +206,7 @@ wget -q https://github.com/snyk/cli/releases/download/v1.864.0/snyk-linux -O ./t
 echo "######################### bin_scan #########################"
 
 echo "[+] Installing stacs ..."
-git clone https://github.com/stacscan/stacs-rules.git ./tools/stacs-rules
+git clone --depth=1 https://github.com/stacscan/stacs-rules.git ./tools/stacs-rules
 sudo apt install libarchive-dev
 python3 -m pip install stacs
 
@@ -199,6 +215,11 @@ sudo docker pull fkiecad/cwe_checker
 
 echo "[+] Installing cve-bin-tool ..."
 python3 -m pip install cve-bin-tool
+
+echo "######################### poc_scan #########################"
+
+wget -q https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -P ./tools
+chmod +x ./tools/linux-exploit-suggester.sh
 
 echo "####################### init_remote ########################"
 
@@ -236,9 +257,11 @@ wget -q https://github.com/cfig/Android_boot_image_editor/archive/refs/heads/mas
 unzip -q master.zip -d ./tools/ && rm master.zip
 
 echo "[+] Installing pwn ..."
-sudo apt-get -y install gdb-multiarch tcpdump netcat
-python3 -m pip install pwntools
-
+sudo dpkg --add-architecture i386
+sudo apt-get -y install gcc gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu gdb-multiarch gcc-multilib tcpdump netcat socat nasm build-essential libc6-dbg libc6-dbg:i386 ruby-dev
+sudo apt-get -y install glibc-source && tar -xf /usr/src/glibc/glib*.tar.xz
+sudo gem install one_gadget seccomp-tools
+python3 -m pip install pwntools ropper ropgadget capstone keystone
 git clone --depth=1 https://github.com/hugsy/gef.git ~/github/gef
 echo "source ~/github/gef/gef.py" > ~/.gdbinit
 

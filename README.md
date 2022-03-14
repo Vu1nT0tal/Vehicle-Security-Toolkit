@@ -17,6 +17,7 @@
     - [src-allinone_java.py](#src-allinone_javapy)
     - [src-allinone_c.py](#src-allinone_cpy)
   - [系统测试](#系统测试)
+  - [漏洞测试](#漏洞测试)
   - [APK Fuzz 测试](#apk-fuzz-测试)
   - [其他工具](#其他工具)
   - [开源协议](#开源协议)
@@ -127,6 +128,14 @@ $ python3 src-allinone_c.py --src ~/source
 
 ```sh
 $ python3 sys-allinone.py --sys ~/source
+```
+
+## 漏洞测试
+
+一站式对 Android/Linux 设备进行漏洞扫描，[poc_scan](./poc_scan) 目录下的工具作为库被调用，也可以独立使用。
+
+```sh
+$ python3 poc_allinone.py --arch [x64|arm|aarch64] --connect [adb|ssh] --device ip:port
 ```
 
 ## APK Fuzz 测试

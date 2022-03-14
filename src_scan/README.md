@@ -18,6 +18,7 @@
     - [bandit](#bandit)
   - [Go](#go)
     - [gosec](#gosec)
+  - [CodeQL](#codeql)
 
 ## Java/Android
 ### src_build.py
@@ -100,7 +101,7 @@ $ ../tools/flawfinder-env/bin/flawfinder --context --quiet --html [--minlevel=4]
 ```sh
 $ ./tools/TscanCode/TscanCode/tscancode --enable=all --xml ~/source 2>tscancode.xml >/dev/null
 
-$ ./tools/TscanCode/TscLua/tsclua --help
+$ ./tools/TscanCode/TscLua/tsclua --json ~/source 2>tsclua.json
 $ ./tools/TscanCode/TscSharp/TscSharp --help
 ```
 
@@ -138,3 +139,5 @@ Go AST 安全问题扫描。
 ```sh
 $ gosec ~/source [-fmt=html] [-out=gosec.html]
 ```
+
+## CodeQL
