@@ -221,6 +221,9 @@ echo "######################### poc_scan #########################"
 wget -q https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -P ./tools
 chmod +x ./tools/linux-exploit-suggester.sh
 
+python3 -m pip install "thefuzz[speedup]"
+git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves.git ~/github/linux_kernel_cves
+
 echo "####################### init_remote ########################"
 
 echo "[+] Installing frida"

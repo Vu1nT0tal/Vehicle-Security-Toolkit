@@ -23,6 +23,7 @@ def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
     os.environ['PATH'] += ':'+str(Path('~/.local/bin').expanduser())
     local_env = env.copy() if env else os.environ
     cwd = local_env.pop('cwd', None)
+    cwd = Path(cwd).expanduser() if cwd else cwd
     exe = local_env.pop('exe', 'sh')
     gradle = local_env.pop('gradle', None)
     if gradle:

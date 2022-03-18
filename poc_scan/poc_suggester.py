@@ -2,7 +2,6 @@
 
 import sys
 import argparse
-import tempfile
 import paramiko
 import getpass
 from pathlib import Path

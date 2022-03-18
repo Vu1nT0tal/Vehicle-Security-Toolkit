@@ -44,7 +44,7 @@ if __name__ == '__main__':
         # 可选插件
         'fireline': defaultdict(list),
         'mobsf': defaultdict(list),
-        #'qark': defaultdict(list),          # 需要环境
+        'qark': defaultdict(list),
         'speck': defaultdict(list),
         'depcheck': defaultdict(list),
         'sonarqube': defaultdict(list)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
         # src_qark
         if 'qark' in plugin:
-            ret = qark(src_path)
+            ret = qark(src_path, tools_path)
             if ret:
                 plugin['qark']['failed'].append(src)
                 Color.print_failed('[-] [qark] failed')

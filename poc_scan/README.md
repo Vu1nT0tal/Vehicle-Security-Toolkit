@@ -10,6 +10,13 @@
 $ python3 poc_suggester.py --connect [adb|ssh] --device ip:port
 ```
 
+## poc_patch.py
+
+```sh
+$ python3 poc_patch.py update
+$ python3 poc_patch.py scan --repo ~/kernel --version 5.10
+```
+
 ## poc_dirtypipe.py
 
 CVE-2022-0847：https://dirtypipe.cm4all.com/
