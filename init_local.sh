@@ -216,11 +216,18 @@ sudo docker pull fkiecad/cwe_checker
 echo "[+] Installing cve-bin-tool ..."
 python3 -m pip install cve-bin-tool
 
+echo "######################### sys_scan #########################"
+
+echo "[+] Installing kconfig-hardened-check ..."
+python3 -m pip install git+https://github.com/a13xp0p0v/kconfig-hardened-check
+
 echo "######################### poc_scan #########################"
 
+echo "[+] Installing linux-exploit-suggester ..."
 wget -q https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -P ./tools
 chmod +x ./tools/linux-exploit-suggester.sh
 
+echo "[+] Installing linux_kernel_cves ..."
 python3 -m pip install "thefuzz[speedup]"
 git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves.git ~/github/linux_kernel_cves
 

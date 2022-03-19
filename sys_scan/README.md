@@ -9,4 +9,8 @@
 
 ## sys_kernel.py
 
+```sh
+$ python3 sys_kernel.py --config ~/kernel/arch/arm64/configs/s32gen1_defconfig
+```
+
 ## sys_selinux.py
