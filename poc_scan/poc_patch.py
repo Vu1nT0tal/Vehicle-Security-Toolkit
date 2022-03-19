@@ -4,6 +4,7 @@ import os
 import sys
 import json
 import argparse
+import cve_searchsploit
 import asyncio
 from aiohttp import ClientSession
 from concurrent.futures import ProcessPoolExecutor
@@ -34,6 +35,8 @@ KERNEL_VERSION = {
 
 
 def update(args=None):
+    """更新CVE补丁库"""
+
     async def download(sem, url: str, patch: Path):
         async with sem:
             async with ClientSession() as session:
@@ -74,10 +77,13 @@ def update(args=None):
 
 
 def compareThread(cve: Path, patch_path: Path):
+    """对比某个CVE补丁与所有内核补丁"""
+
     cve_name = '-'.join(cve.stem.split('-')[:3])
     result = {cve_name: {
         'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
-        'scan': {},
+        'exp': [f'https://www.exploit-db/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
+        'scan': {}
     }}
     try:
         f1 = open(cve).read()
@@ -96,6 +102,8 @@ def compareThread(cve: Path, patch_path: Path):
 
 
 def scan(args):
+    """对比所有CVE补丁与所有内核补丁"""
+
     cves_path = Path('~/github/linux_kernel_cves').expanduser()
     repo_path = Path(args.repo).expanduser().absolute()
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')

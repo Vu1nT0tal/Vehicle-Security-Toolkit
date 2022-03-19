@@ -229,6 +229,7 @@ chmod +x ./tools/linux-exploit-suggester.sh
 
 echo "[+] Installing linux_kernel_cves ..."
 python3 -m pip install "thefuzz[speedup]"
+python3 -m pip install cve_searchsploit && cve_searchsploit -u
 git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves.git ~/github/linux_kernel_cves
 
 echo "####################### init_remote ########################"
