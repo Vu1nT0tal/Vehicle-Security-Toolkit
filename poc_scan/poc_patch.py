@@ -5,6 +5,7 @@ import sys
 import json
 import argparse
 import cve_searchsploit
+import requests
 import asyncio
 from aiohttp import ClientSession
 from concurrent.futures import ProcessPoolExecutor
@@ -80,9 +81,11 @@ def compareThread(cve: Path, patch_path: Path):
     """对比某个CVE补丁与所有内核补丁"""
 
     cve_name = '-'.join(cve.stem.split('-')[:3])
+    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
     result = {cve_name: {
         'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
-        'exp': [f'https://www.exploit-db/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
+        'exp': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
+        'poc': poc_url if requests.get(poc_url) else '',
         'scan': {}
     }}
     try:
