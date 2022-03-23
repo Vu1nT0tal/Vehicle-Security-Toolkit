@@ -475,7 +475,7 @@ keys () {
     $SHELL_CMD find / -type f -name "*.csr" -o -name "*.pub" -o -name "*.prv" -o -name "*.pem" -o -name "*.key"
                     -o -name "*.pkcs12" -o -name "*.pfx" -o -name "*.p12" -o -name "*.der" -o -name "*.cert" \
                     -o -name "*.cer" -o -name "*.crt" -o -name "*.p7b" -o -name "*.p7c" -o -name "*.keystore" \
-                    -o -name "*.crl" 2>/dev/null > ${KEYS_DIR}/keys_file.txt
+                    -o -name "*.crl" -o -name "*.bks" -o -name "*.jks" 2>/dev/null > ${KEYS_DIR}/keys_file.txt
 
     while read line; do
         local_name=$(echo ${line:1} | tr "/" "_")

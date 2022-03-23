@@ -109,6 +109,11 @@ echo "[+] Installing SPECK ..."
 wget -q https://github.com/SPRITZ-Research-Group/SPECK/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 
+echo "[+] Installing keyfinder ..."
+python3 -m pip install python-magic pyOpenSSL
+wget -q https://github.com/CERTCC/keyfinder/archive/refs/heads/master.zip
+unzip -q master.zip -d ./tools/ && rm master.zip
+
 echo "[+] Installing androbugs ..."
 sudo docker pull danmx/docker-androbugs
 
@@ -207,7 +212,7 @@ echo "######################### bin_scan #########################"
 
 echo "[+] Installing stacs ..."
 git clone --depth=1 https://github.com/stacscan/stacs-rules.git ./tools/stacs-rules
-sudo apt install libarchive-dev
+sudo apt-get -y install libarchive-dev
 python3 -m pip install stacs
 
 echo "[+] Installing cwe_checker ..."
@@ -220,6 +225,10 @@ echo "######################### sys_scan #########################"
 
 echo "[+] Installing kconfig-hardened-check ..."
 python3 -m pip install git+https://github.com/a13xp0p0v/kconfig-hardened-check
+
+echo "[+] Installing syzkaller ..."
+sudo apt-get -y install gcc gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+git clone --depth=1 https://github.com/google/syzkaller.git ~/github/syzkaller
 
 echo "######################### poc_scan #########################"
 
@@ -269,7 +278,7 @@ unzip -q master.zip -d ./tools/ && rm master.zip
 
 echo "[+] Installing pwn ..."
 sudo dpkg --add-architecture i386
-sudo apt-get -y install gcc gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu gdb-multiarch gcc-multilib tcpdump netcat socat nasm build-essential libc6-dbg libc6-dbg:i386 ruby-dev
+sudo apt-get -y install gdb-multiarch gcc-multilib tcpdump netcat socat nasm build-essential libc6-dbg libc6-dbg:i386 ruby-dev
 sudo apt-get -y install glibc-source && tar -xf /usr/src/glibc/glib*.tar.xz
 sudo gem install one_gadget seccomp-tools
 python3 -m pip install pwntools ropper ropgadget capstone keystone

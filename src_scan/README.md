@@ -7,6 +7,7 @@
     - [src_mobsf.py](#src_mobsfpy)
     - [src_fireline.py](#src_firelinepy)
     - [src_speck.py](#src_speckpy)
+    - [src_keyfinder.py](#src_keyfinderpy)
     - [src_depcheck.py](#src_depcheckpy)
     - [src_sonarqube.py](#src_sonarqubepy)
   - [C/Cpp](#ccpp)
@@ -64,6 +65,15 @@ $ python3 src_fireline.py --config ../data/src.list
 ```sh
 $ readlink -f ~/hmi/apps/* > ../data/src.list
 $ python3 src_speck.py --config ../data/src.list
+```
+
+### src_keyfinder.py
+
+批量扫描 Android 源码并生成报告。
+
+```sh
+$ readlink -f ~/hmi/apps/* > ../data/src.list
+$ python3 src_keyfinder.py --config ../data/src.list
 ```
 
 ### src_depcheck.py

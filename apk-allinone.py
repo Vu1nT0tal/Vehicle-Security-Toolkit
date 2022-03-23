@@ -21,7 +21,7 @@ from apk_scan.apk_qark import analysis as qark
 from apk_scan.apk_quark import analysis as quark
 from apk_scan.apk_scanner import analysis as scanner
 from apk_scan.apk_speck import analysis as speck
-
+from apk_scan.apk_keyfinder import analysis as keyfinder
 
 # 配置项
 mobsf_key = ''
@@ -56,7 +56,8 @@ if __name__ == '__main__':
         'qark': defaultdict(list),
         'quark': defaultdict(list),
         'scanner': defaultdict(list),
-        'speck': defaultdict(list)
+        'speck': defaultdict(list),
+        'keyfinder': defaultdict(list)
     }
     apk_dirs = open(args.config, 'r').read().splitlines()
 
@@ -219,5 +220,15 @@ if __name__ == '__main__':
             else:
                 plugin['speck']['success'].append(apk)
                 Color.print_success('[+] [speck] success')
+
+        # apk_keyfinder
+        if 'keyfinder' in plugin:
+            ret = keyfinder(apk_path, tools_path)
+            if ret:
+                plugin['keyfinder']['failed'].append(apk)
+                Color.print_failed('[-] [keyfinder] failed')
+            else:
+                plugin['keyfinder']['success'].append(apk)
+                Color.print_success('[+] [keyfinder] success')
 
     print(plugin)

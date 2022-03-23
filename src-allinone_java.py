@@ -11,6 +11,7 @@ from src_scan.src_fireline import analysis as fireline
 from src_scan.src_mobsf import analysis as mobsf
 from src_scan.src_qark import analysis as qark
 from src_scan.src_speck import analysis as speck
+from src_scan.src_keyfinder import analysis as keyfinder
 from src_scan.src_depcheck import analysis as depcheck
 from src_scan.src_sonarqube import analysis as sonarqube
 from src_scan.src_sonarqube import init_sonarqube, create_project
@@ -46,6 +47,7 @@ if __name__ == '__main__':
         'mobsf': defaultdict(list),
         'qark': defaultdict(list),
         'speck': defaultdict(list),
+        'keyfinder': defaultdict(list),
         'depcheck': defaultdict(list),
         'sonarqube': defaultdict(list)
     }
@@ -124,6 +126,16 @@ if __name__ == '__main__':
             else:
                 plugin['speck']['success'].append(src)
                 Color.print_success('[+] [speck] success')
+
+        # src_keyfinder
+        if 'keyfinder' in plugin:
+            ret = keyfinder(src_path, tools_path)
+            if ret:
+                plugin['keyfinder']['failed'].append(src)
+                Color.print_failed('[-] [keyfinder] failed')
+            else:
+                plugin['keyfinder']['success'].append(src)
+                Color.print_success('[+] [keyfinder] success')
 
         # src_depcheck
         if 'depcheck' in plugin:

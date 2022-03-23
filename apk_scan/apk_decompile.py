@@ -58,12 +58,15 @@ if __name__ == '__main__':
             shutil.rmtree(apk_path.parent.joinpath('apktool_smali'), ignore_errors=True)
             shutil.rmtree(apk_path.parent.joinpath('jadx_java'), ignore_errors=True)
         else:
+            ret = []
             if args.apktool:
                 ret1 = apktool(apk_path, tools_path)
+                ret.append(ret1)
             if args.jadx:
                 ret2 = jadx(apk_path, tools_path)
+                ret.append(ret2)
 
-            if ret1 or ret2:
+            if 1 in ret:
                 Color.print_failed('[-] [decompile] failed')
             else:
                 Color.print_success('[+] [decompile] success')
