@@ -278,7 +278,7 @@ unzip -q master.zip -d ./tools/ && rm master.zip
 
 echo "[+] Installing pwn ..."
 sudo dpkg --add-architecture i386
-sudo apt-get -y install gdb-multiarch gcc-multilib tcpdump netcat socat nasm build-essential libc6-dbg libc6-dbg:i386 ruby-dev
+sudo apt-get -y install gdb-multiarch gcc-multilib patchelf tcpdump netcat socat nasm build-essential libc6-dbg libc6-dbg:i386 ruby-dev
 sudo apt-get -y install glibc-source && tar -xf /usr/src/glibc/glib*.tar.xz
 sudo gem install one_gadget seccomp-tools
 python3 -m pip install pwntools ropper ropgadget capstone keystone

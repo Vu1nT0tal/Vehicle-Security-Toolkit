@@ -43,7 +43,7 @@ $ cd Vehicle-Security-Toolkit && ./init_local.sh
 远程 Android 设备连接 ADB，然后执行 `init_remote.sh`：
 
 ```sh
-$ ./init_remote.sh
+$ ./init_remote.sh [android|linux] [adb|ssh ip:port]
 ```
 
 注：Android 设备只有板子没有屏幕时可以使用 scrcpy 投屏。
