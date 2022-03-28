@@ -2,7 +2,9 @@
 
 - [poc_scan](#poc_scan)
   - [poc_suggester.py](#poc_suggesterpy)
-  - [poc_patch.py](#poc_patchpy)
+  - [poc_patch_linux.py](#poc_patch_linuxpy)
+  - [poc_patch_android.py](#poc_patch_androidpy)
+  - [poc_patch_qualcomm.py](#poc_patch_qualcommpy)
   - [poc_dirtypipe.py](#poc_dirtypipepy)
 
 ## poc_suggester.py
@@ -13,13 +15,29 @@
 $ python3 poc_suggester.py --connect [adb|ssh] --device ip:port
 ```
 
-## poc_patch.py
+## poc_patch_linux.py
 
 检测 Linux 内核仓库中已合并及未合并的所有 CVE 补丁。
 
 ```sh
-$ python3 poc_patch.py update   # 更新CVE补丁库
-$ python3 poc_patch.py scan --repo ~/kernel --version 5.10
+$ python3 poc_patch_linux.py update   # 更新CVE补丁库
+$ python3 poc_patch_linux.py scan --repo ~/kernel --version 5.10
+```
+
+## poc_patch_android.py
+
+检测 Android 系统仓库中已合并及未合并的所有 CVE 补丁。
+
+```sh
+$ python3 poc_patch_android.py update  # 更新CVE补丁库
+```
+
+## poc_patch_qualcomm.py
+
+检测 Android 内核仓库中已合并及未合并的所有 CVE 补丁。
+
+```sh
+$ python3 poc_patch_qualcomm.py update  # 更新CVE补丁库
 ```
 
 ## poc_dirtypipe.py

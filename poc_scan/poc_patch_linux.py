@@ -11,9 +11,11 @@ from aiohttp import ClientSession
 from concurrent.futures import ProcessPoolExecutor
 from thefuzz import fuzz
 from pathlib import Path
+from collections import defaultdict
 
 sys.path.append('..')
 from utils import shell_cmd, Color
+
 
 # https://kernel.org/category/releases.html
 KERNEL_VERSION = {
@@ -77,17 +79,42 @@ def update(args=None):
         loop.close()
 
 
+def get_severity(score: float, version: int=3):
+    """通过分数计算严重性"""
+
+    severity = 'None'
+    if version == 3:
+        if 0.1 <= score <= 3.9:
+            severity = 'Low'
+        elif 4.0 <= score <= 6.9:
+            severity = 'Medium'
+        elif 7.0 <= score <= 8.9:
+            severity = 'High'
+        elif 9.0 <= score <= 10.0:
+            severity = 'Critical'
+    else:
+        if 0.0 <= score <= 3.9:
+            severity = 'Low'
+        elif 4.0 <= score <= 6.9:
+            severity = 'Medium'
+        elif 7.0 <= score <= 10.0:
+            severity = 'High'
+    return severity
+
+
 def compareThread(cve: Path, patch_path: Path):
     """对比某个CVE补丁与所有内核补丁"""
 
     cve_name = '-'.join(cve.stem.split('-')[:3])
-    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
     result = {cve_name: {
         'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
-        'exp': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
-        'poc': poc_url if requests.get(poc_url) else '',
+        'poc': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
         'scan': {}
     }}
+    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
+    if requests.get(poc_url):
+        result[cve_name]['poc'].append(poc_url)
+
     try:
         f1 = open(cve).read()
         for patch in patch_path.glob('*'):
@@ -127,14 +154,31 @@ def scan(args):
         tasks.append(executor.submit(compareThread, cve, patch_path))
     executor.shutdown(True)
 
-    results = {}
-    report_file = report_path.joinpath('poc_patch.json')
+    results = defaultdict(dict)
+    report_file = report_path.joinpath('poc_patch_linux.json')
     with open(report_file, 'w+') as f1, open(cves_path.joinpath('data/kernel_cves.json')) as f2:
         cves_info = json.load(f2)
         for task in tasks:
             cve_name, result = task.result()
-            result[cve_name].update(cves_info[cve_name])
-            results.update(result)
+            item = result[cve_name]
+            item.update(cves_info[cve_name])
+
+            # 优先使用cvss3，且只保留其一
+            if 'cvss3' in item:
+                severity = get_severity(item['cvss3']['score'])
+                item.pop('cvss2')
+            elif 'cvss2' in item:
+                severity = get_severity(item['cvss2']['score'], version=2)
+            else:
+                severity = 'None'
+            item['severity'] = severity
+
+            if item['poc']:
+                results['exploit'].update(result)
+            if item['scan']:
+                results['patched'].update(result)
+            else:
+                results[severity].update(result)
         f1.write(json.dumps(results, indent=4))
         print(f'[+] Results saved in {report_file}')
 
@@ -155,6 +199,6 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('********************* poc_patch.py ********************')
+    print('****************** poc_patch_linux.py *****************')
     args = argument()
     args.func(args)
