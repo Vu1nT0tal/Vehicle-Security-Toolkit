@@ -147,7 +147,7 @@ echo "[+] Installing mobsfscan ..."
 sudo docker pull opensecurity/mobsfscan
 
 echo "[+] Installing DependencyCheck ..."
-wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip -O dependency-check.zip
+wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v7.0.3/dependency-check-7.0.3-release.zip -O dependency-check.zip
 unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
 wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
@@ -161,7 +161,7 @@ sudo docker pull sonarqube:community
 sudo docker pull sonarsource/sonar-scanner-cli
 
 mkdir -p ./tools/sonarqube_extensions/plugins && cd ./tools/sonarqube_extensions/plugins
-wget -q https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.1.x-beta1/sonar-cxx-plugin-2.0.6.2921.jar
+wget -q https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.0.7/sonar-cxx-plugin-2.0.7.3119.jar
 wget -q https://github.com/dependency-check/dependency-check-sonar-plugin/releases/download/3.0.1/sonar-dependency-check-plugin-3.0.1.jar
 wget -q https://github.com/spotbugs/sonar-findbugs/releases/download/4.0.6/sonar-findbugs-plugin-4.0.6.jar
 wget -q https://github.com/jensgerdes/sonar-pmd/releases/download/3.3.1/sonar-pmd-plugin-3.3.1.jar
@@ -253,6 +253,11 @@ wget -q https://github.com/RikkaApps/WADB/releases/download/v5.1.1/wadb-v5.1.1.r
 
 echo "[+] Installing SnoopSnitch.apk ..."
 wget -q https://opensource.srlabs.de/attachments/download/185/SnoopSnitch-2.0.11.apk -O ./tools/SnoopSnitch.apk
+
+echo "[+] Installing camille ..."
+python3 -m pip install xlwt click
+wget -q https://github.com/zhengjim/camille/archive/refs/heads/master.zip
+unzip -q master.zip -d ./tools/ && rm master.zip
 
 echo "Installing drozer ..."
 # sudo docker pull fsecurelabs/drozer

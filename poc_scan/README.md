@@ -30,6 +30,7 @@ $ python3 poc_patch_linux.py scan --repo ~/kernel --version 5.10
 
 ```sh
 $ python3 poc_patch_android.py update  # 更新CVE补丁库
+$ python3 poc_patch_android.py scan --repo ~/hmi --version 11
 ```
 
 ## poc_patch_qualcomm.py

@@ -18,6 +18,7 @@
     - [src-allinone_c.py](#src-allinone_cpy)
   - [系统测试](#系统测试)
   - [漏洞测试](#漏洞测试)
+  - [隐私合规测试](#隐私合规测试)
   - [APK Fuzz 测试](#apk-fuzz-测试)
   - [其他工具](#其他工具)
   - [开源协议](#开源协议)
@@ -25,7 +26,7 @@
 
 ## 安装
 
-完整安装可能需要几个小时。如果担心破坏本地环境，可以使用虚拟机，具体请看 [dev](./dev)。
+在 Ubuntu 20.04 上完整安装可能需要几个小时。如果担心破坏本地环境，可以使用虚拟机，具体请看 [dev](./dev)。
 
 ### init_local.sh
 
@@ -136,6 +137,14 @@ $ python3 sys-allinone.py --sys ~/source
 
 ```sh
 $ python3 poc_allinone.py --arch [x64|arm|aarch64] --connect [adb|ssh] --device ip:port
+```
+
+## 隐私合规测试
+
+Android App 隐私合规测试。
+
+```sh
+$ python3 tools/camille-master/camille.py -ns -t 3 -f demo.xls
 ```
 
 ## APK Fuzz 测试

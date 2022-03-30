@@ -48,9 +48,6 @@ def update(args=None):
                     with open(patch, 'w+') as f:
                         f.write(data)
 
-    cves_path = Path('~/github/linux_kernel_cves').expanduser()
-    patch_path = cves_path.joinpath('patch')
-
     if cves_path.exists():
         output, ret_code = shell_cmd('git pull', env={'cwd': '~/github/linux_kernel_cves'})
     else:
@@ -67,14 +64,14 @@ def update(args=None):
     loop = asyncio.get_event_loop()
     for cve, value in stream_fixes.items():
         for version, commit in value.items():
-            patch_path.joinpath(version).mkdir(parents=True, exist_ok=True)
+            patch_sec_path.joinpath(version).mkdir(parents=True, exist_ok=True)
             url = f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/patch/?id={commit["cmt_id"]}'
-            patch = patch_path.joinpath(f'{version}/{cve}-{commit["cmt_id"]}.patch')
+            patch = patch_sec_path.joinpath(f'{version}/{cve}-{commit["cmt_id"]}.patch')
             task = asyncio.ensure_future(download(sem, url, patch))
             tasks.append(task)
     try:
         loop.run_until_complete(asyncio.wait(tasks))
-        print(f'[+] Download {len(tasks)} patchs: {patch_path}')
+        print(f'[+] Download {len(tasks)} patchs: {patch_sec_path}')
     finally:
         loop.close()
 
@@ -106,14 +103,14 @@ def compareThread(cve: Path, patch_path: Path):
     """对比某个CVE补丁与所有内核补丁"""
 
     cve_name = '-'.join(cve.stem.split('-')[:3])
-    result = {cve_name: {
+    result = {
         'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
         'poc': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
         'scan': {}
-    }}
+    }
     poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
     if requests.get(poc_url):
-        result[cve_name]['poc'].append(poc_url)
+        result['poc'].append(poc_url)
 
     try:
         f1 = open(cve).read()
@@ -121,9 +118,9 @@ def compareThread(cve: Path, patch_path: Path):
             f2 = open(patch).read()
             ratio = fuzz.ratio(f1, f2)
             if ratio > 70:
-                result[cve_name]['scan'].update({ratio: patch.stem})
+                result['scan'].update({ratio: patch.stem})
                 print(f'[+] {cve_name} found ({ratio}%): {patch.stem}')
-        if not result[cve_name]['scan']:
+        if not result['scan']:
             print(f'[-] {cve_name} not found!')
     except Exception as e:
         print(e, cve_name, patch.stem)
@@ -134,24 +131,21 @@ def compareThread(cve: Path, patch_path: Path):
 def scan(args):
     """对比所有CVE补丁与所有内核补丁"""
 
-    cves_path = Path('~/github/linux_kernel_cves').expanduser()
     repo_path = Path(args.repo).expanduser().absolute()
-    report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
-    patch_path = report_path.joinpath('patch_all')
 
-    cmd = f'git format-patch -N {KERNEL_VERSION[args.version]} -o {patch_path}'
+    cmd = f'git format-patch -N {KERNEL_VERSION[args.version]} -o {patch_all_path}'
     output, ret_code = shell_cmd(cmd, env={'cwd': repo_path})
-    number, _ = shell_cmd(f'ls {patch_path} | wc -l')
+    number, _ = shell_cmd(f'ls {patch_all_path} | wc -l')
     if ret_code != 0:
         print(output)
         return False
     else:
-        print(f'[+] Generate {number.strip()} patchs: {patch_path}')
+        print(f'[+] Generate {number.strip()} patchs: {patch_all_path}')
 
     tasks = []
     executor = ProcessPoolExecutor(os.cpu_count()-1)
     for cve in cves_path.joinpath(f'patch/{args.version}').glob('*'):
-        tasks.append(executor.submit(compareThread, cve, patch_path))
+        tasks.append(executor.submit(compareThread, cve, patch_all_path))
     executor.shutdown(True)
 
     results = defaultdict(dict)
@@ -159,8 +153,7 @@ def scan(args):
     with open(report_file, 'w+') as f1, open(cves_path.joinpath('data/kernel_cves.json')) as f2:
         cves_info = json.load(f2)
         for task in tasks:
-            cve_name, result = task.result()
-            item = result[cve_name]
+            cve_name, item = task.result()
             item.update(cves_info[cve_name])
 
             # 优先使用cvss3，且只保留其一
@@ -173,6 +166,7 @@ def scan(args):
                 severity = 'None'
             item['severity'] = severity
 
+            result = {cve_name: item}
             if item['poc']:
                 results['exploit'].update(result)
             if item['scan']:
@@ -200,5 +194,12 @@ def argument():
 
 if __name__ == '__main__':
     print('****************** poc_patch_linux.py *****************')
+    cves_path = Path('~/github/linux_kernel_cves').expanduser()
+
+    report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
+    report_path.mkdir(parents=True, exist_ok=True)
+    patch_all_path = report_path.joinpath('patch_all_linux')
+    patch_sec_path = report_path.joinpath('patch_sec_linux')
+
     args = argument()
     args.func(args)
