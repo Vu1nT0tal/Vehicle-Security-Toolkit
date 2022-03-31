@@ -29,7 +29,7 @@ $ python3 poc_patch_linux.py scan --repo ~/kernel --version 5.10
 检测 Android 系统仓库中已合并及未合并的所有 CVE 补丁。
 
 ```sh
-$ python3 poc_patch_android.py update  # 更新CVE补丁库
+$ python3 poc_patch_android.py update --version 11  # 更新CVE补丁库
 $ python3 poc_patch_android.py scan --repo ~/hmi --version 11
 ```
 

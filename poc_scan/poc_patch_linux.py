@@ -121,7 +121,7 @@ def compareThread(cve: Path, patch_path: Path):
                 result['scan'].update({ratio: patch.stem})
                 print(f'[+] {cve_name} found ({ratio}%): {patch.stem}')
         if not result['scan']:
-            print(f'[-] {cve_name} not found!')
+            Color.print_failed(f'[-] {cve_name} not found!')
     except Exception as e:
         print(e, cve_name, patch.stem)
     finally:

@@ -41,6 +41,13 @@ sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/p
 rm -f packages.microsoft.gpg
 sudo apt-get update && sudo apt-get -y install code
 
+echo "[+] Install selenium ..."
+python3 -m pip install selenium
+wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
+wget -q https://chromedriver.storage.googleapis.com/100.0.4896.60/chromedriver_linux64.zip -O chromedriver.zip
+sudo dpkg -i chrome.deb && rm chrome.deb
+unzip -q chromedriver.zip && sudo mv chromedriver /usr/bin && rm chromedriver.zip
+
 echo "[+] Installing golang ..."
 sudo add-apt-repository -y ppa:longsleep/golang-backports
 sudo apt-get update && sudo apt-get -y install golang-go
@@ -147,7 +154,7 @@ echo "[+] Installing mobsfscan ..."
 sudo docker pull opensecurity/mobsfscan
 
 echo "[+] Installing DependencyCheck ..."
-wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v7.0.3/dependency-check-7.0.3-release.zip -O dependency-check.zip
+wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v7.0.4/dependency-check-7.0.4-release.zip -O dependency-check.zip
 unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
 wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
