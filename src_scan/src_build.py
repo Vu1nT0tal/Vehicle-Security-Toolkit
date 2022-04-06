@@ -3,6 +3,7 @@
 import re
 import sys
 import json
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -138,7 +139,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** src_build.py ********************')
+    print(pyfiglet.figlet_format('src_build'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     args = argument()
     src_dirs = open(args.config, 'r').read().splitlines()

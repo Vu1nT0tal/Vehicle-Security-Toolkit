@@ -4,6 +4,7 @@
 import os
 import re
 import time
+import pyfiglet
 import argparse
 
 from drozer.console.session import Session
@@ -253,7 +254,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** drozer_scan.py ********************')
+    print(pyfiglet.figlet_format('drozer_scan'))
     args = argument()
     package_list = open(args.config, 'r').read().splitlines()
 

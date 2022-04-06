@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 import argparse
 import tempfile
 import paramiko
@@ -158,7 +159,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* poc_dirtypipe.py ******************')
+    print(pyfiglet.figlet_format('poc_dirtypipe'))
     parser, args = argument()
     if ':' in args.device:
         ip, port = args.device.split(':')

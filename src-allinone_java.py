@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+import pyfiglet
 import argparse
 from pathlib import Path
 from collections import defaultdict
@@ -33,8 +34,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('**************** src-allinone_java.py ****************')
-
+    print(pyfiglet.figlet_format('src-allinone_java'))
     args = argument()
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 

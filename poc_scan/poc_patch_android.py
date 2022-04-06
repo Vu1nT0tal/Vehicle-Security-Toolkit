@@ -3,6 +3,7 @@
 import sys
 import json
 import base64
+import pyfiglet
 import argparse
 import requests
 import cve_searchsploit
@@ -63,11 +64,10 @@ def get_patch(url: str):
         url = shadow.find_element('tag name', 'a').get_attribute('href')
         r = requests.get(f'{url}^!/?format=TEXT')
         patch = base64.b64decode(r.text).decode()
-    elif 'lore.kernel.org/lkml' in url:
-        patch, _ = shell_cmd(f'b4 -q am -o- {url.split("/")[-1]}')
-    elif 'lore.kernel.org/patchwork' in url:
-        r = requests.get(url)
-        url = r.history[-1].headers['Location']
+    elif 'lore.kernel.org' in url:
+        if 'patchwork' in url:
+            r = requests.get(url)
+            url = r.history[-1].headers['Location']
         patch, _ = shell_cmd(f'b4 -q am -o- {url.split("/")[-1]}')
     elif 'github.com/torvalds' in url:
         patch = requests.get(f'{url}.patch')
@@ -90,9 +90,16 @@ def get_cve(cve_name: str):
         'nvd_text': r['summary'] if r else '',
         'ref_urls': r['references'] if r else [],
     }
+    result['ref_urls'].append(f'https://nvd.nist.gov/vuln/detail/{cve_name}')
     poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
     if requests.get(poc_url):
         result['poc'].append(poc_url)
+    if result['cwe']:
+        cwe_url = f'https://cwe.mitre.org/data/definitions/{result["cwe"].split("-")[1]}.html'
+        r = requests.get(cwe_url)
+        root = etree.HTML(r.content)
+        cwe = root.xpath('//*[@id="Contentpane"]/div[2]/h2/text()')[0]
+        result['cwe'] = cwe
     return result
 
 
@@ -279,7 +286,7 @@ def update(args):
 
     r = requests.get(bulletin_url)
     root = etree.HTML(r.content)
-    table = root.xpath('/html/body/section/section/main/devsite-content/article/div[2]/table/tr')
+    table = root.xpath('//*[@id="gc-wrapper"]/main/devsite-content/article/div[2]/table/tr')
     urls = []
     for i in table:
         href = i.xpath('td/a/@href')
@@ -348,7 +355,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('***************** poc_patch_android.py ****************')
+    print(pyfiglet.figlet_format('poc_patch_android'))
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     patch_sec_path = report_path.joinpath('patch_sec_android')
     patch_sec_path.mkdir(parents=True, exist_ok=True)

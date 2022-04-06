@@ -2,6 +2,7 @@
 
 import sys
 import time
+import pyfiglet
 import argparse
 import requests
 from lxml import etree
@@ -136,7 +137,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** apk_audit.py ********************')
+    print(pyfiglet.figlet_format('apk_audit'))
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     # 初始化 Audit

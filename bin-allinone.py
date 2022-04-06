@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import pyfiglet
 import argparse
 from pathlib import Path
 from collections import defaultdict
@@ -17,7 +18,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* bin-allinone.py ******************')
+    print(pyfiglet.figlet_format('bin-allinone'))
     args = argument()
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 

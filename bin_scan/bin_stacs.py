@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -29,7 +30,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** bin_stacs.py ********************')
+    print(pyfiglet.figlet_format('bin_stacs'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     elf_dirs = open(argument().config, 'r').read().splitlines()
 

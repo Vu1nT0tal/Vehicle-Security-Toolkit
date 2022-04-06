@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -29,7 +30,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** src_mobsf.py ********************')
+    print(pyfiglet.figlet_format('src_mobsf'))
     src_dirs = open(argument().config, 'r').read().splitlines()
 
     for src in src_dirs:

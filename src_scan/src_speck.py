@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** src_speck.py ********************')
+    print(pyfiglet.figlet_format('src_speck'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     src_dirs = open(argument().config, 'r').read().splitlines()
 

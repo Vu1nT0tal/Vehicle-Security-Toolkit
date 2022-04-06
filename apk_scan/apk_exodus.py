@@ -2,6 +2,7 @@
 
 import re
 import json
+import pyfiglet
 import requests
 import argparse
 from pathlib import Path
@@ -64,7 +65,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* apk_exodus.py ********************')
+    print(pyfiglet.figlet_format('apk_exodus'))
 
     success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()

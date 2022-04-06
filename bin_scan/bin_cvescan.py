@@ -2,6 +2,7 @@
 
 import sys
 import json
+import pyfiglet
 import argparse
 import requests
 from pathlib import Path
@@ -57,7 +58,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* bin_cvescan.py *******************')
+    print(pyfiglet.figlet_format('bin_cvescan'))
     elf_dirs = open(argument().config, 'r').read().splitlines()
 
     for elf in elf_dirs:

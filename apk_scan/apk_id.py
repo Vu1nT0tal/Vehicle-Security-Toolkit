@@ -2,6 +2,7 @@
 
 import sys
 import json
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('********************* apk_id.py **********************')
+    print(pyfiglet.figlet_format('apk_id'))
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:

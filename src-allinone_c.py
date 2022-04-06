@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -43,7 +44,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** src-allinone_c.py *****************')
+    print(pyfiglet.figlet_format('src-allinone_c'))
     src_path = Path(argument().src).absolute()
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 

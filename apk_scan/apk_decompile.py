@@ -2,6 +2,7 @@
 
 import sys
 import shutil
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -44,7 +45,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** apk_decompile.py ******************')
+    print(pyfiglet.figlet_format('apk_decompile'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 
     args = argument()

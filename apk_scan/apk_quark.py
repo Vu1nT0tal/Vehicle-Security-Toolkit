@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+import pyfiglet
 import argparse
 from pathlib import Path
 from quark.report import Report
@@ -24,7 +25,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** apk_quark.py ********************')
+    print(pyfiglet.figlet_format('apk_quark'))
 
     success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()

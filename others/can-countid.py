@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 from pathlib import Path
 
-print('******************* can-countid.py *******************')
+print(pyfiglet.figlet_format('can-countid'))
 
 try:
     can_file = Path(sys.argv[1]).absolute()

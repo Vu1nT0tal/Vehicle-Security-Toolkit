@@ -2,6 +2,7 @@
 
 import sys
 import shutil
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** src_fireline.py *******************')
+    print(pyfiglet.figlet_format('src_fireline'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     src_dirs = open(argument().config, 'r').read().splitlines()
 

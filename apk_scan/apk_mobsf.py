@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 import argparse
 import requests
 from pathlib import Path
@@ -111,7 +112,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* apk_mobsf.py *********************')
+    print(pyfiglet.figlet_format('apk_mobsf'))
     args = argument()
     apk_dirs = open(args.config, 'r').read().splitlines()
 

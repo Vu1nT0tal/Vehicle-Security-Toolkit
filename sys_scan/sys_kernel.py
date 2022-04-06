@@ -2,6 +2,7 @@
 
 import sys
 import json
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -24,7 +25,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** sys_kernel.py ********************')
+    print(pyfiglet.figlet_format('sys_kernel'))
     config_path = Path(argument().config).expanduser().absolute()
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     report_path.mkdir(parents=True, exist_ok=True)

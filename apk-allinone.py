@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import time
+import pyfiglet
 import argparse
 from pathlib import Path
 from collections import defaultdict
@@ -35,7 +36,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* apk-allinone.py ******************')
+    print(pyfiglet.figlet_format('apk-allinone'))
     args = argument()
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 

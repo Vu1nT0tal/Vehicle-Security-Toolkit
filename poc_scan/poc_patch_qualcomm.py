@@ -2,6 +2,7 @@
 
 import re
 import sys
+import pyfiglet
 import requests
 from pathlib import Path
 
@@ -36,5 +37,5 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('**************** poc_patch_qualcomm.py ****************')
+    print(pyfiglet.figlet_format('poc_patch_qualcomm'))
     print(get_latest_bulletin())

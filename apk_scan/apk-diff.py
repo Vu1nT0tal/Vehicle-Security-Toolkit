@@ -2,6 +2,7 @@
 
 import re
 import sys
+import pyfiglet
 import argparse
 import difflib
 from filecmp import dircmp
@@ -76,7 +77,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** apk-diff.py *********************')
+    print(pyfiglet.figlet_format('apk-diff'))
     args = argument()
 
     diff_apk(args.apk1, args.apk2)

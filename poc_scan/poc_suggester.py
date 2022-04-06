@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 import argparse
 import paramiko
 import getpass
@@ -18,7 +19,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* poc_suggester.py ******************')
+    print(pyfiglet.figlet_format('poc_suggester'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     parser, args = argument()
     if ':' in args.device:

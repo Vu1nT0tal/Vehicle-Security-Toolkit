@@ -23,7 +23,7 @@ EOF
 sudo apt-get update && sudo apt-get -y upgrade
 
 sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
-python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko
+python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet
 
 echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import pyfiglet
 import argparse
 from pathlib import Path
 from utils import shell_cmd, Color
@@ -28,7 +29,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('***************** bin_cwechecker.py ******************')
+    print(pyfiglet.figlet_format('bin_cwechecker'))
     elf_dirs = open(argument().config, 'r').read().splitlines()
 
     for elf in elf_dirs:

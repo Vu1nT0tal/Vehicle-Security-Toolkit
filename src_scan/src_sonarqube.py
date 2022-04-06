@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-import re
 import sys
 import shutil
+import pyfiglet
 import argparse
 from pathlib import Path
 from sonarqube import SonarQubeClient
@@ -113,7 +113,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** src_sonarqube.py *******************')
+    print(pyfiglet.figlet_format('src_sonarqube'))
     args = argument()
 
     src_dirs = open(args.config, 'r').read().splitlines()

@@ -3,6 +3,7 @@
 import os
 import sys
 import json
+import pyfiglet
 import argparse
 import cve_searchsploit
 import requests
@@ -193,7 +194,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('****************** poc_patch_linux.py *****************')
+    print(pyfiglet.figlet_format('poc_patch_linux'))
     cves_path = Path('~/github/linux_kernel_cves').expanduser()
 
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')

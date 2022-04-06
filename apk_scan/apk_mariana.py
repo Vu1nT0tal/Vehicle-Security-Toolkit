@@ -2,6 +2,7 @@
 
 import sys
 import shutil
+import pyfiglet
 import argparse
 import tempfile
 from pathlib import Path
@@ -43,7 +44,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************* apk_mariana.py *******************')
+    print(pyfiglet.figlet_format('apk_mariana'))
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
     apk_dirs = open(argument().config, 'r').read().splitlines()
 

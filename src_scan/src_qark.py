@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import pyfiglet
 import argparse
 from pathlib import Path
 
@@ -34,7 +35,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** src_qark.py *********************')
+    print(pyfiglet.figlet_format('src_qark'))
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 
     args = argument()

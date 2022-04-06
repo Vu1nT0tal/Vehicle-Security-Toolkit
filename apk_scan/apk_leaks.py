@@ -3,6 +3,7 @@
 import os
 import re
 import json
+import pyfiglet
 import threading
 import argparse
 
@@ -142,7 +143,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print('******************** apk_leaks.py ********************')
+    print(pyfiglet.figlet_format('apk_leaks'))
 
     success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()
