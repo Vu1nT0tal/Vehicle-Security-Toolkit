@@ -21,8 +21,7 @@
   - [隐私合规测试](#隐私合规测试)
   - [APK Fuzz 测试](#apk-fuzz-测试)
   - [其他工具](#其他工具)
-  - [开源协议](#开源协议)
-  - [Stargazers over time](#stargazers-over-time)
+  - [LICENSE](#license)
 
 ## 安装
 
@@ -155,10 +154,8 @@ $ python3 tools/camille-master/camille.py -ns -t 3 -f demo.xls
 
 [其他工具](./others)
 
-## 开源协议
+## LICENSE
 
 Vehicle-Security-Toolkit use SATA(Star And Thank Author) [License](./LICENSE), so you have to star this project before using. 🙏
-
-## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/firmianay/Vehicle-Security-Toolkit.svg)](https://starchart.cc/firmianay/Vehicle-Security-Toolkit)

@@ -13,7 +13,7 @@ from utils import shell_cmd, Color
 def apktool(apk_path: Path, tools_path: Path):
     apktool_jar = tools_path.joinpath('apktool.jar')
     output_path = apk_path.parent.joinpath('apktool_smali')
-    cmd = f'java -jar {apktool_jar} d {apk_path} -f -o {output_path}'
+    cmd = f'java -jar {apktool_jar} d "{apk_path}" -f -o {output_path}'
     output, ret_code = shell_cmd(cmd)
     if output_path.joinpath('AndroidManifest.xml').exists():
         return 0
@@ -25,7 +25,7 @@ def apktool(apk_path: Path, tools_path: Path):
 def jadx(apk_path: Path, tools_path: Path):
     jadx_bin = tools_path.joinpath('jadx/bin/jadx')
     output_path = apk_path.parent.joinpath('jadx_java')
-    cmd = f'{jadx_bin} {apk_path} -d {output_path}'
+    cmd = f'{jadx_bin} "{apk_path}" -d {output_path}'
     output, ret_code = shell_cmd(cmd)
     apk_path.parent.joinpath(f'{apk_path.stem}.jobf').unlink(missing_ok=True)
     if output_path.joinpath('resources/AndroidManifest.xml').exists():

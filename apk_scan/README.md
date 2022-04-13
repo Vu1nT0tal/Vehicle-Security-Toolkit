@@ -173,5 +173,5 @@ $ python3 apk-diff.py <apk1> <apk2>
 使用 apktool 自动化重打包并签名：
 
 ```sh
-$ ./apk_repack.sh <smali_folder> <apk_name>
+$ ./apk-repack.sh <smali_folder> <apk_name>
 ```

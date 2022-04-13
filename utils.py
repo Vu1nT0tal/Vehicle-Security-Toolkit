@@ -1,4 +1,5 @@
 import os
+import pprint
 import socket
 import hashlib
 from lxml import etree
@@ -78,6 +79,10 @@ class Color:
     @staticmethod
     def print_failed(data: str):
         print(Fore.LIGHTRED_EX+data+Fore.RESET)
+
+    @staticmethod
+    def print(data):
+        pprint.pprint(data)
 
 
 class ManifestUtil:
