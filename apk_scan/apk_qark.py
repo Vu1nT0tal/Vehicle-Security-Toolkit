@@ -48,8 +48,7 @@ if __name__ == '__main__':
         report_path = apk_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        ret = analysis(apk_path, args.report)
-        if ret:
+        if ret := analysis(apk_path, args.report):
             Color.print_failed('[-] [qark] failed')
         else:
             Color.print_success('[+] [qark] success')

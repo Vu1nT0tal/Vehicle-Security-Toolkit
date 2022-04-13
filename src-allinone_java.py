@@ -67,11 +67,9 @@ if __name__ == '__main__':
 
         # src_build
         if args.build:
-            print(f'[+] Building ...')
-            item = build_config.get(src_path.name)
-            if item:
-                ret = build(src_path, item)
-                if ret:
+            print('[+] Building ...')
+            if item := build_config.get(src_path.name):
+                if ret := build(src_path, item):
                     plugin['build']['faild'].append(src)
                     Color.print_failed('[-] [build] faild')
                 else:
@@ -89,8 +87,7 @@ if __name__ == '__main__':
 
         # src_fireline
         if 'fireline' in plugin:
-            ret = fireline(src_path, tools_path)
-            if ret:
+            if ret := fireline(src_path, tools_path):
                 plugin['fireline']['failed'].append(src)
                 Color.print_failed('[-] [fireline] failed')
             else:
@@ -99,8 +96,7 @@ if __name__ == '__main__':
 
         # src_mobsf
         if 'mobsf' in plugin:
-            ret = mobsf(src_path)
-            if ret:
+            if ret := mobsf(src_path):
                 plugin['mobsf']['failed'].append(src)
                 Color.print_failed('[-] [mobsf] failed')
             else:
@@ -109,8 +105,7 @@ if __name__ == '__main__':
 
         # src_qark
         if 'qark' in plugin:
-            ret = qark(src_path, tools_path)
-            if ret:
+            if ret := qark(src_path, tools_path):
                 plugin['qark']['failed'].append(src)
                 Color.print_failed('[-] [qark] failed')
             else:
@@ -119,8 +114,7 @@ if __name__ == '__main__':
 
         # src_speck
         if 'speck' in plugin:
-            ret = speck(src_path, tools_path)
-            if ret:
+            if ret := speck(src_path, tools_path):
                 plugin['speck']['failed'].append(src)
                 Color.print_failed('[-] [speck] failed')
             else:
@@ -129,8 +123,7 @@ if __name__ == '__main__':
 
         # src_keyfinder
         if 'keyfinder' in plugin:
-            ret = keyfinder(src_path, tools_path)
-            if ret:
+            if ret := keyfinder(src_path, tools_path):
                 plugin['keyfinder']['failed'].append(src)
                 Color.print_failed('[-] [keyfinder] failed')
             else:
@@ -154,8 +147,7 @@ if __name__ == '__main__':
         if 'sonarqube' in plugin:
             sonar, sonarqube_key = init_sonarqube(sonarqube_key)
             if create_project(sonar):
-                ret = sonarqube(src_path, 'cli', sonarqube_key)
-                if ret:
+                if ret := sonarqube(src_path, 'cli', sonarqube_key):
                     plugin['sonarqube']['failed'].append(src)
                     Color.print_failed('[-] [sonarqube] failed')
                 else:

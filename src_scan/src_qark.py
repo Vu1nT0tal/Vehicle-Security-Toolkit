@@ -48,8 +48,7 @@ if __name__ == '__main__':
         report_path = src_path.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        ret = analysis(src_path, args.report)
-        if ret:
+        if ret := analysis(src_path, args.report):
             Color.print_failed('[-] [qark] failed')
         else:
             Color.print_success('[+] [qark] success')

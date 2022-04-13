@@ -39,8 +39,7 @@ if __name__ == '__main__':
         report_path = elf_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        ret = analysis(elf_path)
-        if ret:
+        if ret := analysis(elf_path):
             Color.print_failed('[-] [cwechecker] failed')
         else:
             Color.print_success('[+] [cwechecker] success')

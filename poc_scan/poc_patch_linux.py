@@ -90,13 +90,12 @@ def get_severity(score: float, version: int=3):
             severity = 'High'
         elif 9.0 <= score <= 10.0:
             severity = 'Critical'
-    else:
-        if 0.0 <= score <= 3.9:
-            severity = 'Low'
-        elif 4.0 <= score <= 6.9:
-            severity = 'Medium'
-        elif 7.0 <= score <= 10.0:
-            severity = 'High'
+    elif 0.0 <= score <= 3.9:
+        severity = 'Low'
+    elif 4.0 <= score <= 6.9:
+        severity = 'Medium'
+    elif 7.0 <= score <= 10.0:
+        severity = 'High'
     return severity
 
 
@@ -125,8 +124,7 @@ def compareThread(cve: Path, patch_path: Path):
             Color.print_failed(f'[-] {cve_name} not found!')
     except Exception as e:
         print(e, cve_name, patch.stem)
-    finally:
-        return cve_name, result
+    return cve_name, result
 
 
 def scan(args):
@@ -143,10 +141,8 @@ def scan(args):
     else:
         print(f'[+] Generate {number.strip()} patchs: {patch_all_path}')
 
-    tasks = []
     executor = ProcessPoolExecutor(os.cpu_count()-1)
-    for cve in cves_path.joinpath(f'patch/{args.version}').glob('*'):
-        tasks.append(executor.submit(compareThread, cve, patch_all_path))
+    tasks = [executor.submit(compareThread, cve, patch_all_path) for cve in cves_path.joinpath(f'patch/{args.version}').glob('*')]
     executor.shutdown(True)
 
     results = defaultdict(dict)

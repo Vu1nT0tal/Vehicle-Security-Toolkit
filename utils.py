@@ -26,12 +26,10 @@ def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
     cwd = local_env.pop('cwd', None)
     cwd = Path(cwd).expanduser() if cwd else cwd
     exe = local_env.pop('exe', 'sh')
-    gradle = local_env.pop('gradle', None)
-    if gradle:
+    if gradle := local_env.pop('gradle', None):
         cmd = f'{change_gradle[gradle]} && {cmd}'
         exe = 'zsh'
-    java = local_env.pop('java', None)
-    if java:
+    if java := local_env.pop('java', None):
         cmd = f'{change_java[java]} && {cmd}'
         exe = 'zsh'
 
@@ -95,28 +93,18 @@ class ManifestUtil:
         permissions = []
         permissions_xml = self.root.findall("uses-permission")
         for perm in permissions_xml:
-            for att in perm.attrib:
-                permissions.append(perm.attrib[att])
-
+            permissions.extend(perm.attrib[att] for att in perm.attrib)
         return permissions
 
     def is_debuggable(self):
-        application_tag = self.root.findall('application')
-        application_tag = application_tag[0]
-        if '{http://schemas.android.com/apk/res/android}debuggable' in application_tag.attrib \
-                and application_tag.attrib['{http://schemas.android.com/apk/res/android}debuggable'] == 'true':
-            return True
-        else:
-            return False
+        return self._extracted('{http://schemas.android.com/apk/res/android}debuggable')
 
     def is_allowBackup(self):
-        application_tag = self.root.findall('application')
-        application_tag = application_tag[0]
-        if '{http://schemas.android.com/apk/res/android}allowBackup' in application_tag.attrib \
-                and application_tag.attrib['{http://schemas.android.com/apk/res/android}allowBackup'] == 'true':
-            return True
-        else:
-            return False
+        return self._extracted('{http://schemas.android.com/apk/res/android}allowBackup')
+
+    def _extracted(self, arg0):
+        application_tag = self.root.findall('application')[0]
+        return arg0 in application_tag.attrib and application_tag.attrib[arg0] == 'true'
 
     def check_all(self):
         Color.print_focus('Debuggable:')
@@ -132,15 +120,14 @@ class ManifestUtil:
             Color.print_success('False')
 
     def set_debuggable(self):
-        application_tag = self.root.findall('application')
-        application_tag = application_tag[0]
-        application_tag.set('{http://schemas.android.com/apk/res/android}debuggable', 'true')
-        self.tree.write(self.path)
+        self._extracted2('{http://schemas.android.com/apk/res/android}debuggable', 'true')
 
     def set_networkSecurityConfig(self):
-        application_tag = self.root.findall('application')
-        application_tag = application_tag[0]
-        application_tag.set('{http://schemas.android.com/apk/res/android}networkSecurityConfig', '@xml/network_security_config')
+        self._extracted2('{http://schemas.android.com/apk/res/android}networkSecurityConfig', '@xml/network_security_config')
+
+    def _extracted2(self, arg0, arg1):
+        application_tag = self.root.findall('application')[0]
+        application_tag.set(arg0, arg1)
         self.tree.write(self.path)
 
 

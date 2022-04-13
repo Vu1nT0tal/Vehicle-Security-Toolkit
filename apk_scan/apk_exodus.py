@@ -12,13 +12,10 @@ from exodus_core.analysis.static_analysis import StaticAnalysis
 
 def get_trackers():
     """将trackers缓存下来，避免每个扫描都下载一遍"""
-    signatures = []
     exodus_url = "https://reports.exodus-privacy.eu.org/api/trackers"
-    r = requests.get(exodus_url)
-    data = r.json()
-    for e in data['trackers']:
-        signatures.append(namedtuple('tracker', data['trackers'][e].keys())(*data['trackers'][e].values()))
+    data = requests.get(exodus_url).json()
 
+    signatures = [namedtuple('tracker', data['trackers'][e].keys())(*data['trackers'][e].values()) for e in data['trackers']]
     compiled_tracker_signature = [re.compile(track.code_signature) for track in signatures]
 
     return signatures, compiled_tracker_signature
@@ -34,15 +31,15 @@ class AnalysisHelper(StaticAnalysis):
                 'uaid': self.get_application_universal_id(),
                 'name': self.get_app_name(),
                 'permissions': self.get_permissions(),
-                'libraries': [library for library in self.get_libraries()],
-            },
+                'libraries': list(self.get_libraries())
+                },
             'apk': {
                 'path': self.apk_path,
-                'checksum': self.get_sha256(),
+                'checksum': self.get_sha256()
             },
             'trackers': [
                 {'name': t.name, 'id': t.id} for t in self.detect_trackers()
-            ],
+            ]
         }
 
 

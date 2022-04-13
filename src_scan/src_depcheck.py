@@ -34,7 +34,7 @@ def analysis_gradle(src_path: Path, tools_path: Path):
     build1 = str(src_path.joinpath('build.gradle'))
 
     # 备份
-    shutil.copy(build1, build1+'.bak')
+    shutil.copy(build1, f'{build1}.bak')
 
     # 修改
     sed1 = 'sed -i \"/dependencies {/a\classpath \'org.owasp:dependency-check-gradle:6.5.3\'\" '+build1
@@ -45,7 +45,7 @@ def analysis_gradle(src_path: Path, tools_path: Path):
 
     # 运行
 
-    cmd = f'chmod +x gradlew && ./gradlew dependencyCheckAnalyze'
+    cmd = 'chmod +x gradlew && ./gradlew dependencyCheckAnalyze'
     output, ret_code = shell_cmd(cmd, local_env)
 
     if 'Could not determine java version' in output:
@@ -55,7 +55,7 @@ def analysis_gradle(src_path: Path, tools_path: Path):
 
     if ret_code == 0:
         # 生成依赖关系图
-        cmd = f'chmod +x gradlew && ./gradlew -q projects 2>&1 | grep Project | cut -d "\'" -f 2'
+        cmd = 'chmod +x gradlew && ./gradlew -q projects 2>&1 | grep Project | cut -d "\'" -f 2'
         output, _ = shell_cmd(cmd, local_env)
         # 遍历根模块和所有子模块
         for subproject in output.splitlines()+['']:
@@ -70,7 +70,7 @@ def analysis_gradle(src_path: Path, tools_path: Path):
         output, ret_code = analysis_cli(src_path, tools_path)
 
     # 恢复
-    shutil.move(build1+'.bak', build1)
+    shutil.move(f'{build1}.bak', build1)
 
     # 清理
     shell_cmd('./gradlew clean', local_env)
@@ -89,7 +89,7 @@ def analysis(src_path: Path, tools_path: Path, mode: str):
         return False
 
     if ret_code != 0:
-        with open(src_path.joinpath(f'dependency-check-report.html.error'), 'w+') as f:
+        with open(src_path.joinpath('dependency-check-report.html.error'), 'w+') as f:
             f.write(output)
 
     return ret_code

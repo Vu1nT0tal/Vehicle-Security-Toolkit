@@ -44,8 +44,7 @@ if __name__ == '__main__':
         report_path = src_path.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        ret = analysis(src_path, tools_path)
-        if ret:
+        if ret := analysis(src_path, tools_path):
             Color.print_failed('[-] [fireline] failed')
         else:
             Color.print_success('[+] [fireline] success')

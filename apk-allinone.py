@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
         # apk_decompile
         if args.decompile:
-            print(f'[+] Decompiling ...')
+            print('[+] Decompiling ...')
             ret1 = apktool(apk_path, tools_path)
             ret2 = jadx(apk_path, tools_path)
             if ret1 or ret2:
@@ -87,8 +87,7 @@ if __name__ == '__main__':
 
         # apk_androbugs
         if 'androbugs' in plugin:
-            ret = androbugs(apk_path)
-            if ret:
+            if ret := androbugs(apk_path):
                 plugin['androbugs']['failed'].append(apk)
                 Color.print_failed('[-] [androbugs] failed')
             else:
@@ -122,8 +121,7 @@ if __name__ == '__main__':
 
         # apk_cryptoguard
         if 'cryptoguard' in plugin:
-            ret = cryptoguard(apk_path)
-            if ret:
+            if ret := cryptoguard(apk_path):
                 plugin['cryptoguard']['failed'].append(apk)
                 Color.print_failed('[-] [cryptoguard] failed')
             else:
@@ -140,8 +138,7 @@ if __name__ == '__main__':
 
         # apk_id
         if 'apkid' in plugin:
-            ret = apkid(apk_path)
-            if ret:
+            if ret := apkid(apk_path):
                 plugin['apkid']['failed'].append(apk)
                 Color.print_failed('[-] [apkid] failed')
             else:
@@ -150,8 +147,7 @@ if __name__ == '__main__':
 
         # apk_jni
         if 'jni' in plugin:
-            ret = jni(apk_path, tools_path)
-            if ret:
+            if ret := jni(apk_path, tools_path):
                 plugin['jni']['failed'].append(apk)
                 Color.print_failed('[-] [jni] failed')
             else:
@@ -166,8 +162,7 @@ if __name__ == '__main__':
 
         # apk_mariana
         if 'mariana' in plugin:
-            ret = mariana(apk_path, tools_path)
-            if ret:
+            if ret := mariana(apk_path, tools_path):
                 plugin['mariana']['failed'].append(apk)
                 Color.print_failed('[-] [mariana] failed')
             else:
@@ -178,8 +173,7 @@ if __name__ == '__main__':
         if 'mobsf' in plugin:
             if not mobsf_key:
                 mobsf_key = input('请输入 mobsf key：')
-            ret = mobsf(mobsf_key, apk_path)
-            if ret:
+            if ret := mobsf(mobsf_key, apk_path):
                 plugin['mobsf']['failed'].append(apk)
                 Color.print_failed('[-] [mobsf] failed')
             else:
@@ -188,8 +182,7 @@ if __name__ == '__main__':
 
         # apk_qark
         if 'qark' in plugin:
-            ret = qark(apk_path, tools_path)
-            if ret:
+            if ret := qark(apk_path, tools_path):
                 plugin['qark']['failed'].append(apk)
                 Color.print_failed('[-] [qark] failed')
             else:
@@ -204,8 +197,7 @@ if __name__ == '__main__':
 
         # apk_scanner
         if 'scanner' in plugin:
-            ret = scanner(apk_path, tools_path)
-            if ret:
+            if ret := scanner(apk_path, tools_path):
                 plugin['scanner']['failed'].append(apk)
                 Color.print_failed('[-] [scanner] failed')
             else:
@@ -214,8 +206,7 @@ if __name__ == '__main__':
 
         # apk_speck
         if 'speck' in plugin:
-            ret = speck(apk_path, tools_path)
-            if ret:
+            if ret := speck(apk_path, tools_path):
                 plugin['speck']['failed'].append(apk)
                 Color.print_failed('[-] [speck] failed')
             else:
@@ -224,8 +215,7 @@ if __name__ == '__main__':
 
         # apk_keyfinder
         if 'keyfinder' in plugin:
-            ret = keyfinder(apk_path, tools_path)
-            if ret:
+            if ret := keyfinder(apk_path, tools_path):
                 plugin['keyfinder']['failed'].append(apk)
                 Color.print_failed('[-] [keyfinder] failed')
             else:

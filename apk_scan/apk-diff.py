@@ -31,7 +31,7 @@ def diff_apk(apk1, apk2):
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
-    print(f'[+] Diffing APKs -> diff_apk.txt')
+    print('[+] Diffing APKs -> diff_apk.txt')
     return ret_code
 
 
@@ -55,7 +55,7 @@ def diff(compared):
             lines = []
             for line in difflib.unified_diff(content1, content2):
                 line = line.strip()
-                if line[:1] in ['+', '-'] and not len(line) == 1 and line[:3] not in ['+++', '---'] \
+                if line[:1] in ['+', '-'] and len(line) != 1 and line[:3] not in ['+++', '---'] \
                         and not re.match('.*(\.line\s\d|return-void)', line):
                     lines.append(line)
             if all('const' in i or '0x7f' in i for i in lines):

@@ -41,8 +41,7 @@ if __name__ == '__main__':
         report_path = apk_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        ret = analysis(apk_path)
-        if ret:
+        if ret := analysis(apk_path):
             Color.print_failed('[-] [cryptoguard] failed')
         else:
             Color.print_success('[+] [cryptoguard] success')

@@ -51,9 +51,8 @@ class Audit:
             r = requests.get(url=f'{self.server}/api/v1/scan/?page={i}', headers=headers)
             if r.status_code == 404:
                 break
-            else:
-                success += [i['description'] for i in r.json()['results'] if i ['status'] == 'Finished']
-                failed += [i['description'] for i in r.json()['results'] if i ['status'] == 'Error']
+            success += [i['description'] for i in r.json()['results'] if i ['status'] == 'Finished']
+            failed += [i['description'] for i in r.json()['results'] if i ['status'] == 'Error']
         return success, failed
 
     def scan_create(self, apk: Path, app: int):

@@ -67,14 +67,13 @@ def build(src_path: Path, item: dict, clean: bool=False):
     """有 build_config 输入时"""
 
     if item['build'] == 'gradlew':
-        ret = gradlew(src_path, item['java'], clean)
+        return gradlew(src_path, item['java'], clean)
     elif item['build'] == 'gradle':
-        ret = gradle(src_path, item['java'], item['gradle'], clean)
+        return gradle(src_path, item['java'], item['gradle'], clean)
     elif item['build'] == 'make':
-        ret = make(src_path, item['java'], clean)
+        return make(src_path, item['java'], clean)
     else:
-        ret = 1
-    return ret
+        return 1
 
 
 def check_output(output: str, local_env: dict):
@@ -83,11 +82,10 @@ def check_output(output: str, local_env: dict):
 
     # gradle 版本低
     if 'Minimum supported Gradle version is 6' in output:
-        local_env.update({'gradle': 6})
+        local_env['gradle'] = 6
     elif 'Minimum supported Gradle version is 7' in output:
-        local_env.update({'gradle': 7})
+        local_env['gradle'] = 7
 
-    # 没有合适的 NDK
     elif 'No version of NDK matched' in output:
         ndk_version = ''
         for line in output.splitlines():
@@ -99,20 +97,15 @@ def check_output(output: str, local_env: dict):
             cmd = f'{sdkmanager} --install "ndk;{ndk_version}'
             output, ret_code = shell_cmd(cmd, local_env)
 
-    # java 版本，只允许切换一次
     else:
         stop_flag += 1
-        if local_env['java'] == 11:
-            local_env.update({'java': 8})
-        else:
-            local_env.update({'java': 11})
-
+        local_env['java'] = 8 if local_env['java'] == 11 else 11
     return local_env if stop_flag != 2 else None
 
 
 def build2(src_path: Path, clean: bool=False, local_env: dict=env.copy()):
     """没有 build_config 输入时"""
-    local_env.update({'cwd': src_path})
+    local_env['cwd'] = src_path
     print(local_env)
 
     if src_path.joinpath('gradlew').exists():
@@ -152,8 +145,7 @@ if __name__ == '__main__':
         if args.build_config:
             with open(args.build_config, 'r') as f:
                 build_config = json.load(f)
-            item = build_config.get(src_path.name)
-            if item:
+            if item := build_config.get(src_path.name):
                 ret = build(src_path, item, args.clean)
                 if ret:
                     Color.print_failed('[-] [build] failed')

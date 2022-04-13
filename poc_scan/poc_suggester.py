@@ -22,14 +22,10 @@ if __name__ == '__main__':
     print(pyfiglet.figlet_format('poc_suggester'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     parser, args = argument()
-    if ':' in args.device:
-        ip, port = args.device.split(':')
-    else:
-        ip, port = args.device, 22
-
+    ip, port = args.device.split(':') if ':' in args.device else (args.device, 22)
     if args.connect == 'adb':
         shell_cmd(f'adb connect {ip}:{port}')
-        output, ret_code = shell_cmd(f'adb shell "uname -a"')
+        output, ret_code = shell_cmd('adb shell "uname -a"')
     elif args.connect == 'ssh':
         username = input('请输入用户名：')
         password = getpass.getpass('请输入密码：')

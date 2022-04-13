@@ -161,11 +161,7 @@ def argument():
 if __name__ == '__main__':
     print(pyfiglet.figlet_format('poc_dirtypipe'))
     parser, args = argument()
-    if ':' in args.device:
-        ip, port = args.device.split(':')
-    else:
-        ip, port = args.device, 22
-
+    ip, port = args.device.split(':') if ':' in args.device else (args.device, 22)
     with tempfile.TemporaryDirectory() as d:
         with tempfile.NamedTemporaryFile(suffix='.c', dir=d) as f:
             f.write(poc_src)

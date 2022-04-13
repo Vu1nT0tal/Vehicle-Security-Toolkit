@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
         # bin_stacs
         if 'stacs' in plugin:
-            if ret:
+            if ret := stacs(elf_path):
                 plugin['stacs']['failed'].append(elf)
                 Color.print_failed['[-] [stacs] failed']
             else:
@@ -47,8 +47,7 @@ if __name__ == '__main__':
 
         # bin_cvescan
         if 'cvescan' in plugin:
-            ret = cvescan(elf_path)
-            if ret:
+            if ret := cvescan(elf_path):
                 plugin['cvescan']['failed'].append(elf)
                 Color.print_failed('[-] [cvescan] failed')
             else:
@@ -57,8 +56,7 @@ if __name__ == '__main__':
 
         # bin_cwechecker
         if 'cwechecker' in plugin:
-            ret = cwechecker(elf_path)
-            if ret:
+            if ret := cwechecker(elf_path):
                 plugin['cwechecker']['failed'].append(elf)
                 Color.print_failed('[-] [cwechecker] failed')
             else:

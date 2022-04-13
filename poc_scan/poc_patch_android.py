@@ -118,16 +118,16 @@ def extract_section(soup, tag1: str, tag2: str):
     for idx, col in enumerate(title.find_all('th')):
         if col.text == 'CVE':
             cve_idx = idx
-        if col.text == 'References':
-            ref_idx = idx
-        if col.text == 'Type':
-            type_idx = idx
-        if col.text == 'Severity':
-            severity_idx = idx
-        if col.text == 'Updated AOSP versions':
-            ver_idx = idx
-        if col.text == 'Component':
+        elif col.text == 'Component':
             component_idx = idx
+        elif col.text == 'References':
+            ref_idx = idx
+        elif col.text == 'Severity':
+            severity_idx = idx
+        elif col.text == 'Type':
+            type_idx = idx
+        elif col.text == 'Updated AOSP versions':
+            ver_idx = idx
 
     # 解析表内容
     for row in title.find_next_siblings('tr'):
@@ -281,9 +281,9 @@ def updateThread(url: str):
 
 def update(args):
     """更新CVE补丁库"""
-    bulletin_url = 'https://source.android.com/security/bulletin'
     ver_date = datetime.strptime(ANDROID_VERSION[args.version], '%Y-%m-%d')
 
+    bulletin_url = 'https://source.android.com/security/bulletin'
     r = requests.get(bulletin_url)
     root = etree.HTML(r.content)
     table = root.xpath('//*[@id="gc-wrapper"]/main/devsite-content/article/div[2]/table/tr')
@@ -296,10 +296,8 @@ def update(args):
             if url_date >= ver_date:
                 urls.append(f'{bulletin_url}/{date_str}')
 
-    tasks = []
     executor = ThreadPoolExecutor(5)
-    for url in urls:
-        tasks.append(executor.submit(updateThread, url))
+    tasks = [executor.submit(updateThread, url) for url in urls]
     executor.shutdown(True)
 
 
@@ -314,8 +312,7 @@ def compareThread(cve: Path, patch_path: Path):
         f1 = open(cve).read()
     except Exception as e:
         print(e, cve_name, patch_path.stem)
-    finally:
-        return cve_name, result
+    return cve_name, result
 
 
 def scan(args):
@@ -325,10 +322,8 @@ def scan(args):
     repo_tool = repo_path.joinpath('.repo/repo/repo')
 
     aosp = requests.get('https://android.googlesource.com/?format=TEXT').text.splitlines()
-    hmi = []
     output, ret_code = shell_cmd(f'cd {repo_path} && {repo_tool} list')
-    for line in output.splitlines():
-        hmi.append(line.split(':')[1].strip())
+    hmi = [line.split(':')[1].strip() for line in output.splitlines()]
 
     # diff1 = set(aosp).difference(set(hmi))  # aosp有，hmi沒有
     # diff2 = set(hmi).difference(set(aosp))  # aosp沒有，hmi有
