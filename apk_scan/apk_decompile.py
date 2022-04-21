@@ -15,11 +15,11 @@ def apktool(apk_path: Path, tools_path: Path):
     output_path = apk_path.parent.joinpath('apktool_smali')
     cmd = f'java -jar {apktool_jar} d "{apk_path}" -f -o {output_path}'
     output, ret_code = shell_cmd(cmd)
+
     if output_path.joinpath('AndroidManifest.xml').exists():
         return 0
-    else:
-        print(output)
-        return 1
+    print(output)
+    return 1
 
 
 def jadx(apk_path: Path, tools_path: Path):
@@ -28,11 +28,11 @@ def jadx(apk_path: Path, tools_path: Path):
     cmd = f'{jadx_bin} "{apk_path}" -d {output_path}'
     output, ret_code = shell_cmd(cmd)
     apk_path.parent.joinpath(f'{apk_path.stem}.jobf').unlink(missing_ok=True)
+
     if output_path.joinpath('resources/AndroidManifest.xml').exists():
         return 0
-    else:
-        print(output)
-        return 1
+    print(output)
+    return 1
 
 
 def argument():

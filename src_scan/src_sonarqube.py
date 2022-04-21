@@ -30,14 +30,14 @@ def analysis_cli(src_path: Path, token: str):
 
 
 def analysis_gradle(src_path: Path, java: int = 11):
-    print(f'[+] [sonarqube] - gradle')
+    print('[+] [sonarqube] - gradle')
     local_env = env.copy()
     local_env.update({'java': java, 'cwd': src_path})
 
     build1 = str(src_path.joinpath('build.gradle'))
 
     # 备份
-    shutil.copy(build1, build1+'.bak')
+    shutil.copy(build1, f'{build1}.bak')
 
     # 修改
     sed1 = 'sed -i \"/dependencies {/a\classpath \'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3\'\" '+build1
@@ -51,7 +51,7 @@ def analysis_gradle(src_path: Path, java: int = 11):
     output, ret_code = shell_cmd(cmd, local_env)
 
     # 恢复
-    shutil.move(build1+'.bak', build1)
+    shutil.move(f'{build1}.bak', build1)
 
     if ret_code != 0:
         Color.print_failed('[-] [sonarqube] gradlew 失败')
@@ -124,7 +124,7 @@ if __name__ == '__main__':
         report_path = src_path.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        key = args.key if args.key else ''
+        key = args.key or ''
         sonar, token = init_sonarqube(key)
 
         if create_project(sonar):

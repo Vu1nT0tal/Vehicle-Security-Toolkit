@@ -81,7 +81,7 @@ echo "[+] Installing apktool ..."
 wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.1/apktool_2.6.1.jar -O ./tools/apktool.jar
 
 echo "[+] Installing jadx ..."
-wget -q https://github.com/skylot/jadx/releases/download/v1.3.4/jadx-1.3.4.zip -O jadx.zip
+wget -q https://github.com/skylot/jadx/releases/download/v1.3.5/jadx-1.3.5.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 echo "[+] Installing apkid ..."
@@ -200,7 +200,7 @@ echo "[+] Installing gosec ..."
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 
 echo "[+] Installing snyk ..."
-wget -q https://github.com/snyk/cli/releases/download/v1.879.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
+wget -q https://github.com/snyk/cli/releases/download/v1.908.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
 
 echo "[+] Installing codeql ..."
 mkdir -p ~/github/codeql-home && cd ~/github/codeql-home
@@ -224,6 +224,11 @@ python3 -m pip install stacs
 
 echo "[+] Installing cwe_checker ..."
 sudo docker pull fkiecad/cwe_checker
+
+echo "[+] Installing BinAbsInspector ..."
+wget -q https://github.com/KeenSecurityLab/BinAbsInspector/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && mv tools/BinAbsInspector-main tools/BinAbsInspector && rm main.zip
+cd ./tools && cp BinAbsInspector/Dockerfile ./ && docker build . -t absinspector && rm Dockerfile && cd $root_path
 
 echo "[+] Installing cve-bin-tool ..."
 python3 -m pip install cve-bin-tool && cve-bin-tool -u

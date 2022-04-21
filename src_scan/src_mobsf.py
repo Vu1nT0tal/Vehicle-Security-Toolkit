@@ -17,10 +17,9 @@ def analysis(src_path: Path):
 
     if mobsf_file.exists():
         return 0
-    else:
-        with open(f'{mobsf_file}.error', 'w+') as f:
-            f.write(output)
-        return 1
+    with open(f'{mobsf_file}.error', 'w+') as f:
+        f.write(output)
+    return 1
 
 
 def argument():
@@ -40,8 +39,7 @@ if __name__ == '__main__':
         report_path = src_path.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        ret = analysis(src_path)
-        if ret:
+        if ret := analysis(src_path):
             Color.print_failed('[-] [mobsf] failed')
         else:
             Color.print_success('[+] [mobsf] success')

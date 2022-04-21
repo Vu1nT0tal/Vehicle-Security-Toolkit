@@ -9,6 +9,7 @@ from utils import Color
 from bin_scan.bin_stacs import analysis as stacs
 from bin_scan.bin_cvescan import analysis as cvescan
 from bin_scan.bin_cwechecker import analysis as cwechecker
+from bin_scan.bin_absinspector import analysis as absinspector
 
 
 def argument():
@@ -25,7 +26,8 @@ if __name__ == '__main__':
     plugin = {
         'stacs': defaultdict(list),
         'cvescan': defaultdict(list),
-        'cwechecker': defaultdict(list)
+        'cwechecker': defaultdict(list),
+        'absinspector': defaultdict(list)
     }
     elf_dirs = open(args.config, 'r').read().splitlines()
 
@@ -62,5 +64,14 @@ if __name__ == '__main__':
             else:
                 plugin['cwechecker']['success'].append(elf)
                 Color.print_success('[+] [cwechecker] success')
+
+        # bin_absinspector
+        if 'absinspector' in plugin:
+            if ret := absinspector(elf_path):
+                plugin['absinspector']['failed'].append(elf)
+                Color.print_failed('[-] [absinspector] failed')
+            else:
+                plugin['absinspector']['success'].append(elf)
+                Color.print_success('[+] [absinspector] success')
 
     print(plugin)

@@ -3,6 +3,7 @@
 - [bin_scan](#bin_scan)
   - [bin_stacs.py](#bin_stacspy)
   - [bin_cwechecker.py](#bin_cwecheckerpy)
+  - [bin_absinspector.py](#bin_absinspectorpy)
   - [bin_cvescan.py](#bin_cvescanpy)
 
 ## bin_stacs.py
@@ -20,6 +21,14 @@ $ python3 bin_stacs.py --config ../data/elf.list
 ```sh
 $ find ~/apks -type f ! -path "*jadx_java*" ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" | xargs file | grep "ELF" | cut -d ":" -f 1 | xargs realpath > ../data/elf.list
 $ python bin_cwechecker.py --config ../data/elf.list
+```
+
+## bin_absinspector.py
+
+使用该脚本批量静态分析 SO/ELF 文件并生成报告。（耗时较长）
+
+```sh
+$ python bin_absinspector.py --config ../data/elf.list
 ```
 
 ## bin_cvescan.py
