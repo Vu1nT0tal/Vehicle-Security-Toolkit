@@ -139,6 +139,10 @@ python3 -m venv ./tools/qark-env
 ./tools/qark-env/bin/pip install wheel colorama
 ./tools/qark-env/bin/pip install git+https://github.com/linkedin/qark.git
 
+echo "[+] Installing SimpleWalker"
+wget -q https://github.com/zkwlx/SimpleWalker/releases/download/1.3/release.zip
+unzip -q release.zip && mv release ./tools/SimpleWalker && rm release.zip
+
 echo "[+] Installing mariana-trench ..."
 python3 -m venv ./tools/mariana-trench-env
 ./tools/mariana-trench-env/bin/pip install colorama mariana-trench "graphene<3"
@@ -227,7 +231,7 @@ sudo docker pull fkiecad/cwe_checker
 
 echo "[+] Installing BinAbsInspector ..."
 wget -q https://github.com/KeenSecurityLab/BinAbsInspector/archive/refs/heads/main.zip
-unzip -q main.zip -d ./tools/ && mv tools/BinAbsInspector-main tools/BinAbsInspector && rm main.zip
+unzip -q main.zip && mv BinAbsInspector-main tools/BinAbsInspector && rm main.zip
 cd ./tools && cp BinAbsInspector/Dockerfile ./ && docker build . -t absinspector && rm Dockerfile && cd $root_path
 
 echo "[+] Installing cve-bin-tool ..."
