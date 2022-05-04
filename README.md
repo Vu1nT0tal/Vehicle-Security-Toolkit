@@ -156,6 +156,6 @@ $ python3 tools/camille-master/camille.py -ns -t 3 -f demo.xls
 
 ## LICENSE
 
-Vehicle-Security-Toolkit use SATA(Star And Thank Author) [License](./LICENSE), so you have to star this project before using. 🙏
+[GNU General Public License v3.0](./LICENSE)
 
-[![Stargazers over time](https://starchart.cc/firmianay/Vehicle-Security-Toolkit.svg)](https://starchart.cc/firmianay/Vehicle-Security-Toolkit)
+[![Stargazers over time](https://starchart.cc/VulnTotal-Team/Vehicle-Security-Toolkit.svg)](https://starchart.cc/VulnTotal-Team/Vehicle-Security-Toolkit)
