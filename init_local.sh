@@ -81,7 +81,7 @@ echo "[+] Installing apktool ..."
 wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.1/apktool_2.6.1.jar -O ./tools/apktool.jar
 
 echo "[+] Installing jadx ..."
-wget -q https://github.com/skylot/jadx/releases/download/v1.3.5/jadx-1.3.5.zip -O jadx.zip
+wget -q https://github.com/skylot/jadx/releases/download/v1.4.0/jadx-1.4.0.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 echo "[+] Installing apkid ..."
@@ -192,10 +192,10 @@ find ./tools/TscanCode -name tscancode -o -name tsclua -o -name TscSharp | xargs
 
 echo "[+] Installing cppcheck ..."
 sudo apt-get -y install cmake libpcre3 libpcre3-dev
-wget -q https://github.com/danmar/cppcheck/archive/refs/tags/2.7.zip
-unzip -q 2.7.zip && mkdir -p ./tools/cppcheck && cd ./tools/cppcheck
-cmake -DHAVE_RULES=ON -DUSE_MATCHCOMPILER=ON ../../cppcheck-2.7 && cmake --build .
-cd $root_path && rm -rf 2.7.zip cppcheck-2.7
+wget -q https://github.com/danmar/cppcheck/archive/refs/tags/2.8.zip
+unzip -q 2.8.zip && mkdir -p ./tools/cppcheck && cd ./tools/cppcheck
+cmake -DHAVE_RULES=ON -DUSE_MATCHCOMPILER=ON ../../cppcheck-2.8 && cmake --build .
+cd $root_path && rm -rf 2.8.zip cppcheck-2.8
 
 echo "[+] Installing bandit ..."
 python3 -m pip install bandit
