@@ -21,7 +21,7 @@
   - [隐私合规测试](#隐私合规测试)
   - [APK Fuzz 测试](#apk-fuzz-测试)
   - [其他工具](#其他工具)
-  - [LICENSE](#license)
+  - [关注我们](#关注我们)
 
 ## 安装
 
@@ -154,8 +154,10 @@ $ python3 tools/camille-master/camille.py -ns -t 3 -f demo.xls
 
 [其他工具](./others)
 
-## LICENSE
+## 关注我们
 
-[GNU General Public License v3.0](./LICENSE)
+[VulnTotal安全团队](https://github.com/VulnTotal-Team)成立于2022年。致力于分享高质量原创文章和开源工具，包括Web安全、移动安全、物联网/汽车安全、代码审计、网络攻防等，欢迎[关注或加入我们](https://github.com/VulnTotal-Team/.github/blob/main/README.md)！
+
+GNU General Public License v3.0
 
 [![Stargazers over time](https://starchart.cc/VulnTotal-Team/Vehicle-Security-Toolkit.svg)](https://starchart.cc/VulnTotal-Team/Vehicle-Security-Toolkit)
