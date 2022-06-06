@@ -7,6 +7,7 @@ from collections import defaultdict
 
 from utils import Color
 from bin_scan.bin_stacs import analysis as stacs
+from bin_scan.bin_capa import analysis as capa
 from bin_scan.bin_cvescan import analysis as cvescan
 from bin_scan.bin_cwechecker import analysis as cwechecker
 from bin_scan.bin_absinspector import analysis as absinspector
@@ -25,6 +26,7 @@ if __name__ == '__main__':
 
     plugin = {
         'stacs': defaultdict(list),
+        'capa': defaultdict(list),
         'cvescan': defaultdict(list),
         'cwechecker': defaultdict(list),
         'absinspector': defaultdict(list)
@@ -40,12 +42,21 @@ if __name__ == '__main__':
 
         # bin_stacs
         if 'stacs' in plugin:
-            if ret := stacs(elf_path):
+            if ret := stacs(elf_path, tools_path):
                 plugin['stacs']['failed'].append(elf)
                 Color.print_failed['[-] [stacs] failed']
             else:
                 plugin['stacs']['success'].append(elf)
                 Color.print_success('[+] [stacs] success')
+
+        # bin_capa
+        if 'capa' in plugin:
+            if ret := capa(elf_path, tools_path):
+                plugin['capa']['failed'].append(elf)
+                Color.print_failed('[-] [capa] failed')
+            else:
+                plugin['capa']['success'].append(elf)
+                Color.print_success('[+] [capa] success')
 
         # bin_cvescan
         if 'cvescan' in plugin:

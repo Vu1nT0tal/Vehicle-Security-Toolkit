@@ -2,6 +2,7 @@
 
 - [bin_scan](#bin_scan)
   - [bin_stacs.py](#bin_stacspy)
+  - [bin_capa.py](#bin_capapy)
   - [bin_cwechecker.py](#bin_cwecheckerpy)
   - [bin_absinspector.py](#bin_absinspectorpy)
   - [bin_cvescan.py](#bin_cvescanpy)
@@ -14,9 +15,17 @@
 $ python3 bin_stacs.py --config ../data/elf.list
 ```
 
+## bin_capa.py
+
+使用该脚本批量分析 SO/ELF 文件并生成行为报告。
+
+```sh
+$ python3 bin_capa.py --config ../data/elf.list
+```
+
 ## bin_cwechecker.py
 
-使用该脚本批量静态分析 SO/ELF 文件并生成报告。
+使用该脚本批量静态分析 SO/ELF 文件并生成漏洞报告。
 
 ```sh
 $ find ~/apks -type f ! -path "*jadx_java*" ! -regex ".*\(apk\|java\|smali\|dex\|xml\|yml\|json\|ini\|txt\|png\|jpg\|wav\|webp\|svg\|kcm\|version\|SF\|RSA\|MF\|data\|dat\|pak\|zip\|kotlin.*\|lifecycle.*\)$" | xargs file | grep "ELF" | cut -d ":" -f 1 | xargs realpath > ../data/elf.list
@@ -25,7 +34,7 @@ $ python bin_cwechecker.py --config ../data/elf.list
 
 ## bin_absinspector.py
 
-使用该脚本批量静态分析 SO/ELF 文件并生成报告。（耗时较长）
+使用该脚本批量静态分析 SO/ELF 文件并生成漏洞报告。（耗时较长）
 
 ```sh
 $ python bin_absinspector.py --config ../data/elf.list

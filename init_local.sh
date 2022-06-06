@@ -226,6 +226,10 @@ git clone --depth=1 https://github.com/stacscan/stacs-rules.git ./tools/stacs-ru
 sudo apt-get -y install libarchive-dev
 python3 -m pip install stacs
 
+echo "[+] Installing capa ..."
+wget -q https://github.com/mandiant/capa/releases/download/v3.2.0/capa-v3.2.0-linux.zip -O capa.zip
+unzip -q capa.zip -d ./tools/ && rm capa.zip
+
 echo "[+] Installing cwe_checker ..."
 sudo docker pull fkiecad/cwe_checker
 
