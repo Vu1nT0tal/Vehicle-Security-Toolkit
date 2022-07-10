@@ -19,6 +19,7 @@
     - [bandit](#bandit)
   - [Go](#go)
     - [gosec](#gosec)
+  - [Semgrep](#semgrep)
   - [CodeQL](#codeql)
 
 ## Java/Android
@@ -148,6 +149,12 @@ Go AST 安全问题扫描。
 
 ```sh
 $ gosec ~/source [-fmt=html] [-out=gosec.html]
+```
+
+## Semgrep
+
+```sh
+$ semgrep ~/source --config auto
 ```
 
 ## CodeQL

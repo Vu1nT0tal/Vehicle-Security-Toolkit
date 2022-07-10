@@ -7,6 +7,16 @@ from pathlib import Path
 from utils import Color, shell_cmd
 
 
+def semgrep(src_path: Path):
+    Color.print_focus('[+] semgrep ...')
+    report_file = report_path.joinpath('semgrep.txt')
+
+    config1 = tools_path.joinpath("semgrep/default/c")
+    config2 = tools_path.joinpath("semgrep/c_cpp/c")
+    cmd = f'semgrep scan --include "*.c" --config {config1} --config {config2} {src_path} -o {report_file}'
+    shell_cmd(cmd)
+
+
 def flawfinder(src_path: Path):
     Color.print_focus('[+] flawfinder ...')
     report_file = report_path.joinpath('flawfinder.html')
@@ -52,10 +62,14 @@ if __name__ == '__main__':
     report_path.mkdir(parents=True, exist_ok=True)
 
     plugin = {
+        'semgrep': 1,
         'flawfinder': 1,
         'tscancode': 1,
         'cppcheck': 1
     }
+
+    if 'semgrep' in plugin:
+        semgrep(src_path)
 
     if 'flawfinder' in plugin:
         flawfinder(src_path)

@@ -214,6 +214,13 @@ git clone --depth=1 https://github.com/github/codeql.git codeql-repo
 git clone --depth=1 https://github.com/github/codeql-go.git && ./codeql-go/scripts/install-deps.sh
 rm codeql-linux64.zip && cd $root_path
 
+echo "[+] Installing semgrep ..."
+mkdir -p ./tools/semgrep && cd ./tools/semgrep
+python3 -m pip install semgrep
+git clone https://github.com/returntocorp/semgrep-rules.git default
+git clone https://github.com/0xdea/semgrep-rules.git c_cpp
+cd $root_path
+
 # echo "[+] Installing scanmycode-ce"
 # wget -q https://github.com/marcinguy/scanmycode-ce/archive/refs/heads/master.zip
 # unzip -q master.zip -d ./tools/ && rm master.zip

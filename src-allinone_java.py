@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 from collections import defaultdict
 
-from utils import Color
+from utils import Color, shell_cmd
 from src_scan.src_build import build, build2
 from src_scan.src_fireline import analysis as fireline
 from src_scan.src_mobsf import analysis as mobsf
@@ -49,7 +49,9 @@ if __name__ == '__main__':
         'speck': defaultdict(list),
         'keyfinder': defaultdict(list),
         'depcheck': defaultdict(list),
-        'sonarqube': defaultdict(list)
+        'sonarqube': defaultdict(list),
+
+        'semgrep': defaultdict(list)
     }
     src_dirs = open(args.config, 'r').read().splitlines()
     if args.build_config:
@@ -155,5 +157,26 @@ if __name__ == '__main__':
                     Color.print_success('[+] [sonarqube] success')
             else:
                 Color.print_focus('[+] [sonarqube] pass')
+
+        # semgrep
+        if 'semgrep' in plugin:
+            def semgrep(src_path: Path, tools_path: Path):
+                report_file = report_path.joinpath('semgrep.txt')
+
+                config1 = tools_path.joinpath("semgrep/default/java")
+                cmd = f'semgrep scan --config {config1} {src_path} -o {report_file}'
+                output, ret_code = shell_cmd(cmd)
+
+                if not report_file.exists():
+                    with open(f'{report_file}.error', 'w+') as f:
+                        f.write(output)
+                return ret_code
+
+            if ret := semgrep(src_path, tools_path):
+                plugin['semgrep']['failed'].append(src)
+                Color.print_failed('[-] [semgrep] failed')
+            else:
+                plugin['semgrep']['success'].append(src)
+                Color.print_success('[+] [semgrep] success')
 
     print(plugin)
