@@ -142,7 +142,7 @@ def scan(args):
         print(f'[+] Generate {number.strip()} patchs: {patch_all_path}')
 
     executor = ProcessPoolExecutor(os.cpu_count()-1)
-    tasks = [executor.submit(compareThread, cve, patch_all_path) for cve in cves_path.joinpath(f'patch/{args.version}').glob('*')]
+    tasks = [executor.submit(compareThread, cve, patch_all_path) for cve in patch_sec_path.joinpath(f'{args.version}').glob('*')]
     executor.shutdown(True)
 
     results = defaultdict(dict)
