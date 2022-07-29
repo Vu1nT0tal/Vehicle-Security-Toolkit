@@ -164,7 +164,7 @@ if __name__ == '__main__':
                 report_file = report_path.joinpath('semgrep.txt')
 
                 config1 = tools_path.joinpath("semgrep/default/java")
-                cmd = f'semgrep scan --config {config1} {src_path} -o {report_file}'
+                cmd = f'semgrep scan --lang java --config {config1} {src_path} -o {report_file}'
                 output, ret_code = shell_cmd(cmd)
 
                 if not report_file.exists():

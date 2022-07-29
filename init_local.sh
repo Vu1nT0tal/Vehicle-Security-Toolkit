@@ -81,7 +81,7 @@ echo "[+] Installing apktool ..."
 wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.1/apktool_2.6.1.jar -O ./tools/apktool.jar
 
 echo "[+] Installing jadx ..."
-wget -q https://github.com/skylot/jadx/releases/download/v1.4.0/jadx-1.4.0.zip -O jadx.zip
+wget -q https://github.com/skylot/jadx/releases/download/v1.4.3/jadx-1.4.3.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 echo "[+] Installing apkid ..."
@@ -158,7 +158,7 @@ echo "[+] Installing mobsfscan ..."
 sudo docker pull opensecurity/mobsfscan
 
 echo "[+] Installing DependencyCheck ..."
-wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v7.0.4/dependency-check-7.0.4-release.zip -O dependency-check.zip
+wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v7.1.1/dependency-check-7.1.1-release.zip -O dependency-check.zip
 unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
 wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
@@ -174,9 +174,9 @@ sudo docker pull sonarsource/sonar-scanner-cli
 mkdir -p ./tools/sonarqube_extensions/plugins && cd ./tools/sonarqube_extensions/plugins
 wget -q https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.0.7/sonar-cxx-plugin-2.0.7.3119.jar
 wget -q https://github.com/dependency-check/dependency-check-sonar-plugin/releases/download/3.0.1/sonar-dependency-check-plugin-3.0.1.jar
-wget -q https://github.com/spotbugs/sonar-findbugs/releases/download/4.0.6/sonar-findbugs-plugin-4.0.6.jar
-wget -q https://github.com/jensgerdes/sonar-pmd/releases/download/3.3.1/sonar-pmd-plugin-3.3.1.jar
-wget -q https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-9.2/sonar-l10n-zh-plugin-9.2.jar
+wget -q https://github.com/spotbugs/sonar-findbugs/releases/download/4.2.0/sonar-findbugs-plugin-4.2.0.jar
+wget -q https://github.com/jborgers/sonar-pmd/releases/download/3.4.0/sonar-pmd-plugin-3.4.0.jar
+wget -q https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-9.5/sonar-l10n-zh-plugin-9.5.jar
 cd $root_path
 
 echo "[+] Installing flawfinder ..."
@@ -204,11 +204,11 @@ echo "[+] Installing gosec ..."
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 
 echo "[+] Installing snyk ..."
-wget -q https://github.com/snyk/cli/releases/download/v1.908.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
+wget -q https://github.com/snyk/cli/releases/download/v1.981.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
 
 echo "[+] Installing codeql ..."
 mkdir -p ~/github/codeql-home && cd ~/github/codeql-home
-wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.8.2/codeql-linux64.zip && unzip -q codeql-linux64.zip
+wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.10.1/codeql-linux64.zip && unzip -q codeql-linux64.zip
 export PATH=$HOME/github/codeql-home/codeql:$PATH && echo "export PATH=\$HOME/github/codeql-home/codeql:\$PATH" >> $HOME/.zshrc
 git clone --depth=1 https://github.com/github/codeql.git codeql-repo
 git clone --depth=1 https://github.com/github/codeql-go.git && ./codeql-go/scripts/install-deps.sh
@@ -217,9 +217,14 @@ rm codeql-linux64.zip && cd $root_path
 echo "[+] Installing semgrep ..."
 mkdir -p ./tools/semgrep && cd ./tools/semgrep
 python3 -m pip install semgrep
-git clone https://github.com/returntocorp/semgrep-rules.git default
-git clone https://github.com/0xdea/semgrep-rules.git c_cpp
+git clone --depth=1 https://github.com/returntocorp/semgrep-rules.git default
+git clone --depth=1 https://github.com/0xdea/semgrep-rules.git c_cpp
 cd $root_path
+
+echo "[+] Installing codechecker ..."
+sudo apt-get install clang clang-tidy build-essential gcc-multilib
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - && sudo apt-get install -y nodejs
+python3 -m pip install codechecker
 
 # echo "[+] Installing scanmycode-ce"
 # wget -q https://github.com/marcinguy/scanmycode-ce/archive/refs/heads/master.zip
@@ -276,10 +281,10 @@ git clone --depth=1 https://github.com/CreditTone/hooker.git ~/github/hooker
 python3 -m pip install -r ~/github/hooker/requirements.txt
 
 echo "[+] Installing wadb.apk ..."
-wget -q https://github.com/RikkaApps/WADB/releases/download/v5.1.1/wadb-v5.1.1.r161.b5b65a7-release.apk -O ./tools/wadb.apk
+wget -q https://github.com/RikkaApps/WADB/releases/download/v7.0.0/wadb-v7.0.0.r212.65458e8-release.apk -O ./tools/wadb.apk
 
 echo "[+] Installing SnoopSnitch.apk ..."
-wget -q https://opensource.srlabs.de/attachments/download/185/SnoopSnitch-2.0.11.apk -O ./tools/SnoopSnitch.apk
+wget -q https://opensource.srlabs.de/attachments/download/188/SnoopSnitch-2.0.12.apk -O ./tools/SnoopSnitch.apk
 
 echo "[+] Installing camille ..."
 python3 -m pip install xlwt click
@@ -290,7 +295,7 @@ echo "Installing drozer ..."
 # sudo docker pull fsecurelabs/drozer
 
 mkdir -p ./tools/drozer && cd ./tools/drozer
-wget -q https://github.com/FSecureLABS/drozer-agent/releases/download/2.5.0/drozer-2.5.0.apk -O drozer.apk
+wget -q https://github.com/FSecureLABS/drozer-agent/releases/download/2.5.2/agent-debug.apk -O drozer.apk
 wget -q https://github.com/FSecureLABS/drozer/releases/download/2.4.4/drozer-2.4.4-py2-none-any.whl
 cd $root_path
 
@@ -310,7 +315,7 @@ unzip -q master.zip -d ./tools/ && rm master.zip
 
 echo "[+] Installing pwn ..."
 sudo dpkg --add-architecture i386
-sudo apt-get -y install gdb-multiarch gcc-multilib patchelf tcpdump netcat socat nasm build-essential libc6-dbg libc6-dbg:i386 ruby-dev
+sudo apt-get -y install gdb-multiarch patchelf tcpdump netcat socat nasm libc6-dbg libc6-dbg:i386 ruby-dev
 sudo apt-get -y install glibc-source && tar -xf /usr/src/glibc/glib*.tar.xz
 sudo gem install one_gadget seccomp-tools
 python3 -m pip install pwntools ropper ropgadget capstone keystone

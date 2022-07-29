@@ -13,7 +13,7 @@ def semgrep(src_path: Path):
 
     config1 = tools_path.joinpath("semgrep/default/c")
     config2 = tools_path.joinpath("semgrep/c_cpp/c")
-    cmd = f'semgrep scan --include "*.c" --config {config1} --config {config2} {src_path} -o {report_file}'
+    cmd = f'semgrep scan --lang c --config {config1} --config {config2} {src_path} -o {report_file}'
     shell_cmd(cmd)
 
 
