@@ -11,6 +11,7 @@
   - [apk_audit.py](#apk_auditpy)
   - [apk_androbugs.py](#apk_androbugspy)
   - [apk_scanner.py](#apk_scannerpy)
+  - [apk_shark.py](#apk_sharkpy)
   - [apk_walker.py](#apk_walkerpy)
   - [apk_mariana.py](#apk_marianapy)
   - [apk_quark.py](#apk_quarkpy)
@@ -111,6 +112,15 @@ $ python3 apk_androbugs.py --config ../data/apk.list
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
 $ python3 apk_scanner.py --config ../data/apk.list
+```
+
+## apk_shark.py
+
+导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
+$ python3 apk_shark.py --config ../data/apk.list
 ```
 
 ## apk_walker.py

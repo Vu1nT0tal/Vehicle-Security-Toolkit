@@ -24,6 +24,7 @@ from apk_scan.apk_scanner import analysis as scanner
 from apk_scan.apk_walker import analysis as walker
 from apk_scan.apk_speck import analysis as speck
 from apk_scan.apk_keyfinder import analysis as keyfinder
+from apk_scan.apk_shark import analysis as shark
 
 # 配置项
 mobsf_key = ''
@@ -60,7 +61,8 @@ if __name__ == '__main__':
         'scanner': defaultdict(list),
         'walker': defaultdict(list),
         'speck': defaultdict(list),
-        'keyfinder': defaultdict(list)
+        'keyfinder': defaultdict(list),
+        'shark': defaultdict(list),
     }
     apk_dirs = open(args.config, 'r').read().splitlines()
 
@@ -232,5 +234,14 @@ if __name__ == '__main__':
             else:
                 plugin['keyfinder']['success'].append(apk)
                 Color.print_success('[+] [keyfinder] success')
+
+        # apk_shark
+        if 'shark' in plugin:
+            if ret := shark(apk_path, tools_path):
+                plugin['shark']['failed'].append(apk)
+                Color.print_failed('[-] [shark] failed')
+            else:
+                plugin['shark']['success'].append(apk)
+                Color.print_success('[+] [shark] success')
 
     print(plugin)
