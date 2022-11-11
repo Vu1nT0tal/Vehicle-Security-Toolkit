@@ -156,7 +156,7 @@ $ python3 tools/camille-master/camille.py -ns -t 3 -f demo.xls
 
 ## 关注我们
 
-[VulnTotal安全团队](https://github.com/VulnTotal-Team)成立于2022年。致力于分享高质量原创文章和开源工具，包括Web安全、移动安全、物联网/汽车安全、代码审计、网络攻防等，欢迎[关注或加入我们](https://github.com/VulnTotal-Team/.github/blob/main/README.md)！
+[VulnTotal安全团队](https://github.com/VulnTotal-Team)致力于分享高质量原创文章和开源工具，包括物联网/汽车安全、移动安全、网络攻防等
 
 GNU General Public License v3.0
 
