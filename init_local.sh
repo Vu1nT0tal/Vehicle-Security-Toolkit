@@ -44,7 +44,7 @@ sudo apt-get update && sudo apt-get -y install code
 echo "[+] Install selenium ..."
 python3 -m pip install selenium
 wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
-wget -q https://chromedriver.storage.googleapis.com/100.0.4896.60/chromedriver_linux64.zip -O chromedriver.zip
+wget -q https://chromedriver.storage.googleapis.com/110.0.5481.77/chromedriver_linux64.zip -O chromedriver.zip
 sudo dpkg -i chrome.deb && rm chrome.deb
 unzip -q chromedriver.zip && sudo mv chromedriver /usr/bin && rm chromedriver.zip
 
@@ -56,13 +56,13 @@ echo "export PATH=\$HOME/go/bin:\$PATH" >> $HOME/.zshrc
 echo "[+] Installing sdkman ..."
 curl -s https://get.sdkman.io | bash
 source $HOME/.sdkman/bin/sdkman-init.sh
-sdk install java 8.0.345-tem
-echo Y | sdk install java 11.0.16.1-tem
-echo n | sdk install java 17.0.4.1-tem
+sdk install java 8.0.362-tem
+echo Y | sdk install java 11.0.18-tem
+echo n | sdk install java 17.0.6-tem
 sdk install gradle 4.10.3
 echo n | sdk install gradle 5.6.4
-echo Y | sdk install gradle 6.9.2
-echo n | sdk install gradle 7.5.1
+echo Y | sdk install gradle 6.9.3
+echo n | sdk install gradle 7.6
 
 echo "[+] Installing docker ..."
 sudo apt-get -y install apt-transport-https ca-certificates curl gnupg lsb-release
@@ -79,10 +79,10 @@ sudo systemctl restart docker
 echo "######################### apk_scan #########################"
 
 echo "[+] Installing apktool ..."
-wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.6.1/apktool_2.6.1.jar -O ./tools/apktool.jar
+wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.7.0/apktool_2.7.0.jar -O ./tools/apktool.jar
 
 echo "[+] Installing jadx ..."
-wget -q https://github.com/skylot/jadx/releases/download/v1.4.4/jadx-1.4.4.zip -O jadx.zip
+wget -q https://github.com/skylot/jadx/releases/download/v1.4.5/jadx-1.4.5.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 echo "[+] Installing apkid ..."
@@ -121,6 +121,10 @@ echo "[+] Installing keyfinder ..."
 python3 -m pip install python-magic pyOpenSSL
 wget -q https://github.com/CERTCC/keyfinder/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
+
+echo "[+] Installing APKHunt ..."
+wget -q https://github.com/Cyber-Buddy/APKHunt/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
 
 echo "[+] Installing androbugs ..."
 sudo docker pull danmx/docker-androbugs
@@ -164,7 +168,7 @@ echo "[+] Installing mobsfscan ..."
 sudo docker pull opensecurity/mobsfscan
 
 echo "[+] Installing DependencyCheck ..."
-wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v7.2.0/dependency-check-7.2.0-release.zip -O dependency-check.zip
+wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v8.0.2/dependency-check-8.0.2-release.zip -O dependency-check.zip
 unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
 wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
@@ -178,11 +182,11 @@ sudo docker pull sonarqube:community
 sudo docker pull sonarsource/sonar-scanner-cli
 
 mkdir -p ./tools/sonarqube_extensions/plugins && cd ./tools/sonarqube_extensions/plugins
-wget -q https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.0.7/sonar-cxx-plugin-2.0.7.3119.jar
+wget -q https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.1.0/sonar-cxx-plugin-2.1.0.428.jar
 wget -q https://github.com/dependency-check/dependency-check-sonar-plugin/releases/download/3.0.1/sonar-dependency-check-plugin-3.0.1.jar
-wget -q https://github.com/spotbugs/sonar-findbugs/releases/download/4.2.1/sonar-findbugs-plugin-4.2.1.jar
+wget -q https://github.com/spotbugs/sonar-findbugs/releases/download/4.2.3/sonar-findbugs-plugin-4.2.3.jar
 wget -q https://github.com/jborgers/sonar-pmd/releases/download/3.4.0/sonar-pmd-plugin-3.4.0.jar
-wget -q https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-9.6/sonar-l10n-zh-plugin-9.6.jar
+wget -q https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-9.9/sonar-l10n-zh-plugin-9.9.jar
 cd $root_path
 
 echo "[+] Installing flawfinder ..."
@@ -198,10 +202,10 @@ find ./tools/TscanCode -name tscancode -o -name tsclua -o -name TscSharp | xargs
 
 echo "[+] Installing cppcheck ..."
 sudo apt-get -y install cmake libpcre3 libpcre3-dev
-wget -q https://github.com/danmar/cppcheck/archive/refs/tags/2.9.zip
-unzip -q 2.9.zip && mkdir -p ./tools/cppcheck && cd ./tools/cppcheck
-cmake -DHAVE_RULES=ON -DUSE_MATCHCOMPILER=ON ../../cppcheck-2.9 && cmake --build .
-cd $root_path && rm -rf 2.9.zip cppcheck-2.9
+wget -q https://github.com/danmar/cppcheck/archive/refs/tags/2.10.zip
+unzip -q 2.10.zip && mkdir -p ./tools/cppcheck && cd ./tools/cppcheck
+cmake -DHAVE_RULES=ON -DUSE_MATCHCOMPILER=ON ../../cppcheck-2.10 && cmake --build .
+cd $root_path && rm -rf 2.10.zip cppcheck-2.10
 
 echo "[+] Installing bandit ..."
 python3 -m pip install bandit
@@ -210,11 +214,11 @@ echo "[+] Installing gosec ..."
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 
 echo "[+] Installing snyk ..."
-wget -q https://github.com/snyk/cli/releases/download/v1.1005.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
+wget -q https://github.com/snyk/cli/releases/download/v1.1100.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
 
 echo "[+] Installing codeql ..."
 mkdir -p ~/github/codeql-home && cd ~/github/codeql-home
-wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.10.5/codeql-linux64.zip && unzip -q codeql-linux64.zip
+wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.12.2/codeql-linux64.zip && unzip -q codeql-linux64.zip
 export PATH=$HOME/github/codeql-home/codeql:$PATH && echo "export PATH=\$HOME/github/codeql-home/codeql:\$PATH" >> $HOME/.zshrc
 git clone --depth=1 https://github.com/github/codeql.git codeql-repo
 git clone --depth=1 https://github.com/github/codeql-go.git && ./codeql-go/scripts/install-deps.sh
@@ -245,7 +249,7 @@ sudo apt-get -y install libarchive-dev
 python3 -m pip install stacs
 
 echo "[+] Installing capa ..."
-wget -q https://github.com/mandiant/capa/releases/download/v4.0.1/capa-v4.0.1-linux.zip -O capa.zip
+wget -q https://github.com/mandiant/capa/releases/download/v5.0.0/capa-v5.0.0-linux.zip -O capa.zip
 unzip -q capa.zip -d ./tools/ && rm capa.zip
 
 echo "[+] Installing cwe_checker ..."

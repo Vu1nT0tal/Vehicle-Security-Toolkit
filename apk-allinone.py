@@ -21,6 +21,7 @@ from apk_scan.apk_mobsf import analysis as mobsf
 from apk_scan.apk_qark import analysis as qark
 from apk_scan.apk_quark import analysis as quark
 from apk_scan.apk_scanner import analysis as scanner
+from apk_scan.apk_hunt import analysis as hunt
 from apk_scan.apk_walker import analysis as walker
 from apk_scan.apk_speck import analysis as speck
 from apk_scan.apk_keyfinder import analysis as keyfinder
@@ -59,6 +60,7 @@ if __name__ == '__main__':
         'qark': defaultdict(list),
         'quark': defaultdict(list),
         'scanner': defaultdict(list),
+        'hunt': defaultdict(list),
         'walker': defaultdict(list),
         'speck': defaultdict(list),
         'keyfinder': defaultdict(list),
@@ -207,6 +209,15 @@ if __name__ == '__main__':
             else:
                 plugin['scanner']['success'].append(apk)
                 Color.print_success('[+] [scanner] success')
+
+        # apk_hunt
+        if 'hunt' in plugin:
+            if ret := hunt(apk_path, tools_path):
+                plugin['hunt']['failed'].append(apk)
+                Color.print_failed('[-] [hunt] failed')
+            else:
+                plugin['hunt']['success'].append(apk)
+                Color.print_success('[+] [hunt] success')
 
         # apk_walker
         if 'walker' in plugin:

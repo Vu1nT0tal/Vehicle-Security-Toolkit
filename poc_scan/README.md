@@ -1,11 +1,11 @@
 # poc_scan
 
-- [poc_scan](#poc_scan)
-  - [poc_suggester.py](#poc_suggesterpy)
-  - [poc_patch_linux.py](#poc_patch_linuxpy)
-  - [poc_patch_android.py](#poc_patch_androidpy)
-  - [poc_patch_qualcomm.py](#poc_patch_qualcommpy)
-  - [poc_dirtypipe.py](#poc_dirtypipepy)
+- [poc\_scan](#poc_scan)
+  - [poc\_suggester.py](#poc_suggesterpy)
+  - [poc\_patch\_linux.py](#poc_patch_linuxpy)
+  - [poc\_patch\_android.py](#poc_patch_androidpy)
+  - [poc\_patch\_qualcomm.py](#poc_patch_qualcommpy)
+  - [poc\_dirtypipe.py](#poc_dirtypipepy)
 
 ## poc_suggester.py
 
