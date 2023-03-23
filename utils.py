@@ -10,26 +10,25 @@ from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
 
 def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
     """执行shell命令，返回元组 (output, ret_code)，其中output包括STDOUT和STDERR。"""
-    change_java = {
-        8: 'sdk use java 8.0.322-tem',
-        11: 'sdk use java 11.0.14-tem'
-    }
-    change_gradle = {
-        4: 'sdk use gradle 4.10.3',
-        5: 'sdk use gradle 5.6.4',
-        6: 'sdk use gradle 6.9.2',
-        7: 'sdk use gradle 7.4'
-    }
-
     os.environ['PATH'] += ':'+str(Path('~/.local/bin').expanduser())
     local_env = env.copy() if env else os.environ
     cwd = local_env.pop('cwd', None)
     cwd = Path(cwd).expanduser() if cwd else cwd
     exe = local_env.pop('exe', 'sh')
     if gradle := local_env.pop('gradle', None):
+        change_gradle = {
+            4: 'sdk use gradle 4.10.3',
+            5: 'sdk use gradle 5.6.4',
+            6: 'sdk use gradle 6.9.3',
+            7: 'sdk use gradle 7.6'
+        }
         cmd = f'{change_gradle[gradle]} && {cmd}'
         exe = 'zsh'
     if java := local_env.pop('java', None):
+        change_java = {
+            8: 'sdk use java 8.0.362-tem',
+            11: 'sdk use java 11.0.18-tem'
+        }
         cmd = f'{change_java[java]} && {cmd}'
         exe = 'zsh'
 
