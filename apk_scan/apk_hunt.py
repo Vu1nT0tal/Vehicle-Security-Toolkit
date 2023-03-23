@@ -12,8 +12,8 @@ from utils import shell_cmd, Color
 def analysis(apk_path: Path, tools_path: Path):
     report_file = apk_path.parent.joinpath('SecScan/hunt.txt')
 
-    scanner = tools_path.joinpath('APKHunt-main/apkhunt.go')
-    cmd = f'go run {scanner} -p {apk_path} -l {report_file}'
+    scanner = tools_path.joinpath('apkhunt')
+    cmd = f'{scanner} -p {apk_path} -l'
     output, ret_code = shell_cmd(cmd)
 
     if not report_file.exists():

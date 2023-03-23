@@ -123,8 +123,8 @@ wget -q https://github.com/CERTCC/keyfinder/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
 
 echo "[+] Installing APKHunt ..."
-wget -q https://github.com/Cyber-Buddy/APKHunt/archive/refs/heads/main.zip
-unzip -q main.zip -d ./tools/ && rm main.zip
+# wget -q https://github.com/Cyber-Buddy/APKHunt/archive/refs/heads/main.zip
+go build -o ./tools/apkhunt ./tools/apkhunt.go
 
 echo "[+] Installing androbugs ..."
 sudo docker pull danmx/docker-androbugs
@@ -273,6 +273,8 @@ sudo apt-get -y install gcc gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-
 git clone --depth=1 https://github.com/google/syzkaller.git ~/github/syzkaller
 
 echo "######################### poc_scan #########################"
+
+python3 -m pip install openai translators pygerrit2 xmltodict
 
 echo "[+] Installing linux-exploit-suggester ..."
 wget -q https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -P ./tools

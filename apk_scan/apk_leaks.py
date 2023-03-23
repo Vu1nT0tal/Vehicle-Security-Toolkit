@@ -4,8 +4,9 @@ import os
 import re
 import json
 import pyfiglet
-import threading
 import argparse
+import threading
+import contextlib
 
 from pathlib import Path
 
@@ -96,13 +97,10 @@ def finder(pattern, path):
         for fn in files:
             filepath = os.path.join(fp, fn)
             with open(filepath) as f:
-                try:
-                    for line in f.readlines():
-                        mo = matcher.search(line)
-                        if mo:
+                with contextlib.suppress(Exception):
+                    for line in f:
+                        if mo := matcher.search(line):
                             found.append(mo.group())
-                except Exception:
-                    pass
     return sorted(list(set(found)))
 
 

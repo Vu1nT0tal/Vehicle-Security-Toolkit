@@ -1,11 +1,12 @@
 # poc_scan
 
-- [poc\_scan](#poc_scan)
-  - [poc\_suggester.py](#poc_suggesterpy)
-  - [poc\_patch\_linux.py](#poc_patch_linuxpy)
-  - [poc\_patch\_android.py](#poc_patch_androidpy)
-  - [poc\_patch\_qualcomm.py](#poc_patch_qualcommpy)
-  - [poc\_dirtypipe.py](#poc_dirtypipepy)
+- [poc_scan](#poc_scan)
+  - [poc_suggester.py](#poc_suggesterpy)
+  - [poc_chatpatch.py](#poc_chatpatchpy)
+  - [poc_patch_linux.py](#poc_patch_linuxpy)
+  - [poc_patch_android.py](#poc_patch_androidpy)
+  - [poc_patch_qualcomm.py](#poc_patch_qualcommpy)
+  - [poc_dirtypipe.py](#poc_dirtypipepy)
 
 ## poc_suggester.py
 
@@ -13,6 +14,14 @@
 
 ```sh
 $ python3 poc_suggester.py --connect [adb|ssh] --device ip:port
+```
+
+## poc_chatpatch.py
+
+通过 chatgpt 对补丁文件进行代码审查，运行前需要填写 OA 账号、OpenAI 密钥和 JIRA 查询语句 JQL。
+
+```sh
+$ python3 poc_chatpatch.py
 ```
 
 ## poc_patch_linux.py

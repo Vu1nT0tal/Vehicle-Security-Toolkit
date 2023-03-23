@@ -25,7 +25,7 @@ def apktool(apk_path: Path, tools_path: Path):
 def jadx(apk_path: Path, tools_path: Path):
     jadx_bin = tools_path.joinpath('jadx/bin/jadx')
     output_path = apk_path.parent.joinpath('jadx_java')
-    cmd = f'{jadx_bin} "{apk_path}" -d {output_path}'
+    cmd = f'{jadx_bin} --deobf "{apk_path}" -d {output_path}'
     output, ret_code = shell_cmd(cmd)
     apk_path.parent.joinpath(f'{apk_path.stem}.jobf').unlink(missing_ok=True)
 

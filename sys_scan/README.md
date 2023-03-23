@@ -1,10 +1,10 @@
 # sys_scan
 
-- [sys\_scan](#sys_scan)
-  - [sys\_boot.py](#sys_bootpy)
-  - [sys\_kernel.py](#sys_kernelpy)
-  - [sys\_selinux.py](#sys_selinuxpy)
-  - [sys\_syzkaller.py](#sys_syzkallerpy)
+- [sys_scan](#sys_scan)
+  - [sys_boot.py](#sys_bootpy)
+  - [sys_kernel.py](#sys_kernelpy)
+  - [sys_selinux.py](#sys_selinuxpy)
+  - [sys_syzkaller.py](#sys_syzkallerpy)
 
 ## sys_boot.py
 
