@@ -5,6 +5,7 @@ import time
 import html
 import json
 import openai
+import tiktoken
 import requests
 import xmltodict
 import translators
@@ -13,7 +14,27 @@ from pprint import pprint
 from pygerrit2 import GerritRestAPI, HTTPBasicAuth
 
 
+def count_tokens(messages: list):
+    """计算请求需要的token数"""
+
+    encoding = tiktoken.encoding_for_model(model)
+    tokens_per_message = 4
+    tokens_per_name = -1
+
+    num_tokens = 0
+    for message in messages:
+        num_tokens += tokens_per_message
+        for key, value in message.items():
+            num_tokens += len(encoding.encode(value))
+            if key == 'name':
+                num_tokens += tokens_per_name
+    num_tokens += 3
+    return num_tokens
+
+
 def download_patches(username: str, password: str, jql: str, project: str):
+    """下载补丁"""
+
     jira_url = ''
     gerrit_url = ''
 
@@ -81,19 +102,25 @@ def download_patches(username: str, password: str, jql: str, project: str):
 
 
 def chatgpt_scan(key: str, project: str):
+    """ChatGPT代码审查"""
 
     def scan_match(match: str):
         match2 = '\n'.join(match.split('\n')[4:])    # 去掉前面的diff信息
-        prompt = prompt_en + match2
+        messages = [{'role': 'user', 'content': prompt_en + match2}]
+
+        num_tokens = count_tokens(messages)
+        if num_tokens > 4096:
+            return {'match': match, 'content_en': '', 'content_zh': '长度超出限制'}
+
         try:
-            completion = openai.ChatCompletion.create(model='gpt-3.5-turbo', messages=[{'role': 'user', 'content': prompt}])
+            completion = openai.ChatCompletion.create(model=model, messages=messages)
             content_en = completion['choices'][0]['message']['content']
             content_zh = translators.translate_text(content_en, translator='sogou')
 
             return {'match': match, 'content_en': content_en, 'content_zh': content_zh}
         except Exception as e:
             print(e)
-            return {'match': match, 'content_en': '', 'content_zh': ''}
+            return {'match': match, 'content_en': '', 'content_zh': '请求失败'}
 
     # OpenAI
     proxy_url = 'http://127.0.0.1:7890'
@@ -146,4 +173,5 @@ if __name__ == '__main__':
     change_num = download_patches(username, password, jql, project)
     print(f'补丁总数：{change_num}')
 
+    model = 'gpt-3.5-turbo'
     chatgpt_scan(openai_key, project)

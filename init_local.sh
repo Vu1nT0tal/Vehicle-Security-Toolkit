@@ -274,7 +274,7 @@ git clone --depth=1 https://github.com/google/syzkaller.git ~/github/syzkaller
 
 echo "######################### poc_scan #########################"
 
-python3 -m pip install openai translators pygerrit2 xmltodict
+python3 -m pip install openai tiktoken translators pygerrit2 xmltodict
 
 echo "[+] Installing linux-exploit-suggester ..."
 wget -q https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -P ./tools
