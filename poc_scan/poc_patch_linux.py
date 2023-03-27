@@ -1,18 +1,22 @@
 #!/usr/bin/python3
 
 import os
+import re
 import sys
 import json
+import copy
+import mmap
 import pyfiglet
 import argparse
-import cve_searchsploit
 import requests
 import asyncio
-from aiohttp import ClientSession
-from concurrent.futures import ProcessPoolExecutor
-from thefuzz import fuzz
+import cve_searchsploit
+
 from pathlib import Path
+from thefuzz import fuzz
+from aiohttp import ClientSession
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor
 
 sys.path.append('..')
 from utils import shell_cmd, Color
@@ -21,21 +25,122 @@ from utils import shell_cmd, Color
 # https://kernel.org/category/releases.html
 KERNEL_VERSION = {
     # LTS
-    '4.9': '69973b830859bc6529a7a0468ba0d80ee5117826',
     '4.14': 'bebc6082da0a9f5d47a1ea2edc099bf671058bd4',
     '4.19': '84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d',
     '5.4': '219d54332a09e8d8741c1e1982f5eae56099de85',
     '5.10': '2c85ebc57b3e1817b6ce1a6b703928e113a90442',
     '5.15': '8bb7eca972ad531c9b149c0a51ab43a417385813',
+    '6.1': '830b3c68c1fb1e9176028d02ef86f3cf76aa2476',
 
     # others
     '4.4': 'afd2ff9b7e1b367172f18ba7f693dfb62bdcb2dc',
+    '4.9': '69973b830859bc6529a7a0468ba0d80ee5117826',
     '5.11': 'f40ddce88593482919761f74910f42f4b84c004b',
     '5.12': '9f4ad9e425a1d3b6a34617b8ea226d56a119a717',
     '5.13': '62fb9874f5da54fdb243003b386128037319b219',
     '5.14': '7d2a07b769330c34b4deabeed939325c77a7ec2f',
     '5.16': 'df0cc57e057f18e44dac8e6c18aba47ab53202f9',
 }
+
+
+def extract_patch_info(cve: Path):
+    with open(cve, 'r') as cve_fd:
+        diff_flag = False
+        modify_flag = False
+        sFilename = ''
+        file_modify = {}
+        diff_info = []
+
+        for line in cve_fd:
+            info = re.findall(r'^diff --git a(.*) b(.*)', line)
+            if len(info) == 1:
+                modify_flag = False
+                sFilename = ''
+                diff_info = copy.deepcopy(info)
+                diff_flag = True
+                continue
+
+            if diff_flag == True:
+                file_path_a = re.findall(r'^--- a(.*)', line)
+                if len(file_path_a) == 1:
+                    sFilename = file_path_a[0]
+                else:
+                    file_path_b = re.findall(r'^\+\+\+ b(.*)', line)
+                    if len(file_path_b) == 1:
+                        sFilename = file_path_b[0]
+
+                if (sFilename == diff_info[0][0]) and (sFilename == diff_info[0][1]):
+                    file_modify[sFilename] = {'add': [], 'del': []}
+                    modify_flag = True
+                    diff_flag = False
+                continue
+
+            if (line[0] == '-') and (line[1] != '-'):
+                if modify_flag == True and len(line[1:].strip()) > 5:
+                    file_modify[sFilename]['del'].append(line[1:].strip())
+            elif (line[0] == '+') and (line[1] != '+'):
+                if modify_flag == True and len(line[1:].strip()) > 5:
+                    file_modify[sFilename]['add'].append(line[1:].strip())
+
+            finish = re.findall(r'^cgit', line)
+            if len(finish) == 1:
+                break
+
+    return file_modify
+
+
+def compareThread2(cve: Path):
+    """提取某个CVE补丁信息，到源码中进行对比"""
+
+    cve_name = '-'.join(cve.stem.split('-')[:3])
+    result = {
+        'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
+        'poc': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
+        'scan': {'modify': [], 'unmodify':[], 'ratio':0}
+    }
+    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
+    if requests.get(poc_url):
+        result['poc'].append(poc_url)
+
+    file_modify = extract_patch_info(cve)
+    modify_patch = 0
+    all_patch = 0
+
+    for filename in file_modify:
+        source_all_path = repo_path.joinpath(filename[1:])
+        if not source_all_path.exists():
+            break
+
+        all_patch += len(file_modify[filename]['add'])+len(file_modify[filename]['del'])
+
+        with open(source_all_path, 'r+') as f:
+            kernel_code = mmap.mmap(f.fileno(), 0)
+            for add_patch in file_modify[filename]['add']:
+                add_idx = kernel_code.find(add_patch.encode())
+                if add_idx == -1:
+                    result['scan']['unmodify'].append(f'[+] {add_patch}')
+                elif add_idx >= 0:
+                    result['scan']['modify'].append(f'[+] {add_patch}')
+                    kernel_code.seek(add_idx)
+                    modify_patch += 1
+
+            for del_patch in file_modify[filename]['del']:
+                del_idx = kernel_code.find(del_patch.encode())
+                if del_idx == -1:
+                    result['scan']['modify'].append(f'[-] {del_patch}')
+                    modify_patch += 1
+                elif del_idx >= 0:
+                    result['scan']['unmodify'].append(f'[-] {del_patch}')
+
+    score = 1 if all_patch == 0 else modify_patch / all_patch
+    result['scan']['ratio'] = score
+
+    if score > 0.6:
+        Color.print_success(f'[-] {cve_name} not found, code modify ratio: {score:.2%}')
+    else:
+        Color.print_failed(f'[-] {cve_name} found, code modify ratio: {score:.2%}')
+
+    return cve_name, result
 
 
 def update(args=None):
@@ -100,7 +205,7 @@ def get_severity(score: float, version: int=3):
 
 
 def compareThread(cve: Path, patch_path: Path):
-    """对比某个CVE补丁与所有内核补丁"""
+    """将某个CVE补丁与所有内核补丁进行比较"""
 
     cve_name = '-'.join(cve.stem.split('-')[:3])
     result = {
@@ -129,8 +234,6 @@ def compareThread(cve: Path, patch_path: Path):
 
 def scan(args):
     """对比所有CVE补丁与所有内核补丁"""
-
-    repo_path = Path(args.repo).expanduser().absolute()
 
     cmd = f'git format-patch -N {KERNEL_VERSION[args.version]} -o {patch_all_path}'
     output, ret_code = shell_cmd(cmd, env={'cwd': repo_path})
@@ -199,4 +302,5 @@ if __name__ == '__main__':
     patch_sec_path = report_path.joinpath('patch_sec_linux')
 
     args = argument()
+    repo_path = Path(args.repo).expanduser().absolute()
     args.func(args)

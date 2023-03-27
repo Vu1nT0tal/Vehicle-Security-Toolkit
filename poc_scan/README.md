@@ -29,6 +29,7 @@ $ python3 poc_chatpatch.py
 检测 Linux 内核仓库中已合并及未合并的所有 CVE 补丁。
 
 ```sh
+$ cve_searchsploit -u   # 建议先更新cve-edbid
 $ python3 poc_patch_linux.py update   # 更新CVE补丁库
 $ python3 poc_patch_linux.py scan --repo ~/kernel --version 5.10
 ```
