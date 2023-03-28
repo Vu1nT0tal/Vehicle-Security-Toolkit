@@ -35,6 +35,7 @@ KERNEL_VERSION = {
     # others
     '4.4': 'afd2ff9b7e1b367172f18ba7f693dfb62bdcb2dc',
     '4.9': '69973b830859bc6529a7a0468ba0d80ee5117826',
+    '5.4.147': '48a24510c328b3b3d7775377494b4ad4f58d189a',
     '5.11': 'f40ddce88593482919761f74910f42f4b84c004b',
     '5.12': '9f4ad9e425a1d3b6a34617b8ea226d56a119a717',
     '5.13': '62fb9874f5da54fdb243003b386128037319b219',
@@ -155,9 +156,9 @@ def update(args=None):
                         f.write(data)
 
     if cves_path.exists():
-        output, ret_code = shell_cmd('git pull', env={'cwd': '~/github/linux_kernel_cves'})
+        output, ret_code = shell_cmd('git pull', env={'cwd': cves_path})
     else:
-        output, ret_code = shell_cmd('git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves.git ~/github/linux_kernel_cves')
+        output, ret_code = shell_cmd(f'git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves.git {cves_path}')
     if ret_code != 0:
         print(output)
         return False
@@ -170,9 +171,9 @@ def update(args=None):
     loop = asyncio.get_event_loop()
     for cve, value in stream_fixes.items():
         for version, commit in value.items():
-            patch_sec_path.joinpath(version).mkdir(parents=True, exist_ok=True)
+            patch_sec_path.joinpath(f'{version}/{commit["fixed_version"]}').mkdir(parents=True, exist_ok=True)
             url = f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/patch/?id={commit["cmt_id"]}'
-            patch = patch_sec_path.joinpath(f'{version}/{cve}-{commit["cmt_id"]}.patch')
+            patch = patch_sec_path.joinpath(f'{version}/{commit["fixed_version"]}/{cve}-{commit["cmt_id"]}.patch')
             task = asyncio.ensure_future(download(sem, url, patch))
             tasks.append(task)
     try:
@@ -244,8 +245,14 @@ def scan(args):
     else:
         print(f'[+] Generate {number.strip()} patchs: {patch_all_path}')
 
+    patches = []
+    version = args.version.split('-')[0].split('.')     # 5.4-rc1
+    for folder in patch_sec_path.joinpath('.'.join(version[:2])).glob('*'):
+        if int(folder.name.split('-')[0].split('.')[-1]) >= int(version[-1]):
+            patches += folder.glob('*')
+
     executor = ProcessPoolExecutor(os.cpu_count()-1)
-    tasks = [executor.submit(compareThread, cve, patch_all_path) for cve in patch_sec_path.joinpath(f'{args.version}').glob('*')]
+    tasks = [executor.submit(compareThread, cve, patch_all_path) for cve in patches]
     executor.shutdown(True)
 
     results = defaultdict(dict)
@@ -259,7 +266,7 @@ def scan(args):
             # 优先使用cvss3，且只保留其一
             if 'cvss3' in item:
                 severity = get_severity(item['cvss3']['score'])
-                item.pop('cvss2')
+                item.pop('cvss2') if 'cvss2' in item else None
             elif 'cvss2' in item:
                 severity = get_severity(item['cvss2']['score'], version=2)
             else:
@@ -273,7 +280,7 @@ def scan(args):
                 results['patched'].update(result)
             else:
                 results[severity].update(result)
-        f1.write(json.dumps(results, indent=4))
+        json.dump(results, f1, indent=4)
         print(f'[+] Results saved in {report_file}')
 
 
@@ -282,9 +289,11 @@ def argument():
     subparsers = parser.add_subparsers()
 
     parser_update = subparsers.add_parser('update', help='update CVE patch data')
+    parser_update.add_argument('--cves', help='linux_kernel_cves git repository path', type=str, required=False, default=cves_path)
     parser_update.set_defaults(func=update)
 
     parser_scan = subparsers.add_parser('scan', help='scan CVE patch in kernel repository')
+    parser_scan.add_argument('--cves', help='linux_kernel_cves git repository path', type=str, required=False, default=cves_path)
     parser_scan.add_argument('--repo', help='kernel git repository path', type=str, required=True)
     parser_scan.add_argument('--version', help='kernel version number', type=str, required=True)
     parser_scan.set_defaults(func=scan)
@@ -294,7 +303,7 @@ def argument():
 
 if __name__ == '__main__':
     print(pyfiglet.figlet_format('poc_patch_linux'))
-    cves_path = Path('~/github/linux_kernel_cves').expanduser()
+    cves_path = '~/github/linux_kernel_cves'
 
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     report_path.mkdir(parents=True, exist_ok=True)
@@ -302,5 +311,8 @@ if __name__ == '__main__':
     patch_sec_path = report_path.joinpath('patch_sec_linux')
 
     args = argument()
-    repo_path = Path(args.repo).expanduser().absolute()
+    cves_path = Path(args.cves).expanduser().absolute()
+    if args.func.__name__ == 'scan':
+        repo_path = Path(args.repo).expanduser().absolute()
+
     args.func(args)

@@ -47,7 +47,7 @@ def analysis(bin_path: Path):
                 'url': f'https://www.cvedetails.com/cve/{cve_number}'})
 
     with open(report_path, 'w') as f:
-        f.write(json.dumps(result, indent=4))
+        json.dump(result, f, indent=4)
     return 0
 
 

@@ -131,7 +131,7 @@ def analysis(apk_path: Path):
             thread.start()
 
     with open(report_file, 'w+') as f:
-        f.write(json.dumps(results, indent=4))
+        json.dump(results, f, indent=4)
 
 
 def argument():

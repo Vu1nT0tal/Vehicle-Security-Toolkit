@@ -360,4 +360,4 @@ if __name__ == '__main__':
     args = argument()
     args.func(args)
     with open(patch_sec_path.joinpath('android_cves.json'), 'w+') as f:
-        f.write(json.dumps(results, indent=4))
+        json.dump(results, f, indent=4)

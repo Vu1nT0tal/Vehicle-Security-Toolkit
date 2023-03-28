@@ -15,7 +15,7 @@ def analysis(apk_path: Path):
     report.analysis(apk_path, rule_path)
     json_report = report.get_report("json")
     with open(report_file, 'w+') as f:
-        f.write(json.dumps(json_report, indent=4))
+        json.dump(json_report, f, indent=4)
 
 
 def argument():

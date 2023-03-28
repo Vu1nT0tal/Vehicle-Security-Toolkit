@@ -14,7 +14,7 @@ def analysis(config_path: Path, report_path: Path):
     report_file = report_path.joinpath('sys_kernel.json')
     output, ret_code = shell_cmd(f'kconfig-hardened-check -m json -c {config_path}')
     with open(report_file, 'w+') as f:
-        f.write(json.dumps(json.loads(output), indent=4))
+        json.dump(json.loads(output), f, indent=4)
         print(f'[+] Results saved in {report_file}')
 
 

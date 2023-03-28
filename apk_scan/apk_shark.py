@@ -24,7 +24,7 @@ def analysis(apk_path: Path, tools_path: Path):
     }
     config_file = report_path.joinpath('config.json5')
     with open(config_file, 'w') as f:
-        f.write(json.dumps(config, indent=4))
+        json.dump(config, f, indent=4)
 
     scanner = tools_path.joinpath('appshark-main/AppShark.jar')
     cmd = f'java -jar {scanner} {config_file}'

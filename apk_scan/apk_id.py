@@ -17,7 +17,7 @@ def analysis(apk_path: Path):
     output, ret_code = shell_cmd(cmd)
     if ret_code == 0:
         with open(report_file, 'w+') as f:
-            f.write(json.dumps(json.loads(output), indent=4))
+            json.dump(json.loads(output), f, indent=4)
 
     if not report_file.exists():
         with open(f'{report_file}.error', 'w+') as f:
