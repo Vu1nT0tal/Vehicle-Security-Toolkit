@@ -246,9 +246,12 @@ def scan(args):
         print(f'[+] Generate {number.strip()} patchs: {patch_all_path}')
 
     patches = []
-    version = args.version.split('-')[0].split('.')     # 5.4-rc1
+    version = args.version.split('-')[0].split('.')     # 5.4-rc1 -> 5.4
+    version.append('0') if len(version) == 2 else None  # 5.4 -> 5.4.0
     for folder in patch_sec_path.joinpath('.'.join(version[:2])).glob('*'):
-        if int(folder.name.split('-')[0].split('.')[-1]) >= int(version[-1]):
+        folder_name = folder.name.split('-')[0].split('.')
+        folder_name.append('0') if len(folder_name) == 2 else None
+        if int(folder_name[-1]) >= int(version[-1]):
             patches += folder.glob('*')
 
     executor = ProcessPoolExecutor(os.cpu_count()-1)
