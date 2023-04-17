@@ -166,12 +166,13 @@ if __name__ == '__main__':
     # OpenAI密钥
     openai_key = ''
     # JIRA查询语句
-    jql = ''
+    projects = {}
+    jql_base = ''
+    for project in projects:
+        jql = jql_base.format(project=project)
 
-    project = re.search(r'component = (\S+)', jql)[1]
+        change_num = download_patches(username, password, jql, project)
+        print(f'补丁总数：{change_num}')
 
-    change_num = download_patches(username, password, jql, project)
-    print(f'补丁总数：{change_num}')
-
-    model = 'gpt-3.5-turbo'
-    chatgpt_scan(openai_key, project)
+        model = 'gpt-3.5-turbo'
+        chatgpt_scan(openai_key, project)
