@@ -10,6 +10,7 @@ import requests
 import xmltodict
 import translators
 from pathlib import Path
+from thefuzz import fuzz
 from pprint import pprint
 from pygerrit2 import GerritRestAPI, HTTPBasicAuth
 
@@ -71,7 +72,7 @@ def download_patches(username: str, password: str, jql: str, project: str):
 
     change_num = 0
     for issue in issues:
-        issue_title = issue['title']
+        issue_title = issue['title'].replace('/', '_')
         issue_path = project_path.joinpath(issue_title)
         issue_path.mkdir(parents=True, exist_ok=True)
         print(issue_title, issue['link'])
@@ -105,22 +106,29 @@ def chatgpt_scan(key: str, project: str):
     """ChatGPT代码审查"""
 
     def scan_match(match: str):
+        # 优先从缓存中查找
+        for cache_match in cache:
+            ratio = fuzz.ratio(match, cache_match['match'])
+            if ratio > 70:
+                print('cache', ratio)
+                return {'match': match, 'content_en': cache_match['content_en'], 'content_zh': cache_match['content_zh']}
+
         match2 = '\n'.join(match.split('\n')[4:])    # 去掉前面的diff信息
         messages = [{'role': 'user', 'content': prompt_en + match2}]
 
-        num_tokens = count_tokens(messages)
-        if num_tokens > 4096:
-            return {'match': match, 'content_en': '', 'content_zh': '长度超出限制'}
+        if count_tokens(messages) < 4096:
+            for _ in range(3):
+                try:
+                    completion = openai.ChatCompletion.create(model=model, messages=messages)
+                    content_en = completion['choices'][0]['message']['content']
+                    content_zh = translators.translate_text(content_en, translator='sogou')
 
-        try:
-            completion = openai.ChatCompletion.create(model=model, messages=messages)
-            content_en = completion['choices'][0]['message']['content']
-            content_zh = translators.translate_text(content_en, translator='sogou')
+                    return {'match': match, 'content_en': content_en, 'content_zh': content_zh}
+                except Exception as e:
+                    print(e)
+                    time.sleep(20)
 
-            return {'match': match, 'content_en': content_en, 'content_zh': content_zh}
-        except Exception as e:
-            print(e)
-            return {'match': match, 'content_en': '', 'content_zh': '请求失败'}
+        return {'match': match, 'content_en': '', 'content_zh': '扫描失败'}
 
     # OpenAI
     proxy_url = 'http://127.0.0.1:7890'
@@ -132,31 +140,32 @@ def chatgpt_scan(key: str, project: str):
     prompt_zh = '下面是一个代码补丁，请帮我做代码审查，如果有任何错误风险，安全漏洞和改进建议，欢迎提出来。\n'
 
     # 遍历所有补丁
-    for patch in Path(project).rglob('*.patch'):
-        print(patch)
-        patch_text = patch.read_text()
+    for subdir in [d for d in Path(project).iterdir() if d.is_dir()]:
+        cache = []  # 缓存已经扫描过的补丁
+        for patch in subdir.rglob('*.patch'):
+            print(patch)
+            patch_text = patch.read_text()
 
-        # 按单个文件分割
-        results = []
-        pattern = r"diff --git.*?(?=diff --git|$)"
-        matches = re.findall(pattern, patch_text, re.DOTALL)
-        for match in matches:
-            if 'Binary files differ' in match:
-                continue
+            # 按单个文件分割
+            results = []
+            pattern = r"diff --git.*?(?=diff --git|$)"
+            matches = re.findall(pattern, patch_text, re.DOTALL)
+            for match in matches:
+                if 'Binary files differ' in match:
+                    continue
 
-            print('----------'*10)
-            result = scan_match(match)
-            results.append(result)
-            if result['content_en']:
-                pprint(result)
-                time.sleep(10)
-            else:
-                print(f'\033[1;31;40m {match} \033[0m')
-                time.sleep(20)
+                print('----------'*10)
+                result = scan_match(match)
+                results.append(result)
+                if result['content_en']:
+                    pprint(result)
+                else:
+                    print(f'\033[1;31;40m {match} \033[0m')
 
-        with open(patch.parent.joinpath(f'{patch.stem}.txt'), 'w+') as f:
-            for result in results:
-                f.write('\n\n' + '\n\n'.join(result.values()))
+            with open(patch.parent.joinpath(f'{patch.stem}.txt'), 'w+') as f:
+                for result in results:
+                    f.write('\n\n' + '\n\n'.join(result.values()))
+            cache.extend(results)
 
 
 if __name__ == '__main__':
