@@ -20,6 +20,7 @@
   - [漏洞测试](#漏洞测试)
   - [隐私合规测试](#隐私合规测试)
   - [APK Fuzz 测试](#apk-fuzz-测试)
+  - [Frida 测试脚本](#frida-测试脚本)
   - [其他工具](#其他工具)
   - [关注我们](#关注我们)
 
@@ -149,6 +150,10 @@ $ python3 tools/camille-master/camille.py -ns -t 3 -f demo.xls
 ## APK Fuzz 测试
 
 基于 drozer 实现的 Fuzz 工具。[apk_fuzz](./apk_fuzz)
+
+## Frida 测试脚本
+
+[Frida](./frida/)
 
 ## 其他工具
 

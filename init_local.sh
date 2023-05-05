@@ -223,10 +223,9 @@ wget -q https://github.com/snyk/cli/releases/download/v1.1100.0/snyk-linux -O ./
 
 echo "[+] Installing codeql ..."
 mkdir -p ~/github/codeql-home && cd ~/github/codeql-home
-wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.12.2/codeql-linux64.zip && unzip -q codeql-linux64.zip
+wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.13.1/codeql-linux64.zip && unzip -q codeql-linux64.zip
 export PATH=$HOME/github/codeql-home/codeql:$PATH && echo "export PATH=\$HOME/github/codeql-home/codeql:\$PATH" >> $HOME/.zshrc
 git clone --depth=1 https://github.com/github/codeql.git codeql-repo
-git clone --depth=1 https://github.com/github/codeql-go.git && ./codeql-go/scripts/install-deps.sh
 rm codeql-linux64.zip && cd $root_path
 
 echo "[+] Installing semgrep ..."
@@ -266,7 +265,7 @@ unzip -q main.zip && mv BinAbsInspector-main tools/BinAbsInspector && rm main.zi
 cd ./tools && cp BinAbsInspector/Dockerfile ./ && docker build . -t absinspector && rm Dockerfile && cd $root_path
 
 echo "[+] Installing cve-bin-tool ..."
-python3 -m pip install cve-bin-tool && cve-bin-tool -u
+python3 -m pip install cve-bin-tool && cve-bin-tool -u now
 
 echo "######################### sys_scan #########################"
 
