@@ -20,6 +20,7 @@ from apk_scan.apk_mariana import analysis as mariana
 from apk_scan.apk_mobsf import analysis as mobsf
 from apk_scan.apk_qark import analysis as qark
 from apk_scan.apk_quark import analysis as quark
+from apk_scan.apk_integrity import analysis as integrity
 from apk_scan.apk_scanner import analysis as scanner
 from apk_scan.apk_hunt import analysis as hunt
 from apk_scan.apk_walker import analysis as walker
@@ -59,6 +60,7 @@ if __name__ == '__main__':
         'mobsf': defaultdict(list),
         'qark': defaultdict(list),
         'quark': defaultdict(list),
+        'integrity': defaultdict(list),
         'scanner': defaultdict(list),
         'hunt': defaultdict(list),
         'walker': defaultdict(list),
@@ -200,6 +202,15 @@ if __name__ == '__main__':
             quark(apk_path)
             plugin['quark']['success'].append(apk)
             Color.print_success('[+] [quark] success')
+
+        # apk_integrity
+        if 'integrity' in plugin:
+            if ret := integrity(apk_path, tools_path):
+                plugin['integrity']['failed'].append(apk)
+                Color.print_failed('[-] [integrity] failed')
+            else:
+                plugin['integrity']['success'].append(apk)
+                Color.print_success('[+] [integrity] success')
 
         # apk_scanner
         if 'scanner' in plugin:

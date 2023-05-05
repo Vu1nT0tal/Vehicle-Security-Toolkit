@@ -16,6 +16,7 @@
   - [apk_walker.py](#apk_walkerpy)
   - [apk_mariana.py](#apk_marianapy)
   - [apk_quark.py](#apk_quarkpy)
+  - [apk_integrity.py](#apk_integritypy)
   - [apk_exodus.py](#apk_exoduspy)
   - [apk_cryptoguard.py](#apk_cryptoguardpy)
   - [apk_jni.py](#apk_jnipy)
@@ -161,6 +162,15 @@ $ ../tools/mariana-trench/bin/sapp --database-name {sample-mariana.db} server --
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
 $ python3 apk_quark.py --config ../data/apk.list
+```
+
+## apk_integrity.py
+
+导出所有 APK 后，使用该脚本批量静态分析并生成报告。
+
+```sh
+$ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
+$ python3 apk_integrity.py --config ../data/apk.list
 ```
 
 ## apk_exodus.py

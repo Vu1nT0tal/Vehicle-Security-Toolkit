@@ -96,6 +96,11 @@ echo "[+] Installing quark ..."
 python3 -m pip install androguard==3.4.0a1 quark-engine
 freshquark
 
+echo "[+] Installing DISintegrity ..."
+python3 -m pip install jinja2 tqdm
+wget -q https://github.com/user1342/DISintegrity/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
+
 echo "[+] Installing ApplicationScanner ..."
 python3 -m pip install lief rich
 sudo npm -g install js-beautify
