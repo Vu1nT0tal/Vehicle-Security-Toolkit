@@ -23,7 +23,7 @@ EOF
 sudo apt-get update && sudo apt-get -y upgrade
 
 sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
-python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet
+python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich
 
 echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect
@@ -44,7 +44,7 @@ sudo apt-get update && sudo apt-get -y install code
 echo "[+] Install selenium ..."
 python3 -m pip install selenium
 wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
-wget -q https://chromedriver.storage.googleapis.com/110.0.5481.77/chromedriver_linux64.zip -O chromedriver.zip
+wget -q https://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_linux64.zip -O chromedriver.zip
 sudo dpkg -i chrome.deb && rm chrome.deb
 unzip -q chromedriver.zip && sudo mv chromedriver /usr/bin && rm chromedriver.zip
 
@@ -56,13 +56,13 @@ echo "export PATH=\$HOME/go/bin:\$PATH" >> $HOME/.zshrc
 echo "[+] Installing sdkman ..."
 curl -s https://get.sdkman.io | bash
 source $HOME/.sdkman/bin/sdkman-init.sh
-sdk install java 8.0.362-tem
-echo Y | sdk install java 11.0.18-tem
-echo n | sdk install java 17.0.6-tem
+sdk install java 8.0.372-tem
+echo Y | sdk install java 11.0.19-tem
+echo n | sdk install java 17.0.7-tem
 sdk install gradle 4.10.3
 echo n | sdk install gradle 5.6.4
-echo Y | sdk install gradle 6.9.3
-echo n | sdk install gradle 7.6
+echo Y | sdk install gradle 6.9.4
+echo n | sdk install gradle 7.6.1
 
 echo "[+] Installing docker ..."
 sudo apt-get -y install apt-transport-https ca-certificates curl gnupg lsb-release
@@ -82,7 +82,7 @@ echo "[+] Installing apktool ..."
 wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.7.0/apktool_2.7.0.jar -O ./tools/apktool.jar
 
 echo "[+] Installing jadx ..."
-wget -q https://github.com/skylot/jadx/releases/download/v1.4.5/jadx-1.4.5.zip -O jadx.zip
+wget -q https://github.com/skylot/jadx/releases/download/v1.4.7/jadx-1.4.7.zip -O jadx.zip
 unzip -q jadx.zip -d ./tools/jadx && chmod +x ./tools/jadx/bin/* && rm jadx.zip
 
 echo "[+] Installing apkid ..."
@@ -146,7 +146,7 @@ sudo docker pull frantzme/cryptoguard
 
 echo "[+] Installing qark ..."
 python3 -m venv ./tools/qark-env
-./tools/qark-env/bin/pip install wheel colorama
+./tools/qark-env/bin/pip install wheel
 ./tools/qark-env/bin/pip install git+https://github.com/linkedin/qark.git
 
 echo "[+] Installing SimpleWalker ..."
@@ -156,11 +156,11 @@ unzip -q release.zip && mv release ./tools/SimpleWalker && rm release.zip
 echo "[+] Installing AppShark ..."
 wget -q https://github.com/bytedance/appshark/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
-wget -q https://github.com/bytedance/appshark/releases/download/0.1/AppShark-0.1-all.jar -O ./tools/appshark-main/AppShark.jar
+wget -q https://github.com/bytedance/appshark/releases/download/v0.1.2/AppShark-0.1.2-all.jar -O ./tools/appshark-main/AppShark.jar
 
 echo "[+] Installing mariana-trench ..."
 python3 -m venv ./tools/mariana-trench-env
-./tools/mariana-trench-env/bin/pip install colorama mariana-trench "graphene<3"
+./tools/mariana-trench-env/bin/pip install wheel mariana-trench
 
 echo "[+] Installing mobileAudit ..."
 wget -q https://github.com/mpast/mobileAudit/archive/refs/heads/main.zip
@@ -173,7 +173,7 @@ echo "[+] Installing mobsfscan ..."
 sudo docker pull opensecurity/mobsfscan
 
 echo "[+] Installing DependencyCheck ..."
-wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v8.0.2/dependency-check-8.0.2-release.zip -O dependency-check.zip
+wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v8.2.1/dependency-check-8.2.1-release.zip -O dependency-check.zip
 unzip -q dependency-check.zip -d ./tools/ && rm dependency-check.zip
 
 wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
@@ -188,10 +188,10 @@ sudo docker pull sonarsource/sonar-scanner-cli
 
 mkdir -p ./tools/sonarqube_extensions/plugins && cd ./tools/sonarqube_extensions/plugins
 wget -q https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.1.0/sonar-cxx-plugin-2.1.0.428.jar
-wget -q https://github.com/dependency-check/dependency-check-sonar-plugin/releases/download/3.0.1/sonar-dependency-check-plugin-3.0.1.jar
+wget -q https://github.com/dependency-check/dependency-check-sonar-plugin/releases/download/4.0.0/sonar-dependency-check-plugin-4.0.0.jar
 wget -q https://github.com/spotbugs/sonar-findbugs/releases/download/4.2.3/sonar-findbugs-plugin-4.2.3.jar
 wget -q https://github.com/jborgers/sonar-pmd/releases/download/3.4.0/sonar-pmd-plugin-3.4.0.jar
-wget -q https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-9.9/sonar-l10n-zh-plugin-9.9.jar
+wget -q https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-10.0/sonar-l10n-zh-plugin-10.0.jar
 cd $root_path
 
 echo "[+] Installing flawfinder ..."
@@ -219,7 +219,7 @@ echo "[+] Installing gosec ..."
 go install github.com/securego/gosec/v2/cmd/gosec@latest
 
 echo "[+] Installing snyk ..."
-wget -q https://github.com/snyk/cli/releases/download/v1.1100.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
+wget -q https://github.com/snyk/cli/releases/download/v1.1156.0/snyk-linux -O ./tools/snyk && chmod +x ./tools/snyk
 
 echo "[+] Installing codeql ..."
 mkdir -p ~/github/codeql-home && cd ~/github/codeql-home
@@ -253,7 +253,7 @@ sudo apt-get -y install libarchive-dev
 python3 -m pip install stacs
 
 echo "[+] Installing capa ..."
-wget -q https://github.com/mandiant/capa/releases/download/v5.0.0/capa-v5.0.0-linux.zip -O capa.zip
+wget -q https://github.com/mandiant/capa/releases/download/v5.1.0/capa-v5.1.0-linux.zip -O capa.zip
 unzip -q capa.zip -d ./tools/ && rm capa.zip
 
 echo "[+] Installing cwe_checker ..."

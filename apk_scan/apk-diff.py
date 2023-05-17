@@ -9,7 +9,7 @@ from filecmp import dircmp
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd
+from utils import *
 
 
 pwd = Path(__file__).parent
@@ -31,7 +31,7 @@ def diff_apk(apk1, apk2):
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
-    print('[+] Diffing APKs -> diff_apk.txt')
+    print_focus('Diffing APKs -> diff_apk.txt')
     return ret_code
 
 
@@ -40,7 +40,7 @@ def diff_code(folder1, folder2):
     diff(compared)
     with open(pwd.joinpath('diff_smali.txt'), 'w+') as f:
         f.write(result)
-    print(f'[+] Diffing smali -> diff_smali.txt\t{str(count)} files are different')
+    print_focus(f'Diffing smali -> diff_smali.txt\t{str(count)} files are different')
 
 
 def diff(compared):

@@ -16,7 +16,7 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
@@ -72,7 +72,7 @@ def get_patch(url: str):
     elif 'github.com/torvalds' in url:
         patch = requests.get(f'{url}.patch')
     else:
-        Color.print_failed(f'[-] {url} not support')
+        print_failed(f'{url} not support')
     return patch
 
 
@@ -173,7 +173,7 @@ def extract_section(soup, tag1: str, tag2: str):
             'type': type_text,
             'severity': severity_text
         }}
-        Color.print_success(f'{tag2}\t{item}')
+        print_success(f'{tag2}\t{item}')
         item[cve_name].update(get_cve(cve_name))
 
         # 下载patch
@@ -182,14 +182,14 @@ def extract_section(soup, tag1: str, tag2: str):
         if tag1 == 'aosp':
             for ver in vers_text.replace(" ", "").split(','):
                 if not urls:
-                    Color.print_failed(f'[-] {tag1} {cve_name} not found')
+                    print_failed(f'{tag1} {cve_name} not found')
                 else:
                     tag_path.joinpath(ver).mkdir(parents=True, exist_ok=True)
                     for idx, url in enumerate(urls):
                         try:
                             patch = get_patch(url)
                         except Exception as e:
-                            Color.print_failed(f'[-] {url} download faild')
+                            print_failed(f'{url} download faild')
                             print(e, item)
                             continue
 
@@ -202,13 +202,13 @@ def extract_section(soup, tag1: str, tag2: str):
                 results[tag1][ver].update(item)
         else:
             if not urls:
-                Color.print_failed(f'[-] {tag1} {cve_name} not found')
+                print_failed(f'{tag1} {cve_name} not found')
             else:
                 for idx, url in enumerate(urls):
                     try:
                         patch = get_patch(url)
                     except Exception as e:
-                        Color.print_failed(f'[-] {url} download faild')
+                        print_failed(f'{url} download faild')
                         print(e, item)
                         continue
 
@@ -223,7 +223,7 @@ def extract_section(soup, tag1: str, tag2: str):
 
 def updateThread(url: str):
     """更新线程"""
-    Color.print_focus(url)
+    print_focus(url)
     ids = {
         'aosp': [
             'android-runtime',

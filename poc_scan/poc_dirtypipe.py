@@ -10,7 +10,7 @@ import crypt
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 poc_src = b"""
@@ -177,7 +177,7 @@ if __name__ == '__main__':
                 parser.print_help()
             output, ret_code = shell_cmd(f'{compiler} --static {f.name} -o {poc_file}')
             if ret_code != 0:
-                print('[-] POC编译失败')
+                print_failed('POC编译失败')
                 exit(1)
 
         if args.connect == 'adb':
@@ -213,9 +213,9 @@ if __name__ == '__main__':
                 ssh2.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh2.connect(hostname=ip, port=port, username='root', password=new_passwd)
                 ssh2.exec_command(f'cp /tmp/passwd.bak /etc/passwd && {cleanup}')
-                print('[+] cve20220847 漏洞存在')
+                print_failed('cve20220847 漏洞存在')
             except paramiko.AuthenticationException:
                 ssh.exec_command(cleanup)
-                print('[-] cve20220847 漏洞不存在')
+                print_success('cve20220847 漏洞不存在')
         else:
             parser.print_help()

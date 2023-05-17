@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import re
+import sys
 import json
 import pyfiglet
 import requests
@@ -8,6 +9,9 @@ import argparse
 from pathlib import Path
 from collections import namedtuple
 from exodus_core.analysis.static_analysis import StaticAnalysis
+
+sys.path.append('..')
+from utils import *
 
 
 def get_trackers():
@@ -69,7 +73,7 @@ if __name__ == '__main__':
 
     signature, compiled_signature = get_trackers()
     for apk in apk_dirs:
-        print(f'[+] [exodus] {apk}')
+        print_focus(f'[exodus] {apk}')
 
         apk_path = Path(apk)
         report_path = apk_path.parent.joinpath('SecScan')
@@ -78,4 +82,4 @@ if __name__ == '__main__':
         analysis(apk_path, signature, compiled_signature)
         success_num += 1
 
-    print(f'扫描完成: {success_num}')
+    print_success(f'[exodus] {success_num}')

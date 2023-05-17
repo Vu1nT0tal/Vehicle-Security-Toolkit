@@ -8,7 +8,7 @@ from pathlib import Path
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 sys.path.append('..')
-from utils import get_host_ip, Color
+from utils import *
 
 DEFAULT_SERVER = f'http://{get_host_ip()}:8000'
 
@@ -29,10 +29,12 @@ class MobSF:
 
     def scan(self, scan_type: str, filename: str, scan_hash: str, rescan: bool=False):
         """扫描一个已经上传的文件 xapk, apk, zip, ipa, appx"""
-        post_dict = {'scan_type': scan_type,
-                     'file_name': filename,
-                     'hash': scan_hash,
-                     're_scan': rescan}
+        post_dict = {
+            'scan_type': scan_type,
+            'file_name': filename,
+            'hash': scan_hash,
+            're_scan': rescan
+        }
         headers = {'Authorization': self.apikey}
 
         r = requests.post(f'{self.server}/api/v1/scan', data=post_dict, headers=headers)
@@ -40,8 +42,10 @@ class MobSF:
 
     def scans(self, page: int=1, page_size: int=100):
         """查看最近的扫描"""
-        payload = {'page': page,
-                   'page_size': page_size}
+        payload = {
+            'page': page,
+            'page_size': page_size
+        }
         headers = {'Authorization': self.apikey}
 
         r = requests.get(f'{self.server}/api/v1/scans', params=payload, headers=headers)
@@ -98,10 +102,7 @@ def analysis(apikey: str, apk_path: Path):
 
     pdf_path = apk_path.parent.joinpath('SecScan/mobsf.pdf')
     ret_code = init.report_pdf(md5, pdf_path)
-    if ret_code != 200:
-        return 3
-
-    return 0
+    return 3 if ret_code != 200 else 0
 
 
 def argument():
@@ -117,14 +118,13 @@ if __name__ == '__main__':
     apk_dirs = open(args.config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        Color.print_focus(f'[+] [mobsf] {apk}')
+        print_focus(f'[mobsf] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        ret = analysis(args.key, apk_path)
-        if ret:
-            Color.print_failed('[-] [mobsf] failed')
+        if ret := analysis(args.key, apk_path):
+            print_failed('[mobsf] failed')
         else:
-            Color.print_success('[+] [mobsf] success')
+            print_success('[mobsf] success')

@@ -1,11 +1,20 @@
 import os
-import pprint
 import socket
 import hashlib
 from lxml import etree
-from colorama import Fore
 from pathlib import Path
 from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
+from rich import print
+from rich.console import Console
+
+
+console = Console()
+def print_success(msg: str):
+    console.print(f'[+] \{msg}' if msg.startswith('[') else f'[+] {msg}', style='bold green')
+def print_failed(msg: str):
+    console.print(f'[-] \{msg}' if msg.startswith('[') else f'[+] {msg}', style='bold red')
+def print_focus(msg: str):
+    console.print(f'[*] \{msg}' if msg.startswith('[') else f'[+] {msg}', style='bold yellow')
 
 
 def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
@@ -19,15 +28,15 @@ def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
         change_gradle = {
             4: 'sdk use gradle 4.10.3',
             5: 'sdk use gradle 5.6.4',
-            6: 'sdk use gradle 6.9.3',
-            7: 'sdk use gradle 7.6'
+            6: 'sdk use gradle 6.9.4',
+            7: 'sdk use gradle 7.6.1'
         }
         cmd = f'{change_gradle[gradle]} && {cmd}'
         exe = 'zsh'
     if java := local_env.pop('java', None):
         change_java = {
-            8: 'sdk use java 8.0.362-tem',
-            11: 'sdk use java 11.0.18-tem'
+            8: 'sdk use java 8.0.372-tem',
+            11: 'sdk use java 11.0.19-tem'
         }
         cmd = f'{change_java[java]} && {cmd}'
         exe = 'zsh'
@@ -64,24 +73,6 @@ def get_md5(file_path: str) -> str:
     return md5.hexdigest()
 
 
-class Color:
-    @staticmethod
-    def print_focus(data: str):
-        print(Fore.YELLOW+data+Fore.RESET)
-
-    @staticmethod
-    def print_success(data: str):
-        print(Fore.LIGHTGREEN_EX+data+Fore.RESET)
-
-    @staticmethod
-    def print_failed(data: str):
-        print(Fore.LIGHTRED_EX+data+Fore.RESET)
-
-    @staticmethod
-    def print(data):
-        pprint.pprint(data)
-
-
 class ManifestUtil:
     def __init__(self, file_path: Path):
         self.path = file_path
@@ -106,17 +97,17 @@ class ManifestUtil:
         return arg0 in application_tag.attrib and application_tag.attrib[arg0] == 'true'
 
     def check_all(self):
-        Color.print_focus('Debuggable:')
+        print_focus('Debuggable:')
         if self.is_debuggable():
-            Color.print_failed('True')
+            print_failed('True')
         else:
-            Color.print_success('False')
+            print_success('False')
 
-        Color.print_focus('AllowBackup:')
+        print_focus('AllowBackup:')
         if self.is_allowBackup():
-            Color.print_failed('True')
+            print_failed('True')
         else:
-            Color.print_success('False')
+            print_success('False')
 
     def set_debuggable(self):
         self._extracted2('{http://schemas.android.com/apk/res/android}debuggable', 'true')

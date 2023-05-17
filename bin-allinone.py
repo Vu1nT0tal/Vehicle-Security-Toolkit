@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 from collections import defaultdict
 
-from utils import Color
+from utils import *
 from bin_scan.bin_stacs import analysis as stacs
 from bin_scan.bin_capa import analysis as capa
 from bin_scan.bin_cvescan import analysis as cvescan
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     elf_dirs = open(args.config, 'r').read().splitlines()
 
     for elf in elf_dirs:
-        Color.print_focus(f'[+] {elf}')
+        print_focus(elf)
 
         elf_path = Path(elf)
         report_path = elf_path.parent.joinpath('SecScan')
@@ -44,45 +44,45 @@ if __name__ == '__main__':
         if 'stacs' in plugin:
             if ret := stacs(elf_path, tools_path):
                 plugin['stacs']['failed'].append(elf)
-                Color.print_failed['[-] [stacs] failed']
+                print_failed('[stacs] failed')
             else:
                 plugin['stacs']['success'].append(elf)
-                Color.print_success('[+] [stacs] success')
+                print_success('[stacs] success')
 
         # bin_capa
         if 'capa' in plugin:
             if ret := capa(elf_path, tools_path):
                 plugin['capa']['failed'].append(elf)
-                Color.print_failed('[-] [capa] failed')
+                print_failed('[capa] failed')
             else:
                 plugin['capa']['success'].append(elf)
-                Color.print_success('[+] [capa] success')
+                print_success('[capa] success')
 
         # bin_cvescan
         if 'cvescan' in plugin:
             if ret := cvescan(elf_path):
                 plugin['cvescan']['failed'].append(elf)
-                Color.print_failed('[-] [cvescan] failed')
+                print_failed('[cvescan] failed')
             else:
                 plugin['cvescan']['success'].append(elf)
-                Color.print_success('[+] [cvescan] success')
+                print_success('[cvescan] success')
 
         # bin_cwechecker
         if 'cwechecker' in plugin:
             if ret := cwechecker(elf_path):
                 plugin['cwechecker']['failed'].append(elf)
-                Color.print_failed('[-] [cwechecker] failed')
+                print_failed('[cwechecker] failed')
             else:
                 plugin['cwechecker']['success'].append(elf)
-                Color.print_success('[+] [cwechecker] success')
+                print_success('[cwechecker] success')
 
         # bin_absinspector
         if 'absinspector' in plugin:
             if ret := absinspector(elf_path):
                 plugin['absinspector']['failed'].append(elf)
-                Color.print_failed('[-] [absinspector] failed')
+                print_failed('[absinspector] failed')
             else:
                 plugin['absinspector']['success'].append(elf)
-                Color.print_success('[+] [absinspector] success')
+                print_success('[absinspector] success')
 
     print(plugin)

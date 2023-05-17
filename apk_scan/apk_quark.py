@@ -1,10 +1,14 @@
 #!/usr/bin/python3
 
+import sys
 import json
 import pyfiglet
 import argparse
 from pathlib import Path
 from quark.report import Report
+
+sys.path.append('..')
+from utils import *
 
 
 def analysis(apk_path: Path):
@@ -31,7 +35,7 @@ if __name__ == '__main__':
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        print(f'[+] [quark] {apk}')
+        print_focus(f'[quark] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
@@ -40,4 +44,4 @@ if __name__ == '__main__':
         analysis(apk_path)
         success_num += 1
 
-    print(f'扫描完成: {success_num}')
+    print_success(f'[quark] {success_num}')

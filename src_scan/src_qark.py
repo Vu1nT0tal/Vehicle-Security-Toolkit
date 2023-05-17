@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 def analysis(src_path: Path, tools_path: Path, report_type: str=None):
@@ -36,19 +36,19 @@ def argument():
 
 if __name__ == '__main__':
     print(pyfiglet.figlet_format('src_qark'))
-    tools_path = Path(__file__).absolute().parent.joinpath('tools')
+    tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 
     args = argument()
     src_dirs = open(args.config, 'r').read().splitlines()
 
     for src in src_dirs:
-        Color.print_focus(f'[+] [qark] {src}')
+        print_focus(f'[qark] {src}')
         src_path = Path(src)
 
         report_path = src_path.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        if ret := analysis(src_path, args.report):
-            Color.print_failed('[-] [qark] failed')
+        if ret := analysis(src_path, tools_path, args.report):
+            print_failed('[qark] failed')
         else:
-            Color.print_success('[+] [qark] success')
+            print_success('[qark] success')

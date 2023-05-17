@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 def analysis(bin_path: Path, tools_path: Path):
@@ -35,13 +35,13 @@ if __name__ == '__main__':
     elf_dirs = open(argument().config, 'r').read().splitlines()
 
     for elf in elf_dirs:
-        Color.print_focus(f'[+] [capa] {elf}')
+        print_focus(f'[capa] {elf}')
         elf_path = Path(elf)
 
         report_path = elf_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
         if ret := analysis(elf_path, tools_path):
-            Color.print_failed('[-] [capa] failed')
+            print_failed('[capa] failed')
         else:
-            Color.print_success('[+] [capa] success')
+            print_success('[capa] success')

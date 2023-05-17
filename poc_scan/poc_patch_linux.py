@@ -19,7 +19,7 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 # https://kernel.org/category/releases.html
@@ -137,9 +137,9 @@ def compareThread2(cve: Path):
     result['scan']['ratio'] = score
 
     if score > 0.6:
-        Color.print_success(f'[-] {cve_name} not found, code modify ratio: {score:.2%}')
+        print_success(f'{cve_name} not found, code modify ratio: {score:.2%}')
     else:
-        Color.print_failed(f'[-] {cve_name} found, code modify ratio: {score:.2%}')
+        print_failed(f'{cve_name} found, code modify ratio: {score:.2%}')
 
     return cve_name, result
 
@@ -178,7 +178,7 @@ def update(args=None):
             tasks.append(task)
     try:
         loop.run_until_complete(asyncio.wait(tasks))
-        print(f'[+] Download {len(tasks)} patchs: {patch_sec_path}')
+        print_focus(f'Download {len(tasks)} patchs: {patch_sec_path}')
     finally:
         loop.close()
 
@@ -225,9 +225,9 @@ def compareThread(cve: Path, patch_path: Path):
             ratio = fuzz.ratio(f1, f2)
             if ratio > 70:
                 result['scan'].update({ratio: patch.stem})
-                print(f'[+] {cve_name} found ({ratio}%): {patch.stem}')
+                print_focus(f'{cve_name} found ({ratio}%): {patch.stem}')
         if not result['scan']:
-            Color.print_failed(f'[-] {cve_name} not found!')
+            print_failed(f'{cve_name} not found!')
     except Exception as e:
         print(e, cve_name, patch.stem)
     return cve_name, result
@@ -243,7 +243,7 @@ def scan(args):
         print(output)
         return False
     else:
-        print(f'[+] Generate {number.strip()} patchs: {patch_all_path}')
+        print_focus(f'Generate {number.strip()} patchs: {patch_all_path}')
 
     patches = []
     version = args.version.split('-')[0].split('.')     # 5.4-rc1 -> 5.4
@@ -284,7 +284,7 @@ def scan(args):
             else:
                 results[severity].update(result)
         json.dump(results, f1, indent=4)
-        print(f'[+] Results saved in {report_file}')
+        print_success(f'Results saved in {report_file}')
 
 
 def argument():

@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 env = {
@@ -19,7 +19,7 @@ env = {
 
 
 def analysis_cli(src_path: Path, tools_path: Path):
-    print(f'[+] {src_path} - cli')
+    print_focus(f'{src_path} - cli')
 
     scanner = tools_path.joinpath('dependency-check/bin/dependency-check.sh')
     report = src_path.joinpath('dependency-check-report.html')
@@ -28,7 +28,7 @@ def analysis_cli(src_path: Path, tools_path: Path):
 
 
 def analysis_gradle(src_path: Path, tools_path: Path):
-    print(f'[+] {src_path} - gradle')
+    print_focus(f'{src_path} - gradle')
     local_env = env.copy()
     local_env.update({'cwd': src_path})
     build1 = str(src_path.joinpath('build.gradle'))
@@ -66,7 +66,7 @@ def analysis_gradle(src_path: Path, tools_path: Path):
             with open(src_path.joinpath(f'{subdir}/build/reports/dependency-check-graph.txt'), 'w+') as f:
                 f.write(output)
     else:
-        print(f'[-] {src_path} gradlew 运行失败，尝试 cli')
+        print_failed(f'{src_path} gradlew 运行失败，尝试 cli')
         output, ret_code = analysis_cli(src_path, tools_path)
 
     # 恢复
@@ -116,6 +116,6 @@ if __name__ == '__main__':
             ret = analysis(src_path, tools_path, 'cli')
 
         if ret:
-            Color.print_failed('[-] [depcheck] failed')
+            print_failed('[depcheck] failed')
         else:
-            Color.print_success('[+] [depcheck] success')
+            print_success('[depcheck] success')

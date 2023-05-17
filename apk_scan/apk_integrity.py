@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 def analysis(apk_path: Path, tools_path: Path):
@@ -25,7 +25,7 @@ def analysis(apk_path: Path, tools_path: Path):
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
-    shutil.rmtree(tmp_dir)
+    shutil.rmtree(tmp_dir, ignore_errors=True)
     return ret_code
 
 
@@ -42,13 +42,13 @@ if __name__ == '__main__':
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        Color.print_focus(f'[+] [integrity] {apk}')
+        print_focus(f'[integrity] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
         if ret := analysis(apk_path, tools_path):
-            Color.print_failed('[-] [integrity] failed')
+            print_failed('[integrity] failed')
         else:
-            Color.print_success('[+] [integrity] success')
+            print_success('[integrity] success')

@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 def analysis(apk_path: Path, tools_path: Path):
@@ -39,13 +39,13 @@ if __name__ == '__main__':
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        Color.print_focus(f'[+] [keyfinder] {apk}')
+        print_focus(f'[keyfinder] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
         if ret := analysis(apk_path, tools_path):
-            Color.print_failed('[-] [keyfinder] failed')
+            print_failed('[keyfinder] failed')
         else:
-            Color.print_success('[+] [keyfinder] success')
+            print_success('[keyfinder] success')

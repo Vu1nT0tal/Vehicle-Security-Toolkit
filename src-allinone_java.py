@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 from collections import defaultdict
 
-from utils import Color, shell_cmd
+from utils import *
 from src_scan.src_build import build, build2
 from src_scan.src_fireline import analysis as fireline
 from src_scan.src_mobsf import analysis as mobsf
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         build_config = {}
 
     for src in src_dirs:
-        Color.print_focus(f'[+] {src}')
+        print_focus(src)
 
         src_path = Path(src)
         report_path = src_path.joinpath('SecScan')
@@ -69,68 +69,68 @@ if __name__ == '__main__':
 
         # src_build
         if args.build:
-            print('[+] Building ...')
+            print_focus('Building ...')
             if item := build_config.get(src_path.name):
                 if ret := build(src_path, item):
                     plugin['build']['faild'].append(src)
-                    Color.print_failed('[-] [build] faild')
+                    print_failed('[build] faild')
                 else:
                     plugin['build']['success'].append(src)
-                    Color.print_success('[+] [build] success')
+                    print_success('[build] success')
             else:
-                Color.print_focus(f'[-] [build] 发现新APK：{src}')
+                print_focus(f'[build] 发现新APK：{src}')
                 ret, _, data = build2(src_path)
                 if ret:
                     plugin['build']['faild'].append(src)
-                    Color.print_failed('[-] [build2] failed')
+                    print_failed('[build2] failed')
                 else:
                     plugin['build']['success'].append(src)
-                    Color.print_success(f'[+] [build2] success java:{data.get("java")} gradle:{data.get("gradle")}')
+                    print_success(f'[build2] success java:{data.get("java")} gradle:{data.get("gradle")}')
 
         # src_fireline
         if 'fireline' in plugin:
             if ret := fireline(src_path, tools_path):
                 plugin['fireline']['failed'].append(src)
-                Color.print_failed('[-] [fireline] failed')
+                print_failed('[fireline] failed')
             else:
                 plugin['fireline']['success'].append(src)
-                Color.print_success('[+] [fireline] success')
+                print_success('[fireline] success')
 
         # src_mobsf
         if 'mobsf' in plugin:
             if ret := mobsf(src_path):
                 plugin['mobsf']['failed'].append(src)
-                Color.print_failed('[-] [mobsf] failed')
+                print_failed('[mobsf] failed')
             else:
                 plugin['mobsf']['success'].append(src)
-                Color.print_success('[+] [mobsf] success')
+                print_success('[mobsf] success')
 
         # src_qark
         if 'qark' in plugin:
             if ret := qark(src_path, tools_path):
                 plugin['qark']['failed'].append(src)
-                Color.print_failed('[-] [qark] failed')
+                print_failed('[qark] failed')
             else:
                 plugin['qark']['success'].append(src)
-                Color.print_success('[+] [qark] success')
+                print_success('[qark] success')
 
         # src_speck
         if 'speck' in plugin:
             if ret := speck(src_path, tools_path):
                 plugin['speck']['failed'].append(src)
-                Color.print_failed('[-] [speck] failed')
+                print_failed('[speck] failed')
             else:
                 plugin['speck']['success'].append(src)
-                Color.print_success('[+] [speck] success')
+                print_success('[speck] success')
 
         # src_keyfinder
         if 'keyfinder' in plugin:
             if ret := keyfinder(src_path, tools_path):
                 plugin['keyfinder']['failed'].append(src)
-                Color.print_failed('[-] [keyfinder] failed')
+                print_failed('[keyfinder] failed')
             else:
                 plugin['keyfinder']['success'].append(src)
-                Color.print_success('[+] [keyfinder] success')
+                print_success('[keyfinder] success')
 
         # src_depcheck
         if 'depcheck' in plugin:
@@ -140,10 +140,10 @@ if __name__ == '__main__':
                 ret = depcheck(src_path, tools_path, 'cli')
             if ret:
                 plugin['depcheck']['failed'].append(src)
-                Color.print_failed('[-] [depcheck] failed')
+                print_failed('[depcheck] failed')
             else:
                 plugin['depcheck']['success'].append(src)
-                Color.print_success('[-] [depcheck] success')
+                print_success('[depcheck] success')
 
         # src_sonarqube
         if 'sonarqube' in plugin:
@@ -151,12 +151,12 @@ if __name__ == '__main__':
             if create_project(sonar):
                 if ret := sonarqube(src_path, 'cli', sonarqube_key):
                     plugin['sonarqube']['failed'].append(src)
-                    Color.print_failed('[-] [sonarqube] failed')
+                    print_failed('[sonarqube] failed')
                 else:
                     plugin['sonarqube']['success'].append(src)
-                    Color.print_success('[+] [sonarqube] success')
+                    print_success('[sonarqube] success')
             else:
-                Color.print_focus('[+] [sonarqube] pass')
+                print_focus('[sonarqube] pass')
 
         # semgrep
         if 'semgrep' in plugin:
@@ -174,9 +174,9 @@ if __name__ == '__main__':
 
             if ret := semgrep(src_path, tools_path):
                 plugin['semgrep']['failed'].append(src)
-                Color.print_failed('[-] [semgrep] failed')
+                print_failed('[semgrep] failed')
             else:
                 plugin['semgrep']['success'].append(src)
-                Color.print_success('[+] [semgrep] success')
+                print_success('[semgrep] success')
 
     print(plugin)

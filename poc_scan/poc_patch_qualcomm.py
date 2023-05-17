@@ -8,7 +8,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 base_url = 'https://www.qualcomm.com/company/product-security/bulletins'

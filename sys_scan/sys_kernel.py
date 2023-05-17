@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd
+from utils import *
 
 
 def analysis(config_path: Path, report_path: Path):
@@ -15,7 +15,7 @@ def analysis(config_path: Path, report_path: Path):
     output, ret_code = shell_cmd(f'kconfig-hardened-check -m json -c {config_path}')
     with open(report_file, 'w+') as f:
         json.dump(json.loads(output), f, indent=4)
-        print(f'[+] Results saved in {report_file}')
+        print_success(f'Results saved in {report_file}')
 
 
 def argument():

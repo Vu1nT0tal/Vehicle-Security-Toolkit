@@ -9,7 +9,7 @@ from lxml import etree
 from pathlib import Path
 
 sys.path.append('..')
-from utils import get_host_ip, Color
+from utils import *
 
 
 DEFAULT_SERVER = f'http://{get_host_ip()}:8888'
@@ -125,7 +125,7 @@ def init_audit():
     else:
         app_id = r['results'][0]['id']
 
-    print(f'[+] [audit] token: {token}, app_id: {app_id}')
+    print_focus(f'[audit] token: {token}, app_id: {app_id}')
     return audit, app_id
 
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
     success_list, error_list = audit.scan_list()
     for apk in apk_dirs:
-        Color.print_focus(f'[+] [audit] {apk}')
+        print_focus(f'[audit] {apk}')
 
         # 避免重复
         if apk not in success_list+error_list:
@@ -152,10 +152,10 @@ if __name__ == '__main__':
             while True:
                 r = audit.scan_read(scan_id)
                 if r['status'] == 'Finished':
-                    Color.print_success('[+] [audit] success')
+                    print_success('[audit] success')
                     break
                 elif r['status'] == 'Error':
-                    Color.print_failed('[-] [audit] failed')
+                    print_failed('[audit] failed')
                     break
                 else:
                     time.sleep(5)

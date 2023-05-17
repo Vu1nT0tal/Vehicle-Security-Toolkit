@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 import json
 import pyfiglet
 import argparse
@@ -9,6 +10,9 @@ import threading
 import contextlib
 
 from pathlib import Path
+
+sys.path.append('..')
+from utils import *
 
 
 notkeyhacks = {
@@ -147,7 +151,7 @@ if __name__ == '__main__':
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        print(f'[+] [leaks] {apk}')
+        print_focus(f'[leaks] {apk}')
 
         apk_path = Path(apk)
         report_path = apk_path.parent.joinpath('SecScan')
@@ -156,4 +160,4 @@ if __name__ == '__main__':
         analysis(apk_path)
         success_num += 1
 
-    print(f'扫描完成: {success_num}')
+    print_success(f'[leaks] {success_num}')

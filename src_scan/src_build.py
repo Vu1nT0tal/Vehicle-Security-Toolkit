@@ -8,7 +8,7 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 stop_flag = 0
 env = {
@@ -113,7 +113,7 @@ def build2(src_path: Path, clean: bool=False, local_env: dict=env.copy()):
     elif src_path.joinpath('build.gradle').exists():
         cmd = 'gradle clean' if clean else 'gradle clean build'
     else:
-        Color.print_focus('Android.mk')
+        print_focus('Android.mk')
     output, ret_code = shell_cmd(cmd, local_env)
     if ret_code != 0:
         local_env = check_output(output, local_env)
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     src_dirs = open(args.config, 'r').read().splitlines()
 
     for src in src_dirs:
-        Color.print_focus(f'[+] [build] {src}')
+        print_focus(f'[build] {src}')
         src_path = Path(src)
 
         # 有build_config
@@ -148,16 +148,16 @@ if __name__ == '__main__':
             if item := build_config.get(src_path.name):
                 ret = build(src_path, item, args.clean)
                 if ret:
-                    Color.print_failed('[-] [build] failed')
+                    print_failed('[build] failed')
                 else:
-                    Color.print_success('[+] [build] success')
+                    print_success('[build] success')
                 continue
             else:
-                Color.print_focus(f'[-] [build] 发现新APK：{src}')
+                print_focus(f'[build] 发现新APK：{src}')
 
         # 没有build_config或发现新APK
         ret, _, data = build2(src_path, args.clean)
         if ret:
-            Color.print_failed('[-] [build2] failed')
+            print_failed('[build2] failed')
         else:
-            Color.print_success(f'[+] [build2] success java:{data.get("java")} gradle:{data.get("gradle")}')
+            print_success(f'[build2] success java:{data.get("java")} gradle:{data.get("gradle")}')

@@ -8,7 +8,7 @@ import getpass
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 def argument():

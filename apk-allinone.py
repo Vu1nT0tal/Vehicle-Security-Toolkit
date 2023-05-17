@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 from collections import defaultdict
 
-from utils import Color
+from utils import *
 from apk_scan.apk_decompile import apktool, jadx
 from apk_scan.apk_androbugs import analysis as androbugs
 from apk_scan.apk_audit import init_audit
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     compiled_signature = ''
 
     for apk in apk_dirs:
-        Color.print_focus(f'[+] {apk}')
+        print_focus(apk)
 
         apk_path = Path(apk)
         report_path = apk_path.parent.joinpath('SecScan')
@@ -83,24 +83,24 @@ if __name__ == '__main__':
 
         # apk_decompile
         if args.decompile:
-            print('[+] Decompiling ...')
+            print_focus('Decompiling ...')
             ret1 = apktool(apk_path, tools_path)
             ret2 = jadx(apk_path, tools_path)
             if ret1 or ret2:
                 plugin['decompile']['failed'].append(apk)
-                Color.print_failed('[-] [decompile] failed')
+                print_failed('[decompile] failed')
             else:
                 plugin['decompile']['success'].append(apk)
-                Color.print_success('[+] [decompile] success')
+                print_success('[decompile] success')
 
         # apk_androbugs
         if 'androbugs' in plugin:
             if ret := androbugs(apk_path):
                 plugin['androbugs']['failed'].append(apk)
-                Color.print_failed('[-] [androbugs] failed')
+                print_failed('[androbugs] failed')
             else:
                 plugin['androbugs']['success'].append(apk)
-                Color.print_success('[+] [androbugs] success')
+                print_success('[androbugs] success')
 
         # apk_audit
         if 'audit' in plugin:
@@ -108,21 +108,21 @@ if __name__ == '__main__':
             success_list, error_list = audit.scan_list()
             if apk in success_list:
                 plugin['audit']['success'].append(apk)
-                Color.print_success('[+] [audit] success')
+                print_success('[audit] success')
             elif apk in error_list:
                 plugin['audit']['failed'].append(apk)
-                Color.print_failed('[-] [audit] failed')
+                print_failed('[audit] failed')
             else:
                 scan_id = audit.scan_create(apk_path, app_id)['id']
                 while True:
                     r = audit.scan_read(scan_id)
                     if r['status'] == 'Finished':
                         plugin['audit']['success'].append(apk)
-                        Color.print_success('[+] [audit] success')
+                        print_success('[audit] success')
                         break
                     elif r['status'] == 'Error':
                         plugin['audit']['failed'].append(apk)
-                        Color.print_failed('[-] [audit] failed')
+                        print_failed('[audit] failed')
                         break
                     else:
                         time.sleep(5)
@@ -131,10 +131,10 @@ if __name__ == '__main__':
         if 'cryptoguard' in plugin:
             if ret := cryptoguard(apk_path):
                 plugin['cryptoguard']['failed'].append(apk)
-                Color.print_failed('[-] [cryptoguard] failed')
+                print_failed('[cryptoguard] failed')
             else:
                 plugin['cryptoguard']['success'].append(apk)
-                Color.print_success('[+] [cryptoguard] success')
+                print_success('[cryptoguard] success')
 
         # apk_exodus
         if 'exodus' in plugin:
@@ -142,40 +142,40 @@ if __name__ == '__main__':
                 signature, compiled_signature = get_trackers()
             exodus(apk_path, signature, compiled_signature)
             plugin['exodus']['success'].append(apk)
-            Color.print_success('[+] [exodus] success')
+            print_success('[exodus] success')
 
         # apk_id
         if 'apkid' in plugin:
             if ret := apkid(apk_path):
                 plugin['apkid']['failed'].append(apk)
-                Color.print_failed('[-] [apkid] failed')
+                print_failed('[apkid] failed')
             else:
                 plugin['apkid']['success'].append(apk)
-                Color.print_success('[+] [apkid] success')
+                print_success('[apkid] success')
 
         # apk_jni
         if 'jni' in plugin:
             if ret := jni(apk_path, tools_path):
                 plugin['jni']['failed'].append(apk)
-                Color.print_failed('[-] [jni] failed')
+                print_failed('[jni] failed')
             else:
                 plugin['jni']['success'].append(apk)
-                Color.print_success('[+] [jni] success')
+                print_success('[jni] success')
 
         # apk_leaks
         if 'leaks' in plugin:
             leaks(apk_path)
             plugin['leaks']['success'].append(apk)
-            Color.print_success('[+] [leaks] success')
+            print_success('[leaks] success')
 
         # apk_mariana
         if 'mariana' in plugin:
             if ret := mariana(apk_path, tools_path):
                 plugin['mariana']['failed'].append(apk)
-                Color.print_failed('[-] [mariana] failed')
+                print_failed('[mariana] failed')
             else:
                 plugin['mariana']['success'].append(apk)
-                Color.print_success('[+] [mariana] success')
+                print_success('[mariana] success')
 
         # apk_mobsf
         if 'mobsf' in plugin:
@@ -183,87 +183,87 @@ if __name__ == '__main__':
                 mobsf_key = input('请输入 mobsf key：')
             if ret := mobsf(mobsf_key, apk_path):
                 plugin['mobsf']['failed'].append(apk)
-                Color.print_failed('[-] [mobsf] failed')
+                print_failed('[mobsf] failed')
             else:
                 plugin['mobsf']['success'].append(apk)
-                Color.print_success('[+] [mobsf] success')
+                print_success('[mobsf] success')
 
         # apk_qark
         if 'qark' in plugin:
             if ret := qark(apk_path, tools_path):
                 plugin['qark']['failed'].append(apk)
-                Color.print_failed('[-] [qark] failed')
+                print_failed('[qark] failed')
             else:
                 plugin['qark']['success'].append(apk)
-                Color.print_success('[+] [qark] success')
+                print_success('[qark] success')
 
         # apk_quark
         if 'quark' in plugin:
             quark(apk_path)
             plugin['quark']['success'].append(apk)
-            Color.print_success('[+] [quark] success')
+            print_success('[quark] success')
 
         # apk_integrity
         if 'integrity' in plugin:
             if ret := integrity(apk_path, tools_path):
                 plugin['integrity']['failed'].append(apk)
-                Color.print_failed('[-] [integrity] failed')
+                print_failed('[integrity] failed')
             else:
                 plugin['integrity']['success'].append(apk)
-                Color.print_success('[+] [integrity] success')
+                print_success('[integrity] success')
 
         # apk_scanner
         if 'scanner' in plugin:
             if ret := scanner(apk_path, tools_path):
                 plugin['scanner']['failed'].append(apk)
-                Color.print_failed('[-] [scanner] failed')
+                print_failed('[scanner] failed')
             else:
                 plugin['scanner']['success'].append(apk)
-                Color.print_success('[+] [scanner] success')
+                print_success('[scanner] success')
 
         # apk_hunt
         if 'hunt' in plugin:
             if ret := hunt(apk_path, tools_path):
                 plugin['hunt']['failed'].append(apk)
-                Color.print_failed('[-] [hunt] failed')
+                print_failed('[hunt] failed')
             else:
                 plugin['hunt']['success'].append(apk)
-                Color.print_success('[+] [hunt] success')
+                print_success('[hunt] success')
 
         # apk_walker
         if 'walker' in plugin:
             if ret := walker(apk_path, tools_path):
                 plugin['walker']['failed'].append(apk)
-                Color.print_failed('[-] [walker] failed')
+                print_failed('[walker] failed')
             else:
                 plugin['walker']['success'].append(apk)
-                Color.print_success('[+] [walker] success')
+                print_success('[walker] success')
 
         # apk_speck
         if 'speck' in plugin:
             if ret := speck(apk_path, tools_path):
                 plugin['speck']['failed'].append(apk)
-                Color.print_failed('[-] [speck] failed')
+                print_failed('[speck] failed')
             else:
                 plugin['speck']['success'].append(apk)
-                Color.print_success('[+] [speck] success')
+                print_success('[speck] success')
 
         # apk_keyfinder
         if 'keyfinder' in plugin:
             if ret := keyfinder(apk_path, tools_path):
                 plugin['keyfinder']['failed'].append(apk)
-                Color.print_failed('[-] [keyfinder] failed')
+                print_failed('[keyfinder] failed')
             else:
                 plugin['keyfinder']['success'].append(apk)
-                Color.print_success('[+] [keyfinder] success')
+                print_success('[keyfinder] success')
 
         # apk_shark
         if 'shark' in plugin:
             if ret := shark(apk_path, tools_path):
                 plugin['shark']['failed'].append(apk)
-                Color.print_failed('[-] [shark] failed')
+                print_failed('[shark] failed')
             else:
                 plugin['shark']['success'].append(apk)
-                Color.print_success('[+] [shark] success')
+                print_success('[shark] success')
 
     print(plugin)

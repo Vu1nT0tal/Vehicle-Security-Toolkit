@@ -6,13 +6,13 @@ import argparse
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 def analysis(src_path: Path, tools_path: Path):
     report_file = src_path.joinpath('SecScan/speck.txt')
 
-    scanner = tools_path.joinpath('SPECK-main/server/Scan.py')
+    scanner = tools_path.joinpath('SPECK-main/SPECK/Scan.py')
     cmd = f'python3 {scanner} -g -s {src_path} | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g"'
     output, ret_code = shell_cmd(cmd, {'cwd': scanner.parent})
 
@@ -38,13 +38,13 @@ if __name__ == '__main__':
     src_dirs = open(argument().config, 'r').read().splitlines()
 
     for src in src_dirs:
-        Color.print_focus(f'[+] [speck] {src}')
+        print_focus(f'[speck] {src}')
         src_path = Path(src)
 
         report_path = src_path.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
         if ret := analysis(src_path, tools_path):
-            Color.print_failed('[-] [speck] failed')
+            print_failed('[speck] failed')
         else:
-            Color.print_success('[+] [speck] success')
+            print_success('[speck] success')

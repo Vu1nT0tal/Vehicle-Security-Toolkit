@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.append('..')
-from utils import shell_cmd, Color
+from utils import *
 
 
 def analysis(apk_path: Path, tools_path: Path):
@@ -23,7 +23,7 @@ def analysis(apk_path: Path, tools_path: Path):
     if ret_code != 0:
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
-        shutil.rmtree(tmp_dir)
+        shutil.rmtree(tmp_dir, ignore_errors=True)
         return ret_code
 
     scanner = tools_path.joinpath('mariana-trench/bin/sapp')
@@ -33,7 +33,7 @@ def analysis(apk_path: Path, tools_path: Path):
         with open(f'{report_file}.error', 'w+') as f:
             f.write(output)
 
-    shutil.rmtree(tmp_dir)
+    shutil.rmtree(tmp_dir, ignore_errors=True)
     return ret_code
 
 
@@ -45,19 +45,19 @@ def argument():
 
 if __name__ == '__main__':
     print(pyfiglet.figlet_format('apk_mariana'))
-    tools_path = Path(__file__).absolute().parent.joinpath('tools')
+    tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
-        Color.print_focus(f'[+] [mariana] {apk}')
+        print_focus(f'[mariana] {apk}')
         apk_path = Path(apk)
 
         report_path = apk_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
         if ret := analysis(apk_path, tools_path):
-            Color.print_failed('[-] [mariana] failed')
+            print_failed('[mariana] failed')
         else:
-            Color.print_success('[+] [mariana] success')
+            print_success('[mariana] success')
 
     print('查看报告：sapp --database-name {sample-mariana.db} server --source-directory {jadx_java/sources}')

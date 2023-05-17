@@ -4,11 +4,11 @@ import pyfiglet
 import argparse
 from pathlib import Path
 
-from utils import Color, shell_cmd
+from utils import *
 
 
 def semgrep(src_path: Path):
-    Color.print_focus('[+] semgrep ...')
+    print_focus('semgrep ...')
     report_file = report_path.joinpath('semgrep.txt')
 
     config1 = tools_path.joinpath("semgrep/default/c")
@@ -18,7 +18,7 @@ def semgrep(src_path: Path):
 
 
 def flawfinder(src_path: Path):
-    Color.print_focus('[+] flawfinder ...')
+    print_focus('flawfinder ...')
     report_file = report_path.joinpath('flawfinder.html')
 
     scanner = tools_path.joinpath('flawfinder-env/bin/flawfinder')
@@ -27,7 +27,7 @@ def flawfinder(src_path: Path):
 
 
 def tscancode(src_path: Path):
-    Color.print_focus('[+] tscancode ...')
+    print_focus('tscancode ...')
     report_file = report_path.joinpath('tscancode.xml')
 
     scanner = tools_path.joinpath('TscanCode/TscanCode/tscancode')
@@ -36,7 +36,7 @@ def tscancode(src_path: Path):
 
 
 def cppcheck(src_path: Path):
-    Color.print_focus('[+] cppcheck ...')
+    print_focus('cppcheck ...')
     report_file1 = report_path.joinpath('cppcheck.txt')
     report_file2 = report_path.joinpath('cppcheck-bug.txt')
 

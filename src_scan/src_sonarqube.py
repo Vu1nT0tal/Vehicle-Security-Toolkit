@@ -8,7 +8,7 @@ from pathlib import Path
 from sonarqube import SonarQubeClient
 
 sys.path.append('..')
-from utils import shell_cmd, get_host_ip, Color
+from utils import *
 
 
 DEFAULT_SERVER = f'http://{get_host_ip()}:9000'
@@ -20,17 +20,17 @@ env = {
 
 
 def analysis_cli(src_path: Path, token: str):
-    print('[+] [sonarqube] - cli')
+    print_focus('[sonarqube] - cli')
 
     cmd = f'docker run --rm -e SONAR_HOST_URL={DEFAULT_SERVER} -e SONAR_LOGIN={token} -v {src_path}:/usr/src sonarsource/sonar-scanner-cli -Dsonar.projectKey={src_path.name} -Dsonar.java.binaries=/usr/src'
     output, ret_code = shell_cmd(cmd)
     if ret_code != 0:
-        Color.print_failed('[-] [sonarqube] cli 失败')
+        print_failed('[sonarqube] cli 失败')
     return output, ret_code
 
 
 def analysis_gradle(src_path: Path, java: int = 11):
-    print('[+] [sonarqube] - gradle')
+    print_focus('[sonarqube] - gradle')
     local_env = env.copy()
     local_env.update({'java': java, 'cwd': src_path})
 
@@ -54,7 +54,7 @@ def analysis_gradle(src_path: Path, java: int = 11):
     shutil.move(f'{build1}.bak', build1)
 
     if ret_code != 0:
-        Color.print_failed('[-] [sonarqube] gradlew 失败')
+        print_failed('[sonarqube] gradlew 失败')
     return output, ret_code
 
 
@@ -98,7 +98,7 @@ def init_sonarqube(key: str=''):
     if not key:
         try:
             token = sonar.user_tokens.generate_user_token("apptest")['token']
-            print(f'[+] "apptest" token: {token}')
+            print_focus(f'"apptest" token: {token}')
         except Exception as e:
             token = input('请输入token：')
 
@@ -118,7 +118,7 @@ if __name__ == '__main__':
 
     src_dirs = open(args.config, 'r').read().splitlines()
     for src in src_dirs:
-        Color.print_focus(f'[+] [sonarqube] {src}')
+        print_focus(f'[sonarqube] {src}')
 
         src_path = Path(src)
         report_path = src_path.joinpath('SecScan')
@@ -131,11 +131,10 @@ if __name__ == '__main__':
             # if src_path.joinpath('gradlew').exists():
             #     ret = analysis(src_path, 'gradle')
             # else:
-            ret = analysis(src_path, 'cli', token)
 
-            if ret:
-                Color.print_failed('[-] [sonarqube] failed')
+            if ret := analysis(src_path, 'cli', token):
+                print_failed('[sonarqube] failed')
             else:
-                Color.print_success('[+] [sonarqube] success')
+                print_success('[sonarqube] success')
         else:
-            Color.print_focus('[+] [sonarqube] pass')
+            print_focus('[sonarqube] pass')

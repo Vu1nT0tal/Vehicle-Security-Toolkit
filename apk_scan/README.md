@@ -44,7 +44,7 @@ $ python3 apk_id.py --config ../data/apk.list
 
 ## apk_leaks.py
 
-使用 `apk_decompile.py` 得到所有反编译代码后，使用该脚本批量搜索 IP、URL、Key 等敏感信息。推荐把所有控制台输出转存一份 `>&1 | tee result.txt`。
+使用 `apk_decompile.py` 得到所有反编译代码后，使用该脚本批量搜索 IP、URL、Key 等敏感信息。
 
 ```sh
 $ find ~/apks -name "*.apk" | xargs realpath > ../data/apk.list
