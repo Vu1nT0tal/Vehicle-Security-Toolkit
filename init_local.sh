@@ -53,6 +53,10 @@ sudo add-apt-repository -y ppa:longsleep/golang-backports
 sudo apt-get update && sudo apt-get -y install golang-go
 echo "export PATH=\$HOME/go/bin:\$PATH" >> $HOME/.zshrc
 
+echo "[+] Installing rust ..."
+echo 1 | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
 echo "[+] Installing sdkman ..."
 curl -s https://get.sdkman.io | bash
 source $HOME/.sdkman/bin/sdkman-init.sh
@@ -211,6 +215,9 @@ wget -q https://github.com/danmar/cppcheck/archive/refs/tags/2.10.zip
 unzip -q 2.10.zip && mkdir -p ./tools/cppcheck && cd ./tools/cppcheck
 cmake -DHAVE_RULES=ON -DUSE_MATCHCOMPILER=ON ../../cppcheck-2.10 && cmake --build .
 cd $root_path && rm -rf 2.10.zip cppcheck-2.10
+
+echo "[+] Installing weggli ..."
+cargo install weggli
 
 echo "[+] Installing bandit ..."
 python3 -m pip install bandit

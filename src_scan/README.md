@@ -124,6 +124,14 @@ TODO: 后续集成 Sonarqube。
 $ ./tools/cppcheck/bin/cppcheck [--bug-hunting] ~/source 2>&1 | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" > cppcheck.txt
 ```
 
+### weggli
+
+支持 C/Cpp 语言扫描。
+
+```sh
+$ weggli [OPTIONS] <PATTERN> ~/source > weggli.txt
+```
+
 ### snyk
 
 支持 Java、C/Cpp、Python、Go 等多种语言扫描。[生成 API_TOKEN](https://app.snyk.io/)
