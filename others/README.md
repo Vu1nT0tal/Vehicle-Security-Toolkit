@@ -7,6 +7,7 @@
   - [idps-test](#idps-test)
   - [mem-heapdump.sh](#mem-heapdumpsh)
   - [进程间通信抓取](#进程间通信抓取)
+  - [git\_compare](#git_compare)
 
 ## top-activity.sh
 
@@ -87,3 +88,32 @@ $ ./app-heapdump.sh com.fce.fcesettings
 - [binder transactions in the bowels of the linux kernel](https://www.synacktiv.com/en/publications/binder-transactions-in-the-bowels-of-the-linux-kernel.html)
 - [Android’s Binder – in depth](http://newandroidbook.com/files/Andevcon-Binder.pdf)
 - <https://android.googlesource.com/platform/frameworks/native/+/jb-dev/libs/binder>
+
+## git_compare
+
+批量比较文件夹 git 差异。
+
+1. 读取 config 文件中的文件夹列表。
+2. 遍历文件夹列表，找到对应的 git 库，获取 git 库的基本信息。
+3. 获得对应 git 库下，两个比较标签之间的差异提交列表。
+4. 遍历提交列表，获取对应 change id 和 gerrit 信息，包括 url、分支等。
+5. 反向获取两个标签之间的差异列表，并合并两个差异列表，去除里面重复的 commit。去重的策略是根据 change id，去掉不同分支上同一个提交，commit id不同的。
+6. 整合信息，按页保存到 excel 文件中。
+
+```sh
+$ python3 git_compare.py --help
+usage: git_compare.py [-h] -r <repo_root> -f <files> [<files> ...] -s <tag|branch|commit> -t <tag|branch|commit> [-u <gerrit_user_name>]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r <repo_root>, --repo <repo_root>
+                        the code root of repo
+  -f <files> [<files> ...], --files <files> [<files> ...]
+                        the file list concerned folders
+  -s <tag|branch|commit>, --tag_from <tag|branch|commit>
+                        the compare start tag or branch or commit id
+  -t <tag|branch|commit>, --tag_to <tag|branch|commit>
+                        the compare end tag or branch or commit id
+  -u <gerrit_user_name>, --user <gerrit_user_name>
+                        the user name of gerrit
+```
