@@ -6,6 +6,7 @@ from pathlib import Path
 from collections import defaultdict
 
 from utils import *
+from bin_scan.bin_checksec import analysis as checksec
 from bin_scan.bin_stacs import analysis as stacs
 from bin_scan.bin_capa import analysis as capa
 from bin_scan.bin_cvescan import analysis as cvescan
@@ -25,6 +26,7 @@ if __name__ == '__main__':
     tools_path = Path(__file__).absolute().parent.joinpath('tools')
 
     plugin = {
+        'checksec': defaultdict(list),
         'stacs': defaultdict(list),
         'capa': defaultdict(list),
         'cvescan': defaultdict(list),
@@ -39,6 +41,15 @@ if __name__ == '__main__':
         elf_path = Path(elf)
         report_path = elf_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
+
+        # bin_checksec
+        if 'checksec' in plugin:
+            if ret := checksec(elf_path):
+                plugin['checksec']['failed'].append(elf)
+                print_failed('[checksec] failed')
+            else:
+                plugin['checksec']['success'].append(elf)
+                print_success('[checksec] success')
 
         # bin_stacs
         if 'stacs' in plugin:
