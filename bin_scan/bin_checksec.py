@@ -9,12 +9,11 @@ sys.path.append('..')
 from utils import *
 
 
-def analysis(bin_path: Path, tools_path: Path):
+def analysis(bin_path: Path):
     report_path = bin_path.parent.joinpath(f'SecScan/{bin_path.stem}-checksec.txt')
     report_path.unlink(missing_ok=True)
 
-    scanner = tools_path.joinpath('checksec')
-    cmd = f'{scanner} -q -vv {bin_path} > {report_path}'
+    cmd = f'checksec {bin_path} 2> {report_path}'
     output, ret_code = shell_cmd(cmd)
 
     if ret_code != 0:
@@ -41,7 +40,7 @@ if __name__ == '__main__':
         report_path = elf_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        if ret := analysis(elf_path, tools_path):
+        if ret := analysis(elf_path):
             print_failed('[checksec] failed')
         else:
             print_success('[checksec] success')
