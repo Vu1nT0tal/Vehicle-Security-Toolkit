@@ -23,7 +23,7 @@ EOF
 sudo apt-get update && sudo apt-get -y upgrade
 
 sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
-python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich
+python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich openpyxl
 
 echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect
@@ -241,6 +241,11 @@ python3 -m pip install semgrep
 git clone --depth=1 https://github.com/returntocorp/semgrep-rules.git default
 git clone --depth=1 https://github.com/0xdea/semgrep-rules.git c_cpp
 cd $root_path
+
+echo "[+] Installing cq ..."
+python3 -m pip install regex
+wget -q https://github.com/nccgroup/cq/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
 
 echo "[+] Installing codechecker ..."
 sudo apt-get install clang clang-tidy build-essential gcc-multilib

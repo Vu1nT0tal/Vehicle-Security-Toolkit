@@ -50,6 +50,15 @@ def weggli(src_path: Path):
         f.write(full_output)
 
 
+def cq(src_path: Path):
+    print_focus('cq ...')
+    report_path = report_path.joinpath('cq')
+
+    scanner = tools_path.joinpath('cq-main/cq.py')
+    cmd = f'{scanner} {src_path} {report_path}'
+    shell_cmd(cmd)
+
+
 def semgrep(src_path: Path):
     print_focus('semgrep ...')
     report_file = report_path.joinpath('semgrep.txt')
@@ -110,7 +119,8 @@ if __name__ == '__main__':
         'flawfinder': 1,
         'tscancode': 1,
         'cppcheck': 1,
-        'weggli': 1
+        'weggli': 1,
+        'cq': 1,
     }
 
     if 'semgrep' in plugin:
@@ -127,5 +137,8 @@ if __name__ == '__main__':
 
     if 'weggli' in plugin:
         weggli(src_path)
+
+    if 'cq' in plugin:
+        cq(src_path)
 
     print(f'报告地址：{report_path}')

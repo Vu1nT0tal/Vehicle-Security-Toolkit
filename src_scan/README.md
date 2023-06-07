@@ -1,20 +1,22 @@
 # src_scan
 
-- [src_scan](#src_scan)
+- [src\_scan](#src_scan)
   - [Java/Android](#javaandroid)
-    - [src_build.py](#src_buildpy)
-    - [src_qark.py](#src_qarkpy)
-    - [src_mobsf.py](#src_mobsfpy)
-    - [src_fireline.py](#src_firelinepy)
-    - [src_speck.py](#src_speckpy)
-    - [src_keyfinder.py](#src_keyfinderpy)
-    - [src_depcheck.py](#src_depcheckpy)
-    - [src_sonarqube.py](#src_sonarqubepy)
+    - [src\_build.py](#src_buildpy)
+    - [src\_qark.py](#src_qarkpy)
+    - [src\_mobsf.py](#src_mobsfpy)
+    - [src\_fireline.py](#src_firelinepy)
+    - [src\_speck.py](#src_speckpy)
+    - [src\_keyfinder.py](#src_keyfinderpy)
+    - [src\_depcheck.py](#src_depcheckpy)
+    - [src\_sonarqube.py](#src_sonarqubepy)
   - [C/Cpp](#ccpp)
     - [flawfinder](#flawfinder)
     - [TscanCode](#tscancode)
     - [cppcheck](#cppcheck)
+    - [weggli](#weggli)
     - [snyk](#snyk)
+    - [cq](#cq)
   - [Python](#python)
     - [bandit](#bandit)
   - [Go](#go)
@@ -139,6 +141,14 @@ $ weggli [OPTIONS] <PATTERN> ~/source > weggli.txt
 ```sh
 $ ./tools/snyk auth [<API_TOKEN>]
 $ ./tools/snyk code test --json-file-output=snky.json ~/source
+```
+
+### cq
+
+支持 Java、C/Cpp、Python、Go 等多种语言扫描。
+
+```sh
+$ ./tools/cq-main/cq.py [options] <output directory>
 ```
 
 ## Python
