@@ -1,27 +1,28 @@
 # apk_scan
 
-- [apk_scan](#apk_scan)
-  - [apk_decompile.py](#apk_decompilepy)
-  - [apk_id.py](#apk_idpy)
-  - [apk_leaks.py](#apk_leakspy)
-  - [apk_qark.py](#apk_qarkpy)
-  - [apk_speck.py](#apk_speckpy)
-  - [apk_keyfinder.py](#apk_keyfinderpy)
-  - [apk_mobsf.py](#apk_mobsfpy)
-  - [apk_audit.py](#apk_auditpy)
-  - [apk_androbugs.py](#apk_androbugspy)
-  - [apk_scanner.py](#apk_scannerpy)
-  - [apk_hunt.py](#apk_huntpy)
-  - [apk_shark.py](#apk_sharkpy)
-  - [apk_walker.py](#apk_walkerpy)
-  - [apk_mariana.py](#apk_marianapy)
-  - [apk_quark.py](#apk_quarkpy)
-  - [apk_integrity.py](#apk_integritypy)
-  - [apk_exodus.py](#apk_exoduspy)
-  - [apk_cryptoguard.py](#apk_cryptoguardpy)
-  - [apk_jni.py](#apk_jnipy)
+- [apk\_scan](#apk_scan)
+  - [apk\_decompile.py](#apk_decompilepy)
+  - [apk\_id.py](#apk_idpy)
+  - [apk\_leaks.py](#apk_leakspy)
+  - [apk\_qark.py](#apk_qarkpy)
+  - [apk\_speck.py](#apk_speckpy)
+  - [apk\_keyfinder.py](#apk_keyfinderpy)
+  - [apk\_mobsf.py](#apk_mobsfpy)
+  - [apk\_audit.py](#apk_auditpy)
+  - [apk\_androbugs.py](#apk_androbugspy)
+  - [apk\_scanner.py](#apk_scannerpy)
+  - [apk\_hunt.py](#apk_huntpy)
+  - [apk\_shark.py](#apk_sharkpy)
+  - [apk\_walker.py](#apk_walkerpy)
+  - [apk\_mariana.py](#apk_marianapy)
+  - [apk\_quark.py](#apk_quarkpy)
+  - [apk\_integrity.py](#apk_integritypy)
+  - [apk\_exodus.py](#apk_exoduspy)
+  - [apk\_cryptoguard.py](#apk_cryptoguardpy)
+  - [apk\_jni.py](#apk_jnipy)
   - [apk-diff.py](#apk-diffpy)
   - [apk-repack.sh](#apk-repacksh)
+  - [apk-pass.py](#apk-passpy)
 
 ## apk_decompile.py
 
@@ -214,4 +215,12 @@ $ python3 apk-diff.py <apk1> <apk2>
 
 ```sh
 $ ./apk-repack.sh <smali_folder> <apk_name>
+```
+
+## apk-pass.py
+
+绕过 Root 和模拟器检测后重打包并签名。
+
+```sh
+$ ../tools/AndRoPass-main/AndRoPass.py -a <apk_name>
 ```

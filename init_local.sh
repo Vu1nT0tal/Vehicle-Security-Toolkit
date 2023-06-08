@@ -23,7 +23,7 @@ EOF
 sudo apt-get update && sudo apt-get -y upgrade
 
 sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
-python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich openpyxl
+python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich colorama openpyxl
 
 echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect
@@ -106,7 +106,7 @@ wget -q https://github.com/user1342/DISintegrity/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 
 echo "[+] Installing ApplicationScanner ..."
-python3 -m pip install lief rich
+python3 -m pip install lief
 sudo npm -g install js-beautify
 wget -q https://github.com/paradiseduo/ApplicationScanner/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
@@ -170,6 +170,10 @@ echo "[+] Installing mobileAudit ..."
 wget -q https://github.com/mpast/mobileAudit/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 docker-compose -f ./tools/mobileAudit-main/docker-compose.yaml build -q
+
+echo "[+] Installing AndRoPass ..."
+wget -q https://github.com/koengu/AndRoPass/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
 
 echo "######################## src_scan ########################"
 
