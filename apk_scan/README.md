@@ -23,6 +23,7 @@
   - [apk-diff.py](#apk-diffpy)
   - [apk-repack.sh](#apk-repacksh)
   - [apk-pass.py](#apk-passpy)
+  - [apk-deeplinks.py](#apk-deeplinkspy)
 
 ## apk_decompile.py
 
@@ -223,4 +224,12 @@ $ ./apk-repack.sh <smali_folder> <apk_name>
 
 ```sh
 $ ../tools/AndRoPass-main/AndRoPass.py -a <apk_name>
+```
+
+## apk-deeplinks.py
+
+测试Deep Links。
+
+```sh
+$ ../tools/Android-App-Link-Verification-Tester-main/deeplink_analyser.py -op list-all -apk <apk_name>
 ```

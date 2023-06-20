@@ -23,7 +23,7 @@ EOF
 sudo apt-get update && sudo apt-get -y upgrade
 
 sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
-python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich colorama openpyxl
+python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich colorama openpyxl beautifulsoup4 lxml
 
 echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect
@@ -173,6 +173,10 @@ docker-compose -f ./tools/mobileAudit-main/docker-compose.yaml build -q
 
 echo "[+] Installing AndRoPass ..."
 wget -q https://github.com/koengu/AndRoPass/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
+
+echo "[+] Installing Android-App-Link-Verification-Tester ..."
+wget -q https://github.com/inesmartins/Android-App-Link-Verification-Tester/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 
 echo "######################## src_scan ########################"

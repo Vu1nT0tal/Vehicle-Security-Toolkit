@@ -6,14 +6,14 @@ import base64
 import pyfiglet
 import argparse
 import requests
-import cve_searchsploit
+import contextlib
 from lxml import etree
 from pathlib import Path
 from bs4 import BeautifulSoup
 from datetime import datetime
 from selenium import webdriver
 from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 
 sys.path.append('..')
 from utils import *
@@ -23,12 +23,73 @@ options.add_argument('--headless')
 
 # 最早出现时间
 ANDROID_VERSION = {
+    '13': '2022-09-01',
+    '12L': '2022-04-01',
     '12': '2021-11-01',
     '11': '2020-10-01',
     '10': '2019-09-01',
     '9': '2018-09-01',
     '8.1': '2018-01-01',
     '8.0': '2017-09-01'
+}
+
+# HTML元素ID
+IDS = {
+    'aosp': [
+        'android-runtime',
+        '01android-runtime',
+        'android-runtime-01',
+        'framework',
+        '01framework',
+        'framework-01',
+        'media-framework',
+        '01media-framework',
+        'media-framework-01',
+        'system',
+        '01system',
+        'system-01',
+        'library',
+        'Android-runtime-05',
+        'framework-05',
+        '05-framework',
+        'system-05',
+        '05-system'
+    ],
+    'kernel': [
+        'kernel components',
+        'kernel-compoents',
+        'kernel-components',
+        'kernel-components-05',
+        '05-kernel-components',
+        'kernel-components_1',
+        'kernel',
+        '01kernel',
+        '05kernel',
+        '05-kernel',
+    ],
+    'qualcomm': [
+        'qualcomm',
+        'qualcom-components',
+        'ualcomm components',
+        'qualcomm-components',
+        '05qualcomm',
+        'qualcomm-components-05',
+        '05-qualcomm-components',
+        # 'qualcomm-closed-source',
+        # 'qualcomm-closed-source-05'
+    ],
+    # 'mediatek': [
+    #     'mediatek-components-05'
+    # ]
+    'aaos': [
+        'media-framework',
+        'platform-apps',
+        'platform-apps_1',
+        'platform-service',
+        'system',
+        'aaos',
+        'car-settings',
+    ],
 }
 
 
@@ -47,6 +108,8 @@ def get_patch(url: str):
     url = url.strip('/')
     if 'source.codeaurora.org' in url:
         patch = requests.get(url.replace('commit', 'patch')).text
+    elif 'git.codelinaro.org' in url:
+        patch = requests.get(f'{url}.diff').text
     elif 'git.kernel.org' in url:
         patch = requests.get(url.replace('commit', 'patch')).text
     elif 'android.googlesource.com' in url:
@@ -73,37 +136,56 @@ def get_patch(url: str):
         patch = requests.get(f'{url}.patch')
     else:
         print_failed(f'{url} not support')
+        patch = ''
     return patch
 
 
-def get_cve(cve_name: str):
+def get_cve_detail(cve_id: str):
     """获取CVE详情"""
-
-    r = requests.get(f'https://cve.circl.lu/api/cve/{cve_name}').json()
+    pocs = []
+    with contextlib.suppress(Exception):
+        headers = {
+            'X-Requested-With': 'XMLHttpRequest',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
+        }
+        r = requests.get(f'https://www.exploit-db.com/search?cve={cve_id.upper()}', headers=headers, timeout=15)
+        if r.status_code == 200:
+            pocs.extend([f'https://www.exploit-db.com/exploits/{i["id"]}' for i in r.json()['data']])
     result = {
-        'poc': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
-        'cvss': {
-            'vector': r['cvss-vector'] if r else '',
-            'score': r['cvss'] if r else ''
-        },
-        'cwe': r['cwe'] if r else '',
-        'nvd_text': r['summary'] if r else '',
-        'ref_urls': r['references'] if r else [],
+        'poc': pocs,
+        'ref_urls': [f'https://nvd.nist.gov/vuln/detail/{cve_id}']
     }
-    result['ref_urls'].append(f'https://nvd.nist.gov/vuln/detail/{cve_name}')
-    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
+
+    try:
+        r = requests.get(f'https://cve.circl.lu/api/cve/{cve_id}').json()
+        result['cvss'] = {
+                'vector': r.get('cvss-vector') or '',
+                'score': r.get('cvss') or ''
+            }
+        result['cwe'] = r.get('cwe') or ''
+        result['nvd_text'] = r.get('summary') or ''
+        result['ref_urls'].extend(r.get('references') or [])
+    except Exception as e:
+        print_failed(f'{cve_id} detail failed: {e}')
+
+    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_id.split("-")[1]}/{cve_id}.json'
     if requests.get(poc_url):
         result['poc'].append(poc_url)
-    if result['cwe']:
-        cwe_url = f'https://cwe.mitre.org/data/definitions/{result["cwe"].split("-")[1]}.html'
-        r = requests.get(cwe_url)
-        root = etree.HTML(r.content)
-        cwe = root.xpath('//*[@id="Contentpane"]/div[2]/h2/text()')[0]
-        result['cwe'] = cwe
+
+    if result.get('cwe') and result['cwe'].startswith('CWE-'):
+        try:
+            cwe_url = f'https://cwe.mitre.org/data/definitions/{result["cwe"].split("-")[1]}.html'
+            r = requests.get(cwe_url)
+            root = etree.HTML(r.content)
+            cwe = root.xpath('//*[@id="Contentpane"]/div[2]/h2/text()')[0]
+            result['cwe'] = cwe
+        except Exception as e:
+            print_failed(f'{cve_id} detail failed: {e}')
+
     return result
 
 
-def extract_section(soup, tag1: str, tag2: str):
+def extract_section(soup, tag1: str, tag2: str, date_str: str):
     """解析表格"""
 
     found = soup.find('h3', id=tag2)
@@ -140,10 +222,10 @@ def extract_section(soup, tag1: str, tag2: str):
             if idx == cve_idx:
                 temp = col.text.strip()
                 if temp.startswith('CVE-'):
-                    cve_name = temp
+                    cve_id = temp
                 elif ',' in temp:
                     # 一行有多个CVE的情况
-                    cve_name = temp
+                    cve_id = temp
                 elif not temp:
                     # 一个CVE有多行的情况
                     flag = True
@@ -166,7 +248,8 @@ def extract_section(soup, tag1: str, tag2: str):
                 component_text = col.text.strip()
             idx += 1
 
-        item = {cve_name: {
+        item = {cve_id: {
+            'date': date_str,
             'fixes': urls,
             'affected_versions': vers_text,
             'affected_component': component_text,
@@ -174,15 +257,15 @@ def extract_section(soup, tag1: str, tag2: str):
             'severity': severity_text
         }}
         print_success(f'{tag2}\t{item}')
-        item[cve_name].update(get_cve(cve_name))
+        item[cve_id].update(get_cve_detail(cve_id))
 
         # 下载patch
         tag_path = patch_sec_path.joinpath(tag1)
         tag_path.mkdir(parents=True, exist_ok=True)
-        if tag1 == 'aosp':
+        if tag1 in {'aosp', 'aaos'}:
             for ver in vers_text.replace(" ", "").split(','):
                 if not urls:
-                    print_failed(f'{tag1} {cve_name} not found')
+                    print_failed(f'{tag1} {cve_id} not found')
                 else:
                     tag_path.joinpath(ver).mkdir(parents=True, exist_ok=True)
                     for idx, url in enumerate(urls):
@@ -194,15 +277,15 @@ def extract_section(soup, tag1: str, tag2: str):
                             continue
 
                         if len(urls) == 1:
-                            patch_path = tag_path.joinpath(f'{ver}/{cve_name}.patch')
+                            patch_path = tag_path.joinpath(f'{ver}/{cve_id}.patch')
                         else:
-                            patch_path = tag_path.joinpath(f'{ver}/{cve_name}-{idx+1}.patch')
+                            patch_path = tag_path.joinpath(f'{ver}/{cve_id}-{idx+1}.patch')
                         with open(patch_path, 'w+') as f:
                             f.write(patch)
                 results[tag1][ver].update(item)
         else:
             if not urls:
-                print_failed(f'{tag1} {cve_name} not found')
+                print_failed(f'{tag1} {cve_id} not found')
             else:
                 for idx, url in enumerate(urls):
                     try:
@@ -213,106 +296,88 @@ def extract_section(soup, tag1: str, tag2: str):
                         continue
 
                     if len(urls) == 1:
-                        patch_path = tag_path.joinpath(f'{cve_name}.patch')
+                        patch_path = tag_path.joinpath(f'{cve_id}.patch')
                     else:
-                        patch_path = tag_path.joinpath(f'{cve_name}-{idx+1}.patch')
+                        patch_path = tag_path.joinpath(f'{cve_id}-{idx+1}.patch')
                     with open(patch_path, 'w+') as f:
                         f.write(patch)
             results[tag1].update(item)
 
 
-def updateThread(url: str):
+def updateAospThread(url: str):
     """更新线程"""
     print_focus(url)
-    ids = {
-        'aosp': [
-            'android-runtime',
-            '01android-runtime',
-            'android-runtime-01',
-            'framework',
-            '01framework',
-            'framework-01',
-            'media-framework',
-            '01media-framework',
-            'media-framework-01',
-            'system',
-            '01system',
-            'system-01',
-            'library',
-            'Android-runtime-05',
-            'framework-05',
-            '05-framework',
-            'system-05',
-            '05-system'
-        ],
-        'kernel': [
-            'kernel components',
-            'kernel-compoents',
-            'kernel-components',
-            'kernel-components-05',
-            '05-kernel-components',
-            'kernel-components_1',
-            'kernel',
-            '01kernel',
-            '05kernel',
-            '05-kernel',
-        ],
-        'qualcomm': [
-            'qualcomm',
-            'qualcom-components',
-            'ualcomm components',
-            'qualcomm-components',
-            '05qualcomm',
-            'qualcomm-components-05',
-            '05-qualcomm-components',
-            # 'qualcomm-closed-source',
-            # 'qualcomm-closed-source-05'
-        ],
-        # 'mediatek': [
-        #     'mediatek-components-05'
-        # ]
-    }
+
+    date_str = url.split('/')[-1]
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
-    for k, v in ids.items():
-        for i in v:
-            extract_section(soup, k, i)
+
+    for tag1, v in IDS.items():
+        for tag2 in v:
+            extract_section(soup, tag1, tag2, date_str)
+
+
+def updateAaosThread(url: str):
+    """更新线程"""
+    print_focus(url)
+
+    date_str = url.split('/')[-1]
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, 'html.parser')
+
+    tag1 = 'aaos'
+    for tag2 in IDS[tag1]:
+        extract_section(soup, tag1, tag2, date_str)
 
 
 def update(args):
     """更新CVE补丁库"""
     ver_date = datetime.strptime(ANDROID_VERSION[args.version], '%Y-%m-%d')
 
-    bulletin_url = 'https://source.android.com/security/bulletin'
-    r = requests.get(bulletin_url)
-    root = etree.HTML(r.content)
-    table = root.xpath('//*[@id="gc-wrapper"]/main/devsite-content/article/div[2]/table/tr')
-    urls = []
-    for i in table:
-        href = i.xpath('td/a/@href')
-        if href and 'android' not in href[0]:
-            date_str = href[0].split('/')[-1]
-            url_date = datetime.strptime(date_str, '%Y-%m-%d')
-            if url_date >= ver_date:
-                urls.append(f'{bulletin_url}/{date_str}')
+    def get_urls(overview_url: str, bulletin_url: str):
+        urls = []
+        r = requests.get(overview_url)
+        root = etree.HTML(r.content)
+        table = root.xpath('//*[@id="gc-wrapper"]/main/devsite-content/article/div[2]/table/tr')
+        for i in table:
+            href = i.xpath('td/a/@href')
+            if href and 'android' not in href[0]:
+                date_str = href[0].split('/')[-1]
+                url_date = datetime.strptime(date_str, '%Y-%m-%d')
+                if url_date >= ver_date:
+                    urls.append(f'{bulletin_url}/{date_str}')
+        return urls
 
-    executor = ThreadPoolExecutor(5)
-    tasks = [executor.submit(updateThread, url) for url in urls]
-    executor.shutdown(True)
+    # 更新AOSP公告
+    aosp_url = 'https://source.android.com/docs/security/bulletin'
+    urls = get_urls(f'{aosp_url}/asb-overview', aosp_url)
+
+    executor = ThreadPoolExecutor(os.cpu_count()-1)
+    tasks = [executor.submit(updateAospThread, url) for url in urls]
+    executor.shutdown(wait=True)
+
+    # 更新AAOS公告
+    aoos_url = 'https://source.android.com/docs/security/bulletin/aaos'
+    urls = get_urls(aoos_url, aoos_url)
+
+    executor = ThreadPoolExecutor(os.cpu_count()-1)
+    tasks = [executor.submit(updateAaosThread, url) for url in urls]
+    executor.shutdown(wait=True)
 
 
 def compareThread(cve: Path, patch_path: Path):
     """对比某个CVE补丁与所有补丁"""
-    cve_name = '-'.join(cve.stem.split('-')[:3])
-    result = {cve_name: {
+    cve_id = '-'.join(cve.stem.split('-')[:3])
+    result = {cve_id: {
         'scan': {}
     }}
 
     try:
+        # TODO
         f1 = open(cve).read()
     except Exception as e:
-        print(e, cve_name, patch_path.stem)
-    return cve_name, result
+        print(e, cve_id, patch_path.stem)
+    return cve_id, result
 
 
 def scan(args):
@@ -357,6 +422,7 @@ if __name__ == '__main__':
 
     results = defaultdict(dict)
     results['aosp'] = defaultdict(dict)
+    results['aaos'] = defaultdict(dict)
     args = argument()
     args.func(args)
     with open(patch_sec_path.joinpath('android_cves.json'), 'w+') as f:
