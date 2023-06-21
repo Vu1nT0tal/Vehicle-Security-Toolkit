@@ -87,6 +87,7 @@ IDS = {
         'platform-apps_1',
         'platform-service',
         'system',
+        'system-ui',
         'aaos',
         'car-settings',
     ],
@@ -200,7 +201,7 @@ def extract_section(soup, tag1: str, tag2: str, date_str: str):
     for idx, col in enumerate(title.find_all('th')):
         if col.text == 'CVE':
             cve_idx = idx
-        elif col.text == 'Component':
+        elif col.text in {'Component', 'Subcomponent'}:
             component_idx = idx
         elif col.text == 'References':
             ref_idx = idx

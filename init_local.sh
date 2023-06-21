@@ -29,7 +29,7 @@ echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect
 echo Y | sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 sed -i "/^plugins/c\plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" ~/.zshrc
 echo "export PATH=\$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
 
@@ -151,7 +151,7 @@ sudo docker pull frantzme/cryptoguard
 echo "[+] Installing qark ..."
 python3 -m venv ./tools/qark-env
 ./tools/qark-env/bin/pip install wheel
-./tools/qark-env/bin/pip install git+https://github.com/linkedin/qark.git
+./tools/qark-env/bin/pip install git+https://github.com/linkedin/qark
 
 echo "[+] Installing SimpleWalker ..."
 wget -q https://github.com/zkwlx/SimpleWalker/releases/download/1.3/release.zip
@@ -240,14 +240,15 @@ echo "[+] Installing codeql ..."
 mkdir -p ~/github/codeql-home && cd ~/github/codeql-home
 wget -q https://github.com/github/codeql-cli-binaries/releases/download/v2.13.1/codeql-linux64.zip && unzip -q codeql-linux64.zip
 export PATH=$HOME/github/codeql-home/codeql:$PATH && echo "export PATH=\$HOME/github/codeql-home/codeql:\$PATH" >> $HOME/.zshrc
-git clone --depth=1 https://github.com/github/codeql.git codeql-repo
+git clone --depth=1 https://github.com/github/codeql codeql-repo
 rm codeql-linux64.zip && cd $root_path
 
 echo "[+] Installing semgrep ..."
 mkdir -p ./tools/semgrep && cd ./tools/semgrep
 python3 -m pip install semgrep
-git clone --depth=1 https://github.com/returntocorp/semgrep-rules.git default
-git clone --depth=1 https://github.com/0xdea/semgrep-rules.git c_cpp
+git clone --depth=1 https://github.com/returntocorp/semgrep-rules default
+git clone --depth=1 https://github.com/0xdea/semgrep-rules c_cpp
+git clone --depth=1 https://github.com/mindedsecurity/semgrep-rules-android-security android
 cd $root_path
 
 echo "[+] Installing cq ..."
@@ -268,7 +269,7 @@ python3 -m pip install codechecker
 echo "######################### bin_scan #########################"
 
 echo "[+] Installing stacs ..."
-git clone --depth=1 https://github.com/stacscan/stacs-rules.git ./tools/stacs-rules
+git clone --depth=1 https://github.com/stacscan/stacs-rules ./tools/stacs-rules
 sudo apt-get -y install libarchive-dev
 python3 -m pip install stacs
 
@@ -294,7 +295,7 @@ python3 -m pip install git+https://github.com/a13xp0p0v/kconfig-hardened-check
 
 echo "[+] Installing syzkaller ..."
 sudo apt-get -y install gcc gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-git clone --depth=1 https://github.com/google/syzkaller.git ~/github/syzkaller
+git clone --depth=1 https://github.com/google/syzkaller ~/github/syzkaller
 
 echo "######################### poc_scan #########################"
 
@@ -307,13 +308,13 @@ chmod +x ./tools/linux-exploit-suggester.sh
 echo "[+] Installing linux_kernel_cves ..."
 python3 -m pip install "thefuzz[speedup]"
 python3 -m pip install cve_searchsploit && cve_searchsploit -u
-git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves.git ~/github/linux_kernel_cves
+git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves ~/github/linux_kernel_cves
 
 echo "####################### init_remote ########################"
 
 echo "[+] Installing frida"
 python3 -m pip install frida frida-tools objection
-git clone --depth=1 https://github.com/CreditTone/hooker.git ~/github/hooker
+git clone --depth=1 https://github.com/CreditTone/hooker ~/github/hooker
 python3 -m pip install -r ~/github/hooker/requirements.txt
 
 echo "[+] Installing wadb.apk ..."
@@ -355,7 +356,7 @@ sudo apt-get -y install gdb-multiarch patchelf tcpdump netcat socat nasm libc6-d
 sudo apt-get -y install glibc-source && tar -xf /usr/src/glibc/glib*.tar.xz
 sudo gem install one_gadget seccomp-tools
 python3 -m pip install pwntools ropper ropgadget capstone keystone
-git clone --depth=1 https://github.com/hugsy/gef.git ~/github/gef
+git clone --depth=1 https://github.com/hugsy/gef ~/github/gef
 echo "source ~/github/gef/gef.py" > ~/.gdbinit
 
 echo "[+] Installing qemu ..."
