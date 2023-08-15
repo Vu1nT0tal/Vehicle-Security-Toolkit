@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 
 import sys
+import yaml
 import shutil
 import pyfiglet
 import argparse
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 sys.path.append('..')
 from utils import *
@@ -55,9 +57,11 @@ if __name__ == '__main__':
         print_focus(f'[decompile] {apk}')
         apk_path = Path(apk)
 
+        smali_path = apk_path.parent.joinpath('apktool_smali')
+        java_path = apk_path.parent.joinpath('jadx_java')
         if args.clean:
-            shutil.rmtree(apk_path.parent.joinpath('apktool_smali'), ignore_errors=True)
-            shutil.rmtree(apk_path.parent.joinpath('jadx_java'), ignore_errors=True)
+            shutil.rmtree(smali_path, ignore_errors=True)
+            shutil.rmtree(java_path, ignore_errors=True)
         else:
             ret = []
             if args.apktool:
@@ -71,3 +75,33 @@ if __name__ == '__main__':
                 print_failed('[decompile] failed')
             else:
                 print_success('[decompile] success')
+
+                if java_path.exists():
+                    manifest_path = java_path.joinpath('resources/AndroidManifest.xml')
+                    root = ET.parse(manifest_path).getroot()
+                    namespace = '{http://schemas.android.com/apk/res/android}'
+
+                    package = root.get('package')
+                    versionName = root.get(f'{namespace}versionName')
+                    versionCode = root.get(f'{namespace}versionCode')
+
+                    uses_sdk = root.find('uses-sdk')
+                    minSdkVersion = uses_sdk.get(f'{namespace}minSdkVersion')
+                    targetSdkVersion = uses_sdk.get(f'{namespace}targetSdkVersion')
+
+                elif smali_path.exists():
+                    manifest_path = smali_path.joinpath('AndroidManifest.xml')
+                    root = ET.parse(manifest_path).getroot()
+                    package = root.get('package')
+
+                    yml_path = smali_path.joinpath('apktool.yml')
+                    yml_data = {}
+                    if yml_path.exists():
+                        data = yml_path.read_text().splitlines()[1:]
+                        yml_data = yaml.safe_load('\n'.join(data))
+                    versionName = yml_data.get('versionInfo', {}).get('versionName')
+                    versionCode = yml_data.get('versionInfo', {}).get('versionCode')
+                    minSdkVersion = yml_data.get('sdkInfo', {}).get('minSdkVersion')
+                    targetSdkVersion = yml_data.get('sdkInfo', {}).get('targetSdkVersion')
+
+                print(f'package:\t{package}\nversionName:\t{versionName}\nversionCode:\t{versionCode}\nminSdkVersion:\t{minSdkVersion}\ntargetSdkVersion:\t{targetSdkVersion}')
