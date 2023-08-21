@@ -40,7 +40,7 @@ extract () {
     sudo mount -o ro $dirpath/product_a.img $dirpath/product
 
     echo "[+] Extracting APK files"
-    APK_DIR=$dirpath/apk
+    APK_DIR=$dirpath/apks
     APK_LIST=$APK_DIR/apk_list.txt
     LIB_LIST=$APK_DIR/lib_list.txt
     mkdir -p $APK_DIR/system/product $APK_DIR/system_ext $APK_DIR/vendor $APK_DIR/product $APK_DIR/libjni

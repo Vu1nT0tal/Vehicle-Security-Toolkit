@@ -83,7 +83,7 @@ sudo systemctl restart docker
 echo "######################### apk_scan #########################"
 
 echo "[+] Installing apktool ..."
-wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.7.0/apktool_2.7.0.jar -O ./tools/apktool.jar
+wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.8.1/apktool_2.8.1.jar -O ./tools/apktool.jar
 
 echo "[+] Installing jadx ..."
 wget -q https://github.com/skylot/jadx/releases/download/v1.4.7/jadx-1.4.7.zip -O jadx.zip
