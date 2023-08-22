@@ -22,6 +22,7 @@ from apk_scan.apk_qark import analysis as qark
 from apk_scan.apk_quark import analysis as quark
 from apk_scan.apk_integrity import analysis as integrity
 from apk_scan.apk_scanner import analysis as scanner
+from apk_scan.apk_infoscanner import analysis as infoscanner
 from apk_scan.apk_hunt import analysis as hunt
 from apk_scan.apk_walker import analysis as walker
 from apk_scan.apk_speck import analysis as speck
@@ -62,6 +63,7 @@ if __name__ == '__main__':
         'quark': defaultdict(list),
         'integrity': defaultdict(list),
         'scanner': defaultdict(list),
+        'infoscanner': defaultdict(list),
         'hunt': defaultdict(list),
         'walker': defaultdict(list),
         'speck': defaultdict(list),
@@ -220,6 +222,15 @@ if __name__ == '__main__':
             else:
                 plugin['scanner']['success'].append(apk)
                 print_success('[scanner] success')
+
+        # apk_infoscanner
+        if 'infoscanner' in plugin:
+            if ret := infoscanner(apk_path, tools_path):
+                plugin['infoscanner']['failed'].append(apk)
+                print_failed('[infoscanner] failed')
+            else:
+                plugin['infoscanner']['success'].append(apk)
+                print_success('[infoscanner] success')
 
         # apk_hunt
         if 'hunt' in plugin:

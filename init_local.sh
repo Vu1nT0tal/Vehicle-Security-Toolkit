@@ -111,6 +111,11 @@ sudo npm -g install js-beautify
 wget -q https://github.com/paradiseduo/ApplicationScanner/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 
+echo "[+] Installing AppInfoScanner ..."
+wget -q https://github.com/kelvinBen/AppInfoScanner/archive/refs/heads/master.zip
+unzip -q master.zip -d ./tools/ && rm master.zip
+python3 -m pip install -r ./tools/AppInfoScanner-master/requirements.txt
+
 echo "[+] Installing jni_helper ..."
 wget -q https://github.com/evilpan/jni_helper/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
