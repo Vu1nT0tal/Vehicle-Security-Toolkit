@@ -93,7 +93,11 @@ echo "[+] Installing apkid ..."
 python3 -m pip install apkid
 
 echo "[+] Installing exodus-core ..."
-sudo apt-get -y install dexdump
+# sudo apt-get -y install dexdump
+# mv /usr/bin/dexdump /usr/bin/dexdump2
+wget -q https://dl.google.com/android/repository/build-tools_r33-linux.zip
+unzip -q build-tools_r33-linux.zip -d ./tools/ && rm build-tools_r33-linux.zip
+sudo ln -s ./tools/android-13/dexdump /usr/bin/dexdump
 python3 -m pip install exodus-core
 
 echo "[+] Installing quark ..."
@@ -110,10 +114,12 @@ python3 -m pip install lief
 sudo npm -g install js-beautify
 wget -q https://github.com/paradiseduo/ApplicationScanner/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
+cp ./tools/apktool.jar ./tools/ApplicationScanner-main/ThirdTools/apktool.jar
 
 echo "[+] Installing AppInfoScanner ..."
 wget -q https://github.com/kelvinBen/AppInfoScanner/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
+cp ./tools/apktool.jar ./tools/AppInfoScanner-master/tools/apktool.jar
 python3 -m pip install -r ./tools/AppInfoScanner-master/requirements.txt
 
 echo "[+] Installing jni_helper ..."
