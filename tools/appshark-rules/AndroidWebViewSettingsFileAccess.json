@@ -1,0 +1,28 @@
+{
+  "AndroidWebViewSettingsFileAccess": {
+    "desc": {
+      "name": "AndroidWebViewSettingsFileAccess",
+      "detail": "Enabling access to the file system in a WebView allows attackers to view sensitive information.",
+      "wiki": "",
+      "category": "WebView",
+      "model": "middle",
+      "possibility": "4"
+    },
+    "traceDepth" : 1,
+    "ConstNumberMode": true,
+    "targetNumberArr": [1],
+    "entry": {},
+    "source": {},
+    "sink": {
+      "<android.webkit.WebSettings: void setAllowFileAccess(boolean)>": {
+        "TaintCheck": ["p0"]
+      },
+      "<android.webkit.WebSettings: void setAllowFileAccessFromFileURLs(boolean)>": {
+        "TaintCheck": ["p0"]
+      },
+      "<android.webkit.WebSettings: void setAllowUniversalAccessFromFileURLs(boolean)>": {
+        "TaintCheck": ["p0"]
+      }
+    }
+  }
+}

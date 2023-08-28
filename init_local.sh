@@ -172,6 +172,7 @@ echo "[+] Installing AppShark ..."
 wget -q https://github.com/bytedance/appshark/archive/refs/heads/main.zip
 unzip -q main.zip -d ./tools/ && rm main.zip
 wget -q https://github.com/bytedance/appshark/releases/download/v0.1.2/AppShark-0.1.2-all.jar -O ./tools/appshark-main/AppShark.jar
+cp ./tools/appshark-rules/*.json ./tools/appshark-main/config/rules
 
 echo "[+] Installing mariana-trench ..."
 python3 -m venv ./tools/mariana-trench-env

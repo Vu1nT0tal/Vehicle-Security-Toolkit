@@ -1,0 +1,22 @@
+{
+  "AndroidWebViewSettingsEnabledJavaScript": {
+    "desc": {
+      "name": "AndroidWebViewSettingsEnabledJavaScript",
+      "detail": "Enabling JavaScript execution in a WebView can result in cross-site scripting attacks.",
+      "wiki": "",
+      "category": "WebView",
+      "model": "middle",
+      "possibility": "4"
+    },
+    "traceDepth" : 1,
+    "ConstNumberMode": true,
+    "targetNumberArr": [1],
+    "entry": {},
+    "source": {},
+    "sink": {
+      "<android.webkit.WebSettings: * setJavaScriptEnabled(boolean)>": {
+        "TaintCheck": ["p0"]
+      }
+    }
+  }
+}

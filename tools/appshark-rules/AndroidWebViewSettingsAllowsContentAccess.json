@@ -1,0 +1,22 @@
+{
+  "AndroidWebViewSettingsAllowsContentAccess": {
+    "desc": {
+      "name": "AndroidWebViewSettingsAllowsContentAccess",
+      "detail": "Access to content providers in a WebView can allow access to protected information by loading content:// links.",
+      "wiki": "",
+      "category": "WebView",
+      "model": "middle",
+      "possibility": "4"
+    },
+    "traceDepth" : 1,
+    "ConstNumberMode": true,
+    "targetNumberArr": [1],
+    "entry": {},
+    "source": {},
+    "sink": {
+      "<android.webkit.WebSettings: void setAllowContentAccess(boolean)>": {
+        "TaintCheck": ["p0"]
+      }
+    }
+  }
+}

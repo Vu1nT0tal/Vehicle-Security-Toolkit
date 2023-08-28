@@ -1,0 +1,22 @@
+{
+  "WebviewDebuggingEnabled": {
+    "desc": {
+      "name": "WebviewDebuggingEnabled",
+      "detail": "Enabling Webview debugging in production builds can expose entry points or leak sensitive information.",
+      "wiki": "",
+      "category": "WebView",
+      "model": "middle",
+      "possibility": "4"
+    },
+    "traceDepth" : 1,
+    "ConstNumberMode": true,
+    "targetNumberArr": [1],
+    "entry": {},
+    "source": {},
+    "sink": {
+      "<android.webkit.WebView: void setWebContentsDebuggingEnabled(boolean)>": {
+        "TaintCheck": ["p0"]
+      }
+    }
+  }
+}

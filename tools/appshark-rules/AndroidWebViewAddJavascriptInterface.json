@@ -1,0 +1,18 @@
+{
+  "AndroidWebViewAddJavascriptInterface": {
+    "desc": {
+      "name": "AndroidWebViewAddJavascriptInterface",
+      "detail": "Exposing a Java object in a WebView with a JavaScript interface can lead to malicious JavaScript controlling the application.",
+      "wiki": "",
+      "category": "WebView",
+      "model": "middle",
+      "possibility": "4"
+    },
+    "APIMode": true,
+    "entry": {},
+    "source": {},
+    "sink": {
+      "<android.webkit.WebView: void addJavascriptInterface(*)>": {}
+    }
+  }
+}
