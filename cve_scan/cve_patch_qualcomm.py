@@ -38,5 +38,5 @@ def argument():
 
 
 if __name__ == '__main__':
-    print(pyfiglet.figlet_format('poc_patch_qualcomm'))
+    print(pyfiglet.figlet_format('cve_patch_qualcomm'))
     print(get_latest_bulletin())

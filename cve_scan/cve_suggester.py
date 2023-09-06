@@ -19,7 +19,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print(pyfiglet.figlet_format('poc_suggester'))
+    print(pyfiglet.figlet_format('cve_suggester'))
     tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
     parser, args = argument()
     ip, port = args.device.split(':') if ':' in args.device else (args.device, 22)

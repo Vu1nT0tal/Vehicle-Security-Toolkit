@@ -309,7 +309,7 @@ echo "[+] Installing syzkaller ..."
 sudo apt-get -y install gcc gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 git clone --depth=1 https://github.com/google/syzkaller ~/github/syzkaller
 
-echo "######################### poc_scan #########################"
+echo "######################### cve_scan #########################"
 
 python3 -m pip install openai tiktoken translators pygerrit2 xmltodict
 
@@ -321,6 +321,12 @@ echo "[+] Installing linux_kernel_cves ..."
 python3 -m pip install "thefuzz[speedup]"
 python3 -m pip install cve_searchsploit && cve_searchsploit -u
 git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves ~/github/linux_kernel_cves
+
+echo "[+] Installing CVEhound ..."
+yes | sudo add-apt-repository ppa:npalix/coccinelle
+sudo apt install coccinelle libpython2.7
+python3 -m pip install git+https://github.com/evdenis/cvehound
+cvehound_update_rules # && cvehound_update_metadata
 
 echo "####################### init_remote ########################"
 

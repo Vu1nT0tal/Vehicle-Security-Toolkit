@@ -159,7 +159,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print(pyfiglet.figlet_format('poc_dirtypipe'))
+    print(pyfiglet.figlet_format('cve_poc_dirtypipe'))
     parser, args = argument()
     ip, port = args.device.split(':') if ':' in args.device else (args.device, 22)
     with tempfile.TemporaryDirectory() as d:

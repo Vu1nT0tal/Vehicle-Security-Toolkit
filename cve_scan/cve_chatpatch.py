@@ -7,6 +7,7 @@ import json
 import openai
 import tiktoken
 import requests
+import pyfiglet
 import xmltodict
 import translators
 from pathlib import Path
@@ -169,6 +170,8 @@ def chatgpt_scan(key: str, project: str):
 
 
 if __name__ == '__main__':
+    print(pyfiglet.figlet_format('cve_chatpatch'))
+
     # OA账号密码
     username = ''
     password = ''

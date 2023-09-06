@@ -416,7 +416,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print(pyfiglet.figlet_format('poc_patch_android'))
+    print(pyfiglet.figlet_format('cve_patch_android'))
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     patch_sec_path = report_path.joinpath('patch_sec_android')
     patch_sec_path.mkdir(parents=True, exist_ok=True)

@@ -4,8 +4,8 @@
 
 - [Vehicle-Security-Toolkit](#vehicle-security-toolkit)
   - [安装](#安装)
-    - [init_local.sh](#init_localsh)
-    - [init_remote.sh](#init_remotesh)
+    - [init\_local.sh](#init_localsh)
+    - [init\_remote.sh](#init_remotesh)
   - [固件提取](#固件提取)
     - [img-extract.sh](#img-extractsh)
     - [adb-extract.sh](#adb-extractsh)
@@ -14,8 +14,8 @@
   - [二进制测试](#二进制测试)
     - [bin-allinone.py](#bin-allinonepy)
   - [源码测试](#源码测试)
-    - [src-allinone_java.py](#src-allinone_javapy)
-    - [src-allinone_c.py](#src-allinone_cpy)
+    - [src-allinone\_java.py](#src-allinone_javapy)
+    - [src-allinone\_c.py](#src-allinone_cpy)
   - [系统测试](#系统测试)
   - [漏洞测试](#漏洞测试)
   - [隐私合规测试](#隐私合规测试)
@@ -133,10 +133,10 @@ $ python3 sys-allinone.py --sys ~/source
 
 ## 漏洞测试
 
-一站式对 Android/Linux 设备进行漏洞扫描，[poc_scan](./poc_scan) 目录下的工具作为库被调用，也可以独立使用。
+一站式对 Android/Linux 设备进行漏洞扫描，[cve_scan](./cve_scan) 目录下的工具作为库被调用，也可以独立使用。
 
 ```sh
-$ python3 poc_allinone.py --arch [x64|arm|aarch64] --connect [adb|ssh] --device ip:port
+$ python3 cve_allinone.py --arch [x64|arm|aarch64] --connect [adb|ssh] --device ip:port
 ```
 
 ## 隐私合规测试

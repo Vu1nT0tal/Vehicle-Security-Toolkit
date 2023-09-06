@@ -259,7 +259,7 @@ def scan(args):
     executor.shutdown(True)
 
     results = defaultdict(dict)
-    report_file = report_path.joinpath('poc_patch_linux.json')
+    report_file = report_path.joinpath('cve_patch_linux.json')
     with open(report_file, 'w+') as f1, open(cves_path.joinpath('data/kernel_cves.json')) as f2:
         cves_info = json.load(f2)
         for task in tasks:
@@ -305,7 +305,7 @@ def argument():
 
 
 if __name__ == '__main__':
-    print(pyfiglet.figlet_format('poc_patch_linux'))
+    print(pyfiglet.figlet_format('cve_patch_linux'))
     cves_path = '~/github/linux_kernel_cves'
 
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
