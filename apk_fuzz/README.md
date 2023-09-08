@@ -2,8 +2,10 @@
 
 - [fuzz](#fuzz)
   - [fuzzinozer](#fuzzinozer)
-  - [fuzz_null.py](#fuzz_nullpy)
-  - [drozer_scan.py](#drozer_scanpy)
+  - [fuzz\_null.py](#fuzz_nullpy)
+  - [drozer\_scan.py](#drozer_scanpy)
+  - [fuzz\_deeplink.sh](#fuzz_deeplinksh)
+  - [fuzz\_deeplink.py](#fuzz_deeplinkpy)
 
 连接 Android 设备并启动 drozer：
 
@@ -43,4 +45,21 @@ $ adb shell pm list packages | grep -E "example" | cut -d ":" -f 2 > ../data/pac
 
 $ source ../tools/drozer/drozer-env/bin/activate
 $ python2 drozer_scan.py --config ../data/package.list [--ip 127.0.0.1] [--port 31415]
+```
+
+## fuzz_deeplink.sh
+
+测试Deep Links。
+
+```sh
+$ ./deeplink-fuzz.sh deeplinks
+$ ./deeplink-fuzz.sh activities
+```
+
+## fuzz_deeplink.py
+
+测试Deep Links。
+
+```sh
+$ ../tools/Android-App-Link-Verification-Tester-main/deeplink_analyser.py -op list-all -apk <apk_name>
 ```

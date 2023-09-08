@@ -346,9 +346,13 @@ python3 -m pip install xlwt click
 wget -q https://github.com/zhengjim/camille/archive/refs/heads/master.zip
 unzip -q master.zip -d ./tools/ && rm master.zip
 
-echo "Installing drozer ..."
-# sudo docker pull fsecurelabs/drozer
+echo "[+] Installing radamsa ..."
+git clone --depth=1 https://gitlab.com/akihe/radamsa
+cd radamsa && make && sudo make install
+cd $root_path && rm -rf radamsa
 
+echo "[+] Installing drozer ..."
+# sudo docker pull fsecurelabs/drozer
 mkdir -p ./tools/drozer && cd ./tools/drozer
 wget -q https://github.com/FSecureLABS/drozer-agent/releases/download/2.5.2/agent-debug.apk -O drozer.apk
 wget -q https://github.com/FSecureLABS/drozer/releases/download/2.4.4/drozer-2.4.4-py2-none-any.whl
