@@ -6,19 +6,22 @@ import pyfiglet
 import argparse
 from pathlib import Path
 from quark.report import Report
+from quark.script import runQuarkAnalysis, Rule
 
 sys.path.append('..')
 from utils import *
 
 
-def analysis(apk_path: Path):
-    rule_path = str(Path('~/.quark-engine/quark-rules/').expanduser())
-    report_file = apk_path.parent.joinpath('SecScan/quark.json')
+def analysis(apk_path: Path, tools_path: Path):
+    rules_path = tools_path.joinpath('quark/rules/rules')
+    scripts_path = tools_path.joinpath('quark/scripts')
+    rules_report_file = apk_path.parent.joinpath('SecScan/quark_rules.json')
+    scripts_report_file = apk_path.parent.joinpath('SecScan/quark_scripts.json')
 
-    report = Report()
-    report.analysis(apk_path, rule_path)
-    json_report = report.get_report("json")
-    with open(report_file, 'w+') as f:
+    rules_report = Report()
+    rules_report.analysis(apk_path, rules_path)
+    json_report = rules_report.get_report("json")
+    with open(rules_report_file, 'w+') as f:
         json.dump(json_report, f, indent=4)
 
 
@@ -30,8 +33,8 @@ def argument():
 
 if __name__ == '__main__':
     print(pyfiglet.figlet_format('apk_quark'))
+    tools_path = Path(__file__).absolute().parents[1].joinpath('tools')
 
-    success_num = 0
     apk_dirs = open(argument().config, 'r').read().splitlines()
 
     for apk in apk_dirs:
@@ -41,7 +44,6 @@ if __name__ == '__main__':
         report_path = apk_path.parent.joinpath('SecScan')
         report_path.mkdir(parents=True, exist_ok=True)
 
-        analysis(apk_path)
-        success_num += 1
+        analysis(apk_path, tools_path)
 
-    print_success(f'[quark] {success_num}')
+    print_success('[quark] success')

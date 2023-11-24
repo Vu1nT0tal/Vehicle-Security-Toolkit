@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
         # apk_quark
         if 'quark' in plugin:
-            quark(apk_path)
+            quark(apk_path, tools_path)
             plugin['quark']['success'].append(apk)
             print_success('[quark] success')
 

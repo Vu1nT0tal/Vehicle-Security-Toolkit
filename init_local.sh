@@ -102,7 +102,10 @@ python3 -m pip install exodus-core
 
 echo "[+] Installing quark ..."
 python3 -m pip install androguard==3.4.0a1 quark-engine
-freshquark
+mkdir -p ./tools/quark && cd ./tools/quark
+git clone --depth=1 https://github.com/quark-engine/quark-rules rules
+git clone --depth=1 https://github.com/quark-engine/quark-script scripts
+cd $root_path
 
 echo "[+] Installing DISintegrity ..."
 python3 -m pip install jinja2 tqdm
@@ -364,6 +367,8 @@ virtualenv -p /usr/bin/python2 ./tools/drozer/drozer-env
 cp ./fuzz/drozer_config ~/.drozer_config
 
 echo "########################## others ##########################"
+
+wget -q https://github.com/google/bundletool/releases/download/1.15.4/bundletool-all-1.15.4.jar -O ./tools/bundletool.jar
 
 sudo npm -g install apk-mitm
 
