@@ -48,6 +48,11 @@ wget -q https://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_l
 sudo dpkg -i chrome.deb && rm chrome.deb
 unzip -q chromedriver.zip && sudo mv chromedriver /usr/bin && rm chromedriver.zip
 
+echo "[+] Installing playwright ..."
+python3 -m pip install playwright
+playwright install-deps
+playwright install chromium
+
 echo "[+] Installing golang ..."
 sudo add-apt-repository -y ppa:longsleep/golang-backports
 sudo apt-get update && sudo apt-get -y install golang-go

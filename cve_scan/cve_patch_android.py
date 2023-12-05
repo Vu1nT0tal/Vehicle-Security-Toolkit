@@ -108,7 +108,13 @@ def get_patch(url: str):
 
     url = url.strip('/')
     if 'source.codeaurora.org' in url:
-        patch = requests.get(url.replace('commit', 'patch')).text
+        # 已迁移到codelinaro
+        url = url.replace('commit/?id', 'commit?id')
+        data = url.split('/')
+        path = '/'.join(data[4:-1])
+        id = data[-1].split('=')[1].split('_')[0]
+        url = f'https://git.codelinaro.org/clo/{path}/-/commit/{id}'
+        patch = requests.get(f'{url}.diff').text
     elif 'git.codelinaro.org' in url:
         patch = requests.get(f'{url}.diff').text
     elif 'git.kernel.org' in url:
