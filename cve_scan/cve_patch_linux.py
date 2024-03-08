@@ -31,6 +31,7 @@ KERNEL_VERSION = {
     '5.10': '2c85ebc57b3e1817b6ce1a6b703928e113a90442',
     '5.15': '8bb7eca972ad531c9b149c0a51ab43a417385813',
     '6.1': '830b3c68c1fb1e9176028d02ef86f3cf76aa2476',
+    '6.6': 'ffc253263a1375a65fa6c9f62a893e9767fbebfa',
 
     # others
     '4.4': 'afd2ff9b7e1b367172f18ba7f693dfb62bdcb2dc',
@@ -223,8 +224,8 @@ def compareThread(cve: Path, patch_path: Path):
         for patch in patch_path.glob('*'):
             f2 = open(patch).read()
             ratio = fuzz.ratio(f1, f2)
-            if ratio > 70:
-                result['scan'].update({ratio: patch.stem})
+            if ratio > 80:
+                result['scan'][ratio] = patch.stem
                 print_focus(f'{cve_name} found ({ratio}%): {patch.stem}')
         if not result['scan']:
             print_failed(f'{cve_name} not found!')
@@ -259,7 +260,6 @@ def scan(args):
     executor.shutdown(True)
 
     results = defaultdict(dict)
-    report_file = report_path.joinpath('cve_patch_linux.json')
     with open(report_file, 'w+') as f1, open(cves_path.joinpath('data/kernel_cves.json')) as f2:
         cves_info = json.load(f2)
         for task in tasks:
@@ -310,6 +310,7 @@ if __name__ == '__main__':
 
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     report_path.mkdir(parents=True, exist_ok=True)
+    report_file = report_path.joinpath('cve_patch_linux.json')
     patch_all_path = report_path.joinpath('patch_all_linux')
     patch_sec_path = report_path.joinpath('patch_sec_linux')
 

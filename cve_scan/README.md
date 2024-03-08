@@ -50,6 +50,8 @@ $ python3 cve_patch_linux.py scan --repo ~/kernel --version 5.10
 
 ```sh
 $ python3 cve_patch_android.py update --version 11  # 更新CVE补丁库
+$ python3 cve_patch_android.py format --repo ~/hmi --manifest 2024-01-01  # 生成仓库补丁
+$ python3 cve_patch_android.py format --repo ~/hmi --date 2024-01-01      # 生成仓库补丁
 $ python3 cve_patch_android.py scan --repo ~/hmi --version 11
 ```
 

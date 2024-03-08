@@ -120,7 +120,7 @@ def extract(results, name, matches):
             results[name].append(secret)
 
 
-def analysis(apk_path: Path):
+def analysis(apk_path: Path, regexes: dict=regexes):
     jadx_java = apk_path.parent.joinpath('jadx_java')
     report_file = apk_path.parent.joinpath('SecScan/leaks.json')
 
@@ -136,6 +136,7 @@ def analysis(apk_path: Path):
 
     with open(report_file, 'w+') as f:
         json.dump(results, f, indent=4)
+    return results
 
 
 def argument():

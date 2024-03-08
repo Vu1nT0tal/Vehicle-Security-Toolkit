@@ -51,7 +51,7 @@ def shell_cmd(cmd: str, env: dict = None, timeout: int = None):
         output = pl.communicate()[0].decode('utf-8', errors='replace')
         output += '\n\nERROR: execution timed out!'
         ret_code = 1
-    return output, ret_code
+    return output.strip(), ret_code
 
 
 def get_host_ip() -> str:
