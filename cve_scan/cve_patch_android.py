@@ -27,6 +27,9 @@ options.add_argument('--headless')
 
 NVD_KEY = ''
 
+# 在扫描时排除的漏洞
+CVE_EXCLUDE = []
+
 # 转移了位置和需要排除的仓库
 REPOSITORY = {
     'migrate': {
@@ -669,26 +672,41 @@ def scan(args):
             for repo, cve_dict in value.items():
                 print(repo, len(cve_dict))
 
-                # 没有本地仓库
+                # 排除没有的本地仓库
                 if repo not in patches_data:
                     print_failed(f'[{repo}] not exists!')
                     results[key]['no_repo'][repo] = cve_dict
                     continue
 
-                for cve_id in cve_dict.keys():
+                for cve_id, cve_data in cve_dict.items():
+                    # 排除部分漏洞
+                    if cve_id in CVE_EXCLUDE:
+                        results[key]['exclude'][cve_id] = cve_data
+                        continue
+
                     for cve_path in get_patch_path(patches, key, repo, cve_id):
                         thread = executor.submit(compareThread, key, repo, cve_id, cve_path)
                         tasks.append(thread)
 
         for f in as_completed(tasks):
+            # 先全部放到patched里面
             key, repo, cve_id, result = f.result()
             cve_data = cve_fixes[key][repo][cve_id]
-            category = 'patched' if list(result.values())[0] else 'unpatched'
-            if cve_id in results[key][category]:
-                results[key][category][cve_id]['scan'].update(result)
+            if cve_id in results[key]['patched']:
+                cve_data['scan'].update(result)
             else:
                 cve_data['scan'] = result
-                results[key][category][cve_id] = cve_data
+                results[key]['patched'][cve_id] = cve_data
+
+        # 将未修复的移到unpatched里面
+        for key, value in results.items():
+            pop_list = []
+            for cve_id, cve_data in value['patched'].items():
+                if any(i == [] for i in cve_data['scan'].values()):
+                    results[key]['unpatched'][cve_id] = cve_data
+                    pop_list.append(cve_id)
+            for i in pop_list:
+                value['patched'].pop(i)
 
     with open(report_file, 'w+') as f:
         json.dump(results, f, indent=4)
