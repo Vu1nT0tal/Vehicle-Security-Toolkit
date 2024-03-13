@@ -431,22 +431,25 @@ def compareThread(key: str, repo: str, cve_id: str, cve_path: Path):
 
     result = []
     f1 = cve_path.read_text(errors='ignore')
-    f1_files = get_modified_files(f1)
+    f1_filenames = get_modified_files(f1, name_only=True)
 
     patches = [
-        patch_all_path.joinpath(repo).joinpath(f2)
+        patch_all_path.joinpath(repo, f2)
         for f2, f2_files in patches_data[repo].items()
-        if any(i in f2_files for i in f1_files)
+        if any(i.split('/')[-1] in f1_filenames for i in f2_files)
     ]
+    if not patches:
+        print_failed(f'[{repo}] {cve_path.stem} not found patches!')
 
     for patch in patches:
         f2 = open(patch).read()
         ratio = fuzz.ratio(f1, f2)
-        if ratio > 80:
-            result.append(f'{ratio}%{patch.stem}')
+        if ratio >= 60:
             print_focus(f'[{repo}] {cve_path.stem} found ({ratio}%): {patch.stem}')
+            if ratio >= 80:
+                result.append(f'{ratio}%{patch.stem}')
 
-    if not result:
+    if patches and not result:
         print_failed(f'[{repo}] {cve_path.stem} not found!')
 
     return key, repo, cve_id, {cve_path.stem: result}
@@ -470,7 +473,7 @@ def formatThread(repo_name, repo_path):
         return repo_name, -1
 
     # 生成所有补丁
-    cmd = f'git format-patch -N {prev_commit} -o {target_path}'
+    cmd = f'git format-patch --histogram -N {prev_commit} -o {target_path}'
     output, ret_code = shell_cmd(cmd, env={'cwd': repo_path})
     number, _ = shell_cmd(f'ls {target_path} | wc -l')
     if ret_code != 0:
@@ -481,14 +484,18 @@ def formatThread(repo_name, repo_path):
     return repo_name, int(number)
 
 
-def get_modified_files(patch: str):
+def get_modified_files(patch: str, name_only: bool = False):
     """获取补丁中修改的文件"""
     modified_files = []
     for line in patch.splitlines():
         if line.startswith('diff --git'):
             start = line.find(' a/') + len(' a/')
             end = line.find(' b/')
-            modified_files.append(line[start:end])
+            file = line[start:end]
+            if name_only:
+                modified_files.append(file.split('/')[-1])
+            else:
+                modified_files.append(file)
     return modified_files
 
 
