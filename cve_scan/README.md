@@ -39,7 +39,7 @@ $ python3 cve_source_linux.py scan --repo ~/kernel
 通过补丁对比的方式检测 Linux 内核仓库中已合并及未合并的所有 CVE 补丁。
 
 ```sh
-$ python3 cve_patch_linux.py update   # 更新CVE补丁库
+$ python3 cve_patch_linux.py update --version 5.10  # 更新CVE补丁库
 $ python3 cve_patch_linux.py scan --repo ~/kernel --version 5.10
 ```
 
@@ -50,7 +50,7 @@ $ python3 cve_patch_linux.py scan --repo ~/kernel --version 5.10
 ```sh
 $ python3 cve_patch_android.py update --version 11  # 更新CVE补丁库
 $ python3 cve_patch_android.py format --repo ~/hmi --date 2022-01-01 --version 11 # 生成仓库补丁
-$ python3 cve_patch_android.py scan --repo ~/hmi --version 11 --strict  # 严格模式扫描
+$ python3 cve_patch_android.py scan --repo ~/hmi --version 11
 ```
 
 ## cve_patch_qualcomm.py

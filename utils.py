@@ -75,6 +75,11 @@ def get_md5(file_path: str) -> str:
     return md5.hexdigest()
 
 
+requests_headers = {
+    'X-Requested-With': 'XMLHttpRequest',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
+}
+
 def get_poc(cve_id: str):
     """检查是否有POC/EXP"""
     pocs = []
@@ -87,15 +92,33 @@ def get_poc(cve_id: str):
 
     edb_url = 'https://www.exploit-db.com/search?cve='
     with contextlib.suppress(Exception):
-        headers = {
-            'X-Requested-With': 'XMLHttpRequest',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
-        }
-        r = requests.get(f'{edb_url}{cve_id.upper()}', headers=headers, timeout=15)
+
+        r = requests.get(f'{edb_url}{cve_id.upper()}', headers=requests_headers, timeout=15)
         if r.status_code == 200:
             pocs.extend([f'https://www.exploit-db.com/exploits/{i["id"]}' for i in r.json()['data']])
 
     return pocs
+
+
+def get_severity(score: float, version: int=3):
+    """通过分数计算严重性"""
+    severity = None
+    if version == 3:
+        if 0.1 <= score <= 3.9:
+            severity = 'Low'
+        elif 4.0 <= score <= 6.9:
+            severity = 'Medium'
+        elif 7.0 <= score <= 8.9:
+            severity = 'High'
+        elif 9.0 <= score <= 10.0:
+            severity = 'Critical'
+    elif 0.0 <= score <= 3.9:
+        severity = 'Low'
+    elif 4.0 <= score <= 6.9:
+        severity = 'Medium'
+    elif 7.0 <= score <= 10.0:
+        severity = 'High'
+    return severity
 
 
 class ManifestUtil:

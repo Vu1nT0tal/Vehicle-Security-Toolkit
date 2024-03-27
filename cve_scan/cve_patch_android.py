@@ -654,18 +654,22 @@ def get_modified_files(patch: str, mode: str='all'):
     return modified_files
 
 
+def parse_patch(patch: Path, data: str):
+    lines = data.splitlines()
+    diff_index = next((i for i, line in enumerate(lines) if line.startswith('diff --git')), -1)
+    meta_part = lines[:diff_index]
+    diff_part = lines[diff_index:-3]
+
+    with open(patch, 'w+') as f1, open(patch.with_suffix('.txt'), 'w+') as f2:
+        f1.write('\n'.join(diff_part))
+        f2.write('\n'.join(meta_part))
+
+
 def patchThread(repo: Path, patch: Path):
     try:
         # 提取diff部分
         patch_data = patch.read_text(errors='ignore')
-        lines = patch_data.splitlines()
-        diff_index = next((i for i, line in enumerate(lines) if line.startswith('diff --git')), -1)
-        meta_part = lines[:diff_index]
-        diff_part = lines[diff_index:-3]
-
-        with open(patch, 'w+') as f1, open(patch.with_suffix('.txt'), 'w+') as f2:
-            f1.write('\n'.join(diff_part))
-            f2.write('\n'.join(meta_part))
+        parse_patch(patch, patch_data)
 
         # 找出修改的文件
         modified_files = get_modified_files(patch_data)
@@ -876,20 +880,20 @@ def argument():
     subparsers = parser.add_subparsers()
 
     parser_update = subparsers.add_parser('update', help='update CVE patch data')
-    parser_update.add_argument('--version', help='Android version number', type=str, default='all')
+    parser_update.add_argument('--version', help='Android version number', type=str, default=None)
     parser_update.set_defaults(func=update)
 
     parser_format = subparsers.add_parser('format', help='format CVE patch data for Android repository')
     parser_format.add_argument('--repo', help='Android git repository path', type=str, required=True)
-    parser_format.add_argument('--manifest', help='Manifest time "YYYY-MM-DD"', type=str, required=False)
-    parser_format.add_argument('--date', help='Date time "YYYY-MM-DD"', type=str, required=False)
+    parser_format.add_argument('--manifest', help='Manifest time "YYYY-MM-DD"', type=str, default=None)
+    parser_format.add_argument('--date', help='Date time "YYYY-MM-DD"', type=str, default=None)
     parser_format.add_argument('--version', help='Android version number', type=str, required=True)
     parser_format.set_defaults(func=format)
 
     parser_scan = subparsers.add_parser('scan', help='scan CVE patch in Android repository')
-    parser_scan.add_argument('--strict', help='Strict mode', action='store_true', default=False)
     parser_scan.add_argument('--repo', help='Android git repository path', type=str, required=True)
     parser_scan.add_argument('--version', help='Android version number', type=str, required=True)
+    parser_scan.add_argument('--strict', help='Strict mode', action='store_true', default=False)
     parser_scan.set_defaults(func=scan)
 
     return parser.parse_args()
@@ -906,7 +910,7 @@ if __name__ == '__main__':
     android_cves = patch_sec_path.joinpath('android_cves.json')
 
     args = argument()
-    ANDROID_VERSION = args.version
+    ANDROID_VERSION = args.version or 'all'
     android_meta = patch_sec_path.joinpath(ANDROID_VERSION, 'meta.json')
 
     # 第一步：更新CVE补丁库
