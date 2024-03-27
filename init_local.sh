@@ -23,7 +23,7 @@ EOF
 sudo apt-get update && sudo apt-get -y upgrade
 
 sudo apt-get -y install python3-dev python3-pip python3-venv zip unzip npm graphviz simg2img meld maven scrcpy
-python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich colorama openpyxl beautifulsoup4 lxml nvdlib
+python3 -m pip install virtualenv wheel pyaxmlparser requests_toolbelt future paramiko pyfiglet rich colorama openpyxl beautifulsoup4 lxml xhtml2pdf nvdlib
 
 echo "[+] Installing zsh ..."
 sudo apt-get -y install git zsh expect
@@ -153,6 +153,10 @@ unzip -q master.zip -d ./tools/ && rm master.zip
 echo "[+] Installing APKHunt ..."
 # wget -q https://github.com/Cyber-Buddy/APKHunt/archive/refs/heads/main.zip
 go build -o ./tools/apkhunt ./tools/apkhunt.go
+
+echo "[+] Installing APKDeepLens ..."
+wget -q https://github.com/d78ui98/APKDeepLens/archive/refs/heads/main.zip
+unzip -q main.zip -d ./tools/ && rm main.zip
 
 echo "[+] Installing androbugs ..."
 sudo docker pull danmx/docker-androbugs
@@ -327,7 +331,6 @@ chmod +x ./tools/linux-exploit-suggester.sh
 
 echo "[+] Installing linux_kernel_cves ..."
 python3 -m pip install "thefuzz[speedup]"
-python3 -m pip install cve_searchsploit && cve_searchsploit -u
 git clone --depth=1 https://github.com/nluedtke/linux_kernel_cves ~/github/linux_kernel_cves
 
 echo "[+] Installing CVEhound ..."

@@ -1,6 +1,8 @@
 import os
 import socket
 import hashlib
+import requests
+import contextlib
 from lxml import etree
 from pathlib import Path
 from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
@@ -71,6 +73,29 @@ def get_md5(file_path: str) -> str:
         for chunk in iter(lambda: f.read(4096), b''):
             md5.update(chunk)
     return md5.hexdigest()
+
+
+def get_poc(cve_id: str):
+    """检查是否有POC/EXP"""
+    pocs = []
+
+    poc_url = 'https://raw.githubusercontent.com/nomi-sec/PoC-in-GitHub/master'
+    with contextlib.suppress(Exception):
+        r = requests.get(f'{poc_url}/{cve_id.split("-")[1]}/{cve_id.upper()}.json', timeout=15)
+        if r.status_code == 200:
+            pocs.extend([i['html_url'] for i in r.json()])
+
+    edb_url = 'https://www.exploit-db.com/search?cve='
+    with contextlib.suppress(Exception):
+        headers = {
+            'X-Requested-With': 'XMLHttpRequest',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
+        }
+        r = requests.get(f'{edb_url}{cve_id.upper()}', headers=headers, timeout=15)
+        if r.status_code == 200:
+            pocs.extend([f'https://www.exploit-db.com/exploits/{i["id"]}' for i in r.json()['data']])
+
+    return pocs
 
 
 class ManifestUtil:

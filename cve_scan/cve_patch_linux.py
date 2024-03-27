@@ -8,9 +8,7 @@ import copy
 import mmap
 import pyfiglet
 import argparse
-import requests
 import asyncio
-import cve_searchsploit
 
 from pathlib import Path
 from thefuzz import fuzz
@@ -97,12 +95,9 @@ def compareThread2(cve: Path):
     cve_name = '-'.join(cve.stem.split('-')[:3])
     result = {
         'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
-        'poc': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
+        'poc': get_poc(cve_name),
         'scan': {'modify': [], 'unmodify':[], 'ratio':0}
     }
-    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
-    if requests.get(poc_url):
-        result['poc'].append(poc_url)
 
     file_modify = extract_patch_info(cve)
     modify_patch = 0
@@ -212,12 +207,9 @@ def compareThread(cve: Path, patch_path: Path):
     cve_name = '-'.join(cve.stem.split('-')[:3])
     result = {
         'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
-        'poc': [f'https://www.exploit-db.com/exploits/{edbid}' for edbid in cve_searchsploit.edbid_from_cve(cve_name)],
+        'poc': get_poc(cve_name),
         'scan': {}
     }
-    poc_url = f'https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{cve_name.split("-")[1]}/{cve_name}.json'
-    if requests.get(poc_url):
-        result['poc'].append(poc_url)
 
     try:
         f1 = open(cve).read()
