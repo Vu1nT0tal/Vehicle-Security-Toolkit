@@ -19,7 +19,7 @@ PKGNAME=$1
 adb shell ps -ef | grep $PKGNAME
 
 if [ "$?" != "0" ]; then
-    echo "[!] The process does not exist!"
+    echo "[!] The process does not exists!"
     exit 1
 fi
 

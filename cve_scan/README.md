@@ -40,25 +40,28 @@ $ python3 cve_source_linux.py scan --repo ~/kernel
 
 ```sh
 $ python3 cve_patch_linux.py update --version 5.10  # 更新CVE补丁库
-$ python3 cve_patch_linux.py scan --repo ~/kernel --version 5.10
+$ python3 cve_patch_linux.py format --repo ~/kernel --commit xxxx --version 5.10  # 生成仓库补丁
+$ python3 cve_patch_linux.py scan --version 5.10  # 检测补丁
 ```
 
 ## cve_patch_android.py
 
-通过补丁对比的方式检测 Android 系统仓库中已合并及未合并的所有 CVE 补丁。
+通过补丁对比的方式检测 Android 系统仓库中已合并及未合并的所有 AOSP CVE 补丁。
 
 ```sh
 $ python3 cve_patch_android.py update --version 11  # 更新CVE补丁库
 $ python3 cve_patch_android.py format --repo ~/hmi --date 2022-01-01 --version 11 # 生成仓库补丁
-$ python3 cve_patch_android.py scan --repo ~/hmi --version 11
+$ python3 cve_patch_android.py scan --version 11  # 检测补丁
 ```
 
 ## cve_patch_qualcomm.py
 
-通过补丁对比的方式检测 Android 内核仓库中已合并及未合并的所有 CVE 补丁。
+通过补丁对比的方式检测 Android 系统仓库中已合并及未合并的所有高通 CVE 补丁。
 
 ```sh
-$ python3 cve_patch_qualcomm.py update  # 更新CVE补丁库
+$ python3 cve_patch_qualcomm.py update --chip SA8155P # 更新CVE补丁库
+$ python3 cve_patch_qualcomm.py format --repo ~/hmi --date 2022-01-01 --chip SA8155P  # 生成仓库补丁
+$ python3 cve_patch_qualcomm.py scan --chip SA8155P # 检测补丁
 ```
 
 ## cve_poc_dirtypipe.py

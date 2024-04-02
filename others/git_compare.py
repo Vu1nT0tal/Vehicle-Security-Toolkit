@@ -434,7 +434,7 @@ class GitCompare:
     def get_concerned_folders(self, config_file: str) -> list:
         logging.debug(f"get concerned folders from file: {config_file}")
         if not os.path.exists(config_file):
-            logging.error(f"file {config_file} not exist")
+            logging.error(f"file {config_file} not exists")
             return None
         folder_list = []
         config = configparser.ConfigParser()
@@ -444,7 +444,7 @@ class GitCompare:
             for key in config[section]:
                 folder = config[section][key].rstrip()
                 if not os.path.exists(folder):
-                    logging.warning(f"folder {folder} not exist")
+                    logging.warning(f"folder {folder} not exists")
                     continue
                 if not os.path.isdir(folder):
                     logging.warning(f"folder {folder} is not in type of dir")

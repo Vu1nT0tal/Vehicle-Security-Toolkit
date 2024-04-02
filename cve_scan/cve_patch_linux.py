@@ -1,24 +1,20 @@
 #!/usr/bin/python3
 
 import os
-import re
 import sys
 import json
-import copy
-import mmap
 import requests
 import pyfiglet
 import argparse
 
 from tqdm import tqdm
 from pathlib import Path
-from thefuzz import fuzz
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 
+from cve_utils import *
 sys.path.append('..')
 from utils import *
-
 
 # https://kernel.org/category/releases.html
 KERNEL_VERSION = {
@@ -45,117 +41,9 @@ KERNEL_VERSION = {
 
 
 def format_version(version: str):
-    version = args.version.split('-')[0].split('.')     # 5.4-rc1 -> 5.4
+    version = version.split('-')[0].split('.')          # 5.4-rc1 -> 5.4
     version.append('0') if len(version) == 2 else None  # 5.4 -> 5.4.0
     return version
-
-
-def parse_patch(patch: Path, data: str):
-    lines = data.splitlines()
-    diff_index = next((i for i, line in enumerate(lines) if line.startswith('diff --git')), -1)
-    meta_part = lines[:diff_index]
-    diff_part = lines[diff_index:-3]
-
-    with open(patch, 'w+') as f1, open(patch.with_suffix('.txt'), 'w+') as f2:
-        f1.write('\n'.join(diff_part))
-        f2.write('\n'.join(meta_part))
-
-
-def extract_patch_info(cve: Path):
-    with open(cve, 'r') as cve_fd:
-        diff_flag = False
-        modify_flag = False
-        sFilename = ''
-        file_modify = {}
-        diff_info = []
-
-        for line in cve_fd:
-            info = re.findall(r'^diff --git a(.*) b(.*)', line)
-            if len(info) == 1:
-                modify_flag = False
-                sFilename = ''
-                diff_info = copy.deepcopy(info)
-                diff_flag = True
-                continue
-
-            if diff_flag == True:
-                file_path_a = re.findall(r'^--- a(.*)', line)
-                if len(file_path_a) == 1:
-                    sFilename = file_path_a[0]
-                else:
-                    file_path_b = re.findall(r'^\+\+\+ b(.*)', line)
-                    if len(file_path_b) == 1:
-                        sFilename = file_path_b[0]
-
-                if (sFilename == diff_info[0][0]) and (sFilename == diff_info[0][1]):
-                    file_modify[sFilename] = {'add': [], 'del': []}
-                    modify_flag = True
-                    diff_flag = False
-                continue
-
-            if (line[0] == '-') and (line[1] != '-'):
-                if modify_flag == True and len(line[1:].strip()) > 5:
-                    file_modify[sFilename]['del'].append(line[1:].strip())
-            elif (line[0] == '+') and (line[1] != '+'):
-                if modify_flag == True and len(line[1:].strip()) > 5:
-                    file_modify[sFilename]['add'].append(line[1:].strip())
-
-            finish = re.findall(r'^cgit', line)
-            if len(finish) == 1:
-                break
-
-    return file_modify
-
-
-def compareThread2(cve: Path):
-    """提取某个CVE补丁信息，到源码中进行对比"""
-
-    cve_name = '-'.join(cve.stem.split('-')[:3])
-    result = {
-        'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
-        'poc': get_poc(cve_name),
-        'scan': {'modify': [], 'unmodify':[], 'ratio':0}
-    }
-
-    file_modify = extract_patch_info(cve)
-    modify_patch = 0
-    all_patch = 0
-
-    for filename in file_modify:
-        source_all_path = repo_path.joinpath(filename[1:])
-        if not source_all_path.exists():
-            break
-
-        all_patch += len(file_modify[filename]['add'])+len(file_modify[filename]['del'])
-
-        with open(source_all_path, 'r+') as f:
-            kernel_code = mmap.mmap(f.fileno(), 0)
-            for add_patch in file_modify[filename]['add']:
-                add_idx = kernel_code.find(add_patch.encode())
-                if add_idx == -1:
-                    result['scan']['unmodify'].append(f'[+] {add_patch}')
-                elif add_idx >= 0:
-                    result['scan']['modify'].append(f'[+] {add_patch}')
-                    kernel_code.seek(add_idx)
-                    modify_patch += 1
-
-            for del_patch in file_modify[filename]['del']:
-                del_idx = kernel_code.find(del_patch.encode())
-                if del_idx == -1:
-                    result['scan']['modify'].append(f'[-] {del_patch}')
-                    modify_patch += 1
-                elif del_idx >= 0:
-                    result['scan']['unmodify'].append(f'[-] {del_patch}')
-
-    score = 1 if all_patch == 0 else modify_patch / all_patch
-    result['scan']['ratio'] = score
-
-    if score > 0.6:
-        print_success(f'{cve_name} not found, code modify ratio: {score:.2%}')
-    else:
-        print_failed(f'{cve_name} found, code modify ratio: {score:.2%}')
-
-    return cve_name, result
 
 
 def update(args):
@@ -164,7 +52,11 @@ def update(args):
         """更新线程"""
         try:
             patch_data = requests.get(url, headers=requests_headers).text
-            parse_patch(patch, patch_data)
+            meta, diff = parse_patch(patch_data)
+            with open(patch.with_suffix('.meta'), 'w+') as f:
+                f.write(meta)
+            with open(patch.with_suffix('.diff'), 'w+') as f:
+                f.write(diff)
         except Exception as e:
             print_failed(f'Download failed: {url}\n{patch}')
             print(e)
@@ -190,7 +82,7 @@ def update(args):
                 continue
 
             patch_sec_path.joinpath(f'{version2}/{commit["fixed_version"]}').mkdir(parents=True, exist_ok=True)
-            url = f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/patch/?id={commit["cmt_id"]}'
+            url = f'{base_url}/patch/?id={commit["cmt_id"]}'
             patch = patch_sec_path.joinpath(f'{version2}/{commit["fixed_version"]}/{cve}-{commit["cmt_id"]}.patch')
             tasks.append(executor.submit(updateThread, url, patch))
 
@@ -199,91 +91,94 @@ def update(args):
             pbar.update()
 
 
-def compareThread(cve: Path, patch_path: Path):
-    """将某个CVE补丁与所有内核补丁进行比较"""
+def format(args):
+    """为仓库生成补丁"""
+    # 生成补丁
+    commit = args.commit or KERNEL_VERSION[args.version]
+    target_path = patch_all_path.joinpath(repo_name)
+    cmd = f'git format-patch -N {commit} -o {target_path}'
+    output, ret_code = shell_cmd(cmd, env={'cwd': repo_path})
+    number, _ = shell_cmd(f'ls {target_path} | wc -l')
+    if ret_code != 0:
+        print_failed(f'Generate patches Error: {output}')
+        return
+    print_focus(f'Generate {number.strip()} patchs: {target_path}')
 
-    cve_name = '-'.join(cve.stem.split('-')[:3])
+    # 处理生成的补丁
+    results = process_patches(patch_all_path)
+
+    with open(kernel_patches, 'w+') as f:
+        json.dump(results, f, indent=4)
+        print_success(f'Patches saved in {kernel_patches}')
+
+
+def compareThread(cve_path: Path):
+    """将某个CVE补丁与所有内核补丁进行比较"""
+    cve_name = '-'.join(cve_path.stem.split('-')[:3])
     result = {
-        'url': f'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-{cve.parent.name}.y&id={cve.stem.split("-")[-1]}',
+        'url': f'{base_url}/commit/?h=linux-{cve_path.parents[1].name}.y&id={cve_path.stem.split("-")[-1]}',
         'poc': get_poc(cve_name),
-        'scan': []
     }
 
-    try:
-        f1 = open(cve).read()
-        for patch in patch_path.glob('*.patch'):
-            f2 = open(patch).read()
-            ratio = fuzz.ratio(f1, f2)
-            if ratio >= 60:
-                print_focus(f'{cve_name} found ({ratio}%): {patch.stem}')
-                if ratio >= 80:
-                    result['scan'].append(f'{ratio}% {patch.stem}')
-                    # 非strict模式下找到一个就返回
-                    if not args.strict:
-                        break
-        if not result['scan']:
+    diff_data = open(cve_path).read()
+    patch_data = open(cve_path.with_suffix('.patch')).read()
+
+    ret_code = 0
+    if patches := filter_patches(patch_all_path, repo_name, cve_name, diff_data, patches_data):
+        scan_result = scan_patches(repo_name, cve_name, patches, diff_data, patch_data, args.strict)
+        result['scan'] = scan_result
+        if not scan_result:
             print_failed(f'{cve_name} not found!')
-    except Exception as e:
-        print(e, cve_name, patch.stem)
-    return cve_name, result
+            ret_code = 2
+    else:
+        print_failed(f'{cve_name} Files not exists!')
+        ret_code = 1
+
+    return ret_code, cve_name, result
 
 
 def scan(args):
     """对比所有CVE补丁与所有内核补丁"""
-
-    commit = args.commit or KERNEL_VERSION[args.version]
-    cmd = f'git format-patch -N {commit} -o {patch_all_path}'
-    output, ret_code = shell_cmd(cmd, env={'cwd': repo_path})
-    number, _ = shell_cmd(f'ls {patch_all_path} | wc -l')
-    if ret_code != 0:
-        print_failed(f'Generate patches Error: {output}')
-        return
-    print_focus(f'Generate {number.strip()} patchs: {patch_all_path}')
-
-    patch_paths = list(patch_all_path.glob('**/*.patch'))
-    with ProcessPoolExecutor(os.cpu_count()-1) as executor:
-        tasks = []
-        for patch in patch_paths:
-            patch_data = patch.read_text(errors='ignore')
-            # 安全补丁通常小于50KB
-            if patch.stat().st_size < 50 * 1024:
-                thread = executor.submit(parse_patch, patch, patch_data)
-                tasks.append(thread)
-            else:
-                patch.unlink(missing_ok=True)
-
-        with tqdm(total=len(tasks)) as pbar:
-            for _ in as_completed(tasks):
-                pbar.update()
-
     patches = []
     version = format_version(args.version)
     for folder in patch_sec_path.joinpath('.'.join(version[:2])).glob('*'):
         folder_name = format_version(folder.name)
-        if int(folder_name[-1]) >= int(version[-1]):
-            patches += folder.glob('*')
+        if int(folder_name[-1]) > int(version[-1]):
+            patches += folder.glob('*.diff')
 
     executor = ProcessPoolExecutor(os.cpu_count()-1)
-    tasks = [executor.submit(compareThread, cve, patch_all_path) for cve in patches]
+    tasks = [executor.submit(compareThread, cve) for cve in patches]
     executor.shutdown(True)
 
     results = defaultdict(dict)
-    cves_info = json.load(open(cves_path.joinpath('data/kernel_cves.json')))
     for task in tasks:
-        cve_name, item = task.result()
-        item.update(cves_info[cve_name])
+        ret_code, cve_name, item = task.result()
+        item.update(cves_data[cve_name])
+        if item.get('rejected', False) is True:
+            continue
 
-        # 优先使用cvss3，且只保留其一
+        # 优先使用cvss3
+        cvss = cvssVector = severity = None
         if 'cvss3' in item:
-            severity = get_severity(item['cvss3']['score'])
-            item.pop('cvss2') if 'cvss2' in item else None
+            cvss = item['cvss3']['score']
+            cvssVector = item['cvss3']['raw']
+            severity = get_severity(cvss)
         elif 'cvss2' in item:
-            severity = get_severity(item['cvss2']['score'], version=2)
-        else:
-            severity = None
+            cvss = item['cvss2']['score']
+            cvssVector = item['cvss2']['raw']
+            severity = get_severity(cvss, version=2)
+        item['cvss'] = cvss
+        item['cvssVector'] = cvssVector
         item['severity'] = severity
 
+        for key in ['cvss3', 'cvss2', 'ref_urls']:
+            item.pop(key, None)
+
         result = {cve_name: item}
+        if ret_code == 1:
+            results['no_files'].update(result)
+            continue
+
         if item['scan']:
             results['patched'].update(result)
         else:
@@ -303,11 +198,15 @@ def argument():
     parser_update.add_argument('--version', help='kernel version number', type=str, default=None)
     parser_update.set_defaults(func=update)
 
-    parser_scan = subparsers.add_parser('scan', help='scan CVE patch in kernel repository')
+    parser_format = subparsers.add_parser('format', help='format local patch data')
+    parser_format.add_argument('--repo', help='kernel git repository path', type=str, required=True)
+    parser_format.add_argument('--version', help='kernel version number', type=str, required=True)
+    parser_format.add_argument('--commit', help='kernel commit id', type=str, default=None)
+    parser_format.set_defaults(func=format)
+
+    parser_scan = subparsers.add_parser('scan', help='scan CVE patch data')
     parser_scan.add_argument('--cves', help='linux_kernel_cves git repository path', type=str, default=cves_path)
-    parser_scan.add_argument('--repo', help='kernel git repository path', type=str, required=True)
     parser_scan.add_argument('--version', help='kernel version number', type=str, required=True)
-    parser_scan.add_argument('--commit', help='kernel commit id', type=str, default=None)
     parser_scan.add_argument('--strict', help='Strict mode', action='store_true', default=False)
     parser_scan.set_defaults(func=scan)
 
@@ -317,16 +216,38 @@ def argument():
 if __name__ == '__main__':
     print(pyfiglet.figlet_format('cve_patch_linux'))
     cves_path = '~/github/linux_kernel_cves'
+    base_url = 'https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git'
+    repo_name = 'linux'
 
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     report_path.mkdir(parents=True, exist_ok=True)
     report_file = report_path.joinpath('cve_patch_linux.json')
     patch_all_path = report_path.joinpath('patch_all_linux')
     patch_sec_path = report_path.joinpath('patch_sec_linux')
+    kernel_patches = patch_all_path.joinpath('kernel_patches.json')
 
     args = argument()
-    cves_path = Path(args.cves).expanduser().absolute()
-    if args.func.__name__ == 'scan':
+
+    # 第一步：更新CVE补丁库
+    if args.func.__name__ == 'update':
+        cves_path = Path(args.cves).expanduser().absolute()
+
+    # 第二步：为仓库生成补丁
+    elif args.func.__name__ == 'format':
+        if not patch_sec_path.exists():
+            print_failed('Please update first')
+            sys.exit(1)
+
         repo_path = Path(args.repo).expanduser().absolute()
+
+    # 第三步：对比所有CVE补丁与所有补丁
+    elif args.func.__name__ == 'scan':
+        if not kernel_patches.exists():
+            print_failed('Please format first')
+            sys.exit(1)
+
+        patches_data = json.load(open(kernel_patches))
+        cves_path = Path(args.cves).expanduser().absolute()
+        cves_data = json.load(open(cves_path.joinpath('data/kernel_cves.json')))
 
     args.func(args)
