@@ -6,7 +6,9 @@
   - [cve\_source\_linux.py](#cve_source_linuxpy)
   - [cve\_patch\_linux.py](#cve_patch_linuxpy)
   - [cve\_patch\_android.py](#cve_patch_androidpy)
-  - [cve\_patch\_qualcomm.py](#cve_patch_qualcommpy)
+  - [cve\_patch\_qcom.py](#cve_patch_qcompy)
+  - [cve\_patch\_armtf.py](#cve_patch_armtfpy)
+  - [cve\_patch\_uboot.py](#cve_patch_ubootpy)
   - [cve\_poc\_dirtypipe.py](#cve_poc_dirtypipepy)
 
 ## cve_suggester.py
@@ -36,32 +38,52 @@ $ python3 cve_source_linux.py scan --repo ~/kernel
 
 ## cve_patch_linux.py
 
-通过补丁对比的方式检测 Linux 内核仓库中已合并及未合并的所有 CVE 补丁。
+通过补丁对比的方式检测 Linux 内核仓库中的所有 CVE 补丁。
 
 ```sh
 $ python3 cve_patch_linux.py update --version 5.10  # 更新CVE补丁库
-$ python3 cve_patch_linux.py format --repo ~/kernel --commit xxxx --version 5.10  # 生成仓库补丁
-$ python3 cve_patch_linux.py scan --version 5.10  # 检测补丁
+$ python3 cve_patch_linux.py format --version 5.10 --repo ~/kernel --commit xxxx  # 生成仓库补丁
+$ python3 cve_patch_linux.py scan --version 5.10    # 检测补丁
 ```
 
 ## cve_patch_android.py
 
-通过补丁对比的方式检测 Android 系统仓库中已合并及未合并的所有 AOSP CVE 补丁。
+通过补丁对比的方式检测 Android 系统仓库中的所有 AOSP CVE 补丁。
 
 ```sh
 $ python3 cve_patch_android.py update --version 11  # 更新CVE补丁库
-$ python3 cve_patch_android.py format --repo ~/hmi --date 2022-01-01 --version 11 # 生成仓库补丁
-$ python3 cve_patch_android.py scan --version 11  # 检测补丁
+$ python3 cve_patch_android.py format --version 11 --repo ~/hmi --date 2022-01-01 # 生成仓库补丁
+$ python3 cve_patch_android.py scan --version 11    # 检测补丁
 ```
 
-## cve_patch_qualcomm.py
+## cve_patch_qcom.py
 
-通过补丁对比的方式检测 Android 系统仓库中已合并及未合并的所有高通 CVE 补丁。
+通过补丁对比的方式检测 Android 系统仓库中的所有高通 CVE 补丁。
 
 ```sh
-$ python3 cve_patch_qualcomm.py update --chip SA8155P # 更新CVE补丁库
-$ python3 cve_patch_qualcomm.py format --repo ~/hmi --date 2022-01-01 --chip SA8155P  # 生成仓库补丁
-$ python3 cve_patch_qualcomm.py scan --chip SA8155P # 检测补丁
+$ python3 cve_patch_qcom.py update --version SA8155P  # 更新CVE补丁库
+$ python3 cve_patch_qcom.py format --version SA8155P --repo ~/hmi --date 2022-01-01 # 生成仓库补丁
+$ python3 cve_patch_qcom.py scan --version SA8155P    # 检测补丁
+```
+
+## cve_patch_armtf.py
+
+通过补丁对比的方式检测 BootRom 仓库中的所有 Trusted Firmware 的 CVE 补丁。
+
+```sh
+$ python3 cve_patch_armtf.py update --version TF-A   # 更新CVE补丁库
+$ python3 cve_patch_armtf.py format --version TF-A --repo ~/tfa --commit xxxx  # 生成仓库补丁
+$ python3 cve_patch_armtf.py scan --version TF-A     # 检测补丁
+```
+
+## cve_patch_uboot.py
+
+通过补丁对比的方式检测 U-Boot 仓库中的所有 CVE 补丁。
+
+```sh
+$ python3 cve_patch_uboot.py update   # 更新CVE补丁库
+$ python3 cve_patch_uboot.py format --repo ~/uboot --commit xxxx  # 生成仓库补丁
+$ python3 cve_patch_uboot.py scan     # 检测补丁
 ```
 
 ## cve_poc_dirtypipe.py
