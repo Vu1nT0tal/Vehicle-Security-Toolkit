@@ -140,10 +140,7 @@ def extract_section(soup, tag2: str, date_str: str):
             if idx == cve_idx:
                 temp = col.text.strip()
                 if temp.startswith('CVE-'):
-                    cve_id = temp
-                elif ',' in temp:
-                    # 一行有多个CVE的情况
-                    cve_id = temp
+                    cve_id = temp.split(',')[0].strip() if ',' in temp else temp
                 elif not temp:
                     # 一个CVE有多行的情况
                     flag = True
@@ -394,7 +391,7 @@ def format(args):
 
 def scan(args):
     """对比所有CVE补丁与所有补丁"""
-    patches = patch_sec_path.joinpath(version).glob('*.diff')
+    patches = patcher.patch_sec_path.joinpath(version).glob('*.diff')
     patcher.scan_patches(patches, scanThread)
 
 
@@ -424,18 +421,18 @@ if __name__ == '__main__':
     print(pyfiglet.figlet_format('cve_patch_android'))
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     report_path.mkdir(parents=True, exist_ok=True)
-    report_file = report_path.joinpath('cve_patch_android.json')
-    report_html = report_file.with_suffix('.html')
-    patch_all_path = report_path.joinpath('patch_all_android')
-    patch_sec_path = report_path.joinpath('patch_sec_android')
-    all_patches = patch_all_path.joinpath('all_patches.json')
-    sec_cves = patch_sec_path.joinpath('sec_cves.json')
 
     args = argument()
     version = args.version
     strict_mode = getattr(args, 'strict', False)
     repo_path = Path(getattr(args, 'repo', '')).expanduser().absolute()
-    android_meta = patch_sec_path.joinpath(version, 'meta.json')
+
+    patcher = Patcher(
+        'android', report_path,
+        version, repo_path, strict_mode,
+        CVE_EXCLUDE, REPO_EXCLUDE, REPO_MIGRATE
+    )
+    android_meta = patcher.patch_sec_path.joinpath(version, 'meta.json')
 
     # 第一步：更新CVE补丁库
     if args.func.__name__ == 'update':
@@ -443,21 +440,16 @@ if __name__ == '__main__':
 
     # 第二步：为所有仓库生成补丁
     elif args.func.__name__ == 'format':
-        if not sec_cves.exists():
+        if not patcher.sec_cves.exists():
             print_failed('Please update first')
             sys.exit(1)
 
     # 第三步：对比所有CVE补丁与所有补丁
     elif args.func.__name__ == 'scan':
-        if not all_patches.exists():
+        if not patcher.all_patches.exists():
             print_failed('Please format first')
             sys.exit(1)
 
         meta_data = json.load(open(android_meta))
 
-    patcher = Patcher(
-        patch_all_path, patch_sec_path, report_file,
-        version, repo_path, strict_mode,
-        CVE_EXCLUDE, REPO_EXCLUDE, REPO_MIGRATE
-    )
     args.func(args)

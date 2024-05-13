@@ -45,6 +45,9 @@ def get_poc(cve_id: str):
 
 def get_severity(score: float, version: int=3):
     """通过分数计算严重性"""
+    if not score:
+        return None
+
     severity_dict = {
         (0, 3.9): "Low",
         (4.0, 6.9): "Medium",
@@ -61,19 +64,25 @@ def get_severity(score: float, version: int=3):
     )
 
 
-def get_cve_detail(cve_id: str):
-    """获取CVE详情"""
-    result = {
-        'references': [f'https://nvd.nist.gov/vuln/detail/{cve_id}']
+def parse_nvdlib_cve(cve):
+    """解析nvdlib返回的CVE数据"""
+    poc = get_poc(cve.id)
+    references = [i.url for i in cve.references] + [f'https://nvd.nist.gov/vuln/detail/{cve.id}']
+    return {
+        'cvss': cve.score[1],
+        'cvssVector': getattr(cve, 'v31vector', getattr(cve, 'v30vector', getattr(cve, 'v2vector', ''))),
+        'summary': cve.descriptions[0].value,
+        'poc': poc,
+        'references': references
     }
 
+
+def get_cve_detail(cve_id: str):
+    """获取CVE详情"""
+    result = {}
     try:
         r = nvdlib.searchCVE(cveId=cve_id, key=NVD_KEY)[0]
-        result['cvss'] = r.score[1]
-        result['cvssVector'] = getattr(r, 'v31vector', getattr(r, 'v30vector', getattr(r, 'v2vector', '')))
-        result['references'].extend([i.url for i in r.references])
-        result['summary'] = r.descriptions[0].value
-        result['poc'] = get_poc(cve_id)
+        result = parse_nvdlib_cve(r)
     except Exception as e:
         print_failed(f'{cve_id} detail failed: {e}')
 
@@ -86,6 +95,31 @@ def get_cve_detail(cve_id: str):
     # except Exception as e:
     #     print_failed(f'{cve_id} detail failed: {e}')
 
+    return result
+
+
+def search_cve(cpe: str):
+    """
+    通过CPE搜索CVE，vendor/product/version三个部分是必须的
+    示例：cpe:2.3:a:denx:u-boot:2022.01
+    ”"""
+    fix_keywords = ['/commit/', '/pull/','lore.kernel.org']
+    result = {}
+    try:
+        r = nvdlib.searchCVE(cpeName=cpe, key=NVD_KEY)
+        for cve in r:
+            cve_data = parse_nvdlib_cve(cve)
+            cve_data['cve_id'] = cve.id
+            cve_data['fixes'] = []
+            for ref in cve_data['references']:
+                for keyword in fix_keywords:
+                    if keyword in ref:
+                        cve_data['fixes'].append(ref)
+            result[cve.id] = cve_data
+    except Exception as e:
+        print_failed(f'{cpe} search failed: {e}')
+
+    print_focus(f'{cpe}: {len(result)}')
     return result
 
 
@@ -188,10 +222,20 @@ def get_patch(url: str):
         else:
             meta, diff = parse_patch(patch)
     elif 'lore.kernel.org' in url:
+        url = url.replace('%40', '@')
         if 'patchwork' in url:
             r = requests.get(url)
             url = r.history[-1].headers['Location']
         patch, _ = shell_cmd(f'b4 -q am -o- {url.split("/")[-1]}')
+        if not patch.startswith('From'):
+            print(f'Format error: {url}')
+            patch = ''
+        else:
+            meta, diff = parse_patch(patch)
+
+    # U-Boot
+    elif 'source.denx.de' in url:
+        patch = requests.get(f'{url}.patch').text
         if not patch.startswith('From'):
             print(f'Format error: {url}')
             patch = ''
@@ -208,7 +252,7 @@ def parse_patch(patch_data: str):
     lines = patch_data.splitlines()
     diff_index = next((i for i, line in enumerate(lines) if line.startswith('diff --git')), -1)
     if diff_index == -1:
-        print_failed(f'No diff --git: {patch_data}')
+        print_failed(f'Not found "diff --git": {patch_data}')
         return '', ''
 
     meta_part = '\n'.join(lines[:diff_index])
@@ -217,13 +261,13 @@ def parse_patch(patch_data: str):
 
 
 class Patcher:
-    def __init__(self,
-                 patch_all_path, patch_sec_path, report_file,
+    def __init__(self, proj, report_path,
                  version='', repo_path='', strict=False,
                  cve_exclude=[], repo_exclude=[], repo_migrate={}) -> None:
-        self.patch_all_path = patch_all_path
-        self.patch_sec_path = patch_sec_path
-        self.report_file = report_file
+        self.patch_all_path = report_path.joinpath(f'patch_all_{proj}')
+        self.patch_sec_path = report_path.joinpath(f'patch_sec_{proj}')
+        self.report_file = report_path.joinpath(f'cve_patch_{proj}.json')
+        self.report_html = self.report_file.with_suffix('.html')
         self.version = version
         self.repo_path = repo_path
         self.strict = strict
@@ -231,9 +275,9 @@ class Patcher:
         self.repo_exclude = repo_exclude
         self.repo_migrate = repo_migrate.get(version, {})
         self.repo_tool = repo_path.joinpath('.repo/repo/repo')
-        self.all_patches = patch_all_path.joinpath('all_patches.json')
-        self.sec_cves = patch_sec_path.joinpath('sec_cves.json')
-        self.cve_fixes = patch_sec_path.joinpath('cve_fixes.json')
+        self.all_patches = self.patch_all_path.joinpath('all_patches.json')
+        self.sec_cves = self.patch_sec_path.joinpath('sec_cves.json')
+        self.cve_fixes = self.patch_sec_path.joinpath('cve_fixes.json')
         self.patches_data = json.load(open(self.all_patches)) if self.all_patches.exists() else {}
         self.cves_data = json.load(open(self.sec_cves))[version] if self.sec_cves.exists() else {}
         self.fixes_data = json.load(open(self.cve_fixes)) if self.cve_fixes.exists() else {}
@@ -264,9 +308,11 @@ class Patcher:
         elif 'codelinaro.org' in url:
             repo = '/'.join(url.split('/-/')[0].split('/')[5:])
         else:
-            print_failed(f'Format error: {url}')
+            print_focus(f'No repo in url: {url}')
 
-        if repo not in self.repo_exclude and repo in self.repo_migrate:
+        if repo in self.repo_exclude:
+            repo = ''
+        if repo in self.repo_migrate:
             repo = self.repo_migrate[repo]
         return repo
 
@@ -510,7 +556,7 @@ class Patcher:
         with open(self.sec_cves, 'w+') as f:
             json.dump(cves_data, f, indent=4)
 
-        print_focus(f'CVE: {len(cves_data)}, CVE fixes: {len(fixes_data)}')
+        print_focus(f'CVE: {len(cves_data[self.version])}, CVE fixes: {len(fixes_data)}')
         print_success(f'Results saved in {self.sec_cves}')
 
     def scan_patches(self, sec_patches, threadFunc):
@@ -556,7 +602,6 @@ class Patcher:
                     continue
 
                 for cve_path in get_repo_patch(repo, cve_id):
-                    print(cve_path)
                     thread = executor.submit(threadFunc, repo, cve_path)
                     tasks.append(thread)
 

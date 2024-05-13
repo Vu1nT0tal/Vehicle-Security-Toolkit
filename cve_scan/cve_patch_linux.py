@@ -121,7 +121,7 @@ def format(args):
     """为仓库生成补丁"""
     # 生成补丁
     commit = args.commit or KERNEL_VERSION[version]
-    target_path = patch_all_path.joinpath(version)
+    target_path = patcher.patch_all_path.joinpath(version)
     patcher.gen_patches_one_repo(repo_path, target_path, commit)
 
     # 处理生成的补丁
@@ -130,7 +130,7 @@ def format(args):
 
 def scan(args):
     """对比所有CVE补丁与所有补丁"""
-    patches = patch_sec_path.joinpath(version).glob('*.diff')
+    patches = patcher.patch_sec_path.joinpath(version).glob('*.diff')
     patcher.scan_patches(patches, patcher.scanThread)
 
 
@@ -162,17 +162,17 @@ if __name__ == '__main__':
     cves_path = Path(__file__).absolute().parents[1].joinpath('tools/linux_kernel_cves')
     report_path = Path(__file__).absolute().parents[1].joinpath('data/SecScan')
     report_path.mkdir(parents=True, exist_ok=True)
-    report_file = report_path.joinpath('cve_patch_linux.json')
-    report_html = report_file.with_suffix('.html')
-    patch_all_path = report_path.joinpath('patch_all_linux')
-    patch_sec_path = report_path.joinpath('patch_sec_linux')
-    all_patches = patch_all_path.joinpath('all_patches.json')
-    sec_cves = patch_sec_path.joinpath('sec_cves.json')
 
     args = argument()
     version = args.version
-    repo_path = Path(getattr(args, 'repo', '')).expanduser().absolute()
     strict_mode = getattr(args, 'strict', False)
+    repo_path = Path(getattr(args, 'repo', '')).expanduser().absolute()
+
+    patcher = Patcher(
+        'linux', report_path,
+        version, repo_path, strict_mode,
+        CVE_EXCLUDE
+    )
 
     # 第一步：更新CVE补丁库
     if args.func.__name__ == 'update':
@@ -180,19 +180,14 @@ if __name__ == '__main__':
 
     # 第二步：为仓库生成补丁
     elif args.func.__name__ == 'format':
-        if not patch_sec_path.exists():
+        if not patcher.sec_cves.exists():
             print_failed('Please update first')
             sys.exit(1)
 
     # 第三步：对比所有CVE补丁与所有补丁
     elif args.func.__name__ == 'scan':
-        if not all_patches.exists():
+        if not patcher.all_patches.exists():
             print_failed('Please format first')
             sys.exit(1)
 
-    patcher = Patcher(
-        patch_all_path, patch_sec_path, report_file,
-        version, repo_path, strict_mode,
-        CVE_EXCLUDE
-    )
     args.func(args)
