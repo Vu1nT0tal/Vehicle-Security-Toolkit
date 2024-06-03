@@ -98,15 +98,21 @@ def get_cve_detail(cve_id: str):
     return result
 
 
-def search_cve(cpe: str):
+def search_cve(virtualMatchString: str, cpeName: str=''):
     """
-    通过CPE搜索CVE，vendor/product/version三个部分是必须的
+    cpeName：vendor/product/version是必须的
     示例：cpe:2.3:a:denx:u-boot:2022.01
+    virtualMatchString：可以只提供vendor/product
+    示例：cpe:2.3:a:denx:u-boot
     ”"""
     fix_keywords = ['/commit/', '/pull/','lore.kernel.org']
     result = {}
+    cpe = cpeName or virtualMatchString
     try:
-        r = nvdlib.searchCVE(cpeName=cpe, key=NVD_KEY)
+        if cpeName:
+            r = nvdlib.searchCVE(cpeName=cpe, key=NVD_KEY)
+        else:
+            r = nvdlib.searchCVE(virtualMatchString=cpe, key=NVD_KEY)
         for cve in r:
             cve_data = parse_nvdlib_cve(cve)
             cve_data['cve_id'] = cve.id

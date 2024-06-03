@@ -24,7 +24,7 @@ CVE_COMMIT = {
 
 def update(args):
     """更新CVE补丁库"""
-    items = search_cve('cpe:2.3:a:denx:u-boot:2022.01')
+    items = search_cve('cpe:2.3:a:denx:u-boot')
     cves_data[version] = items
     for cve_data in items.values():
         print(cve_data)
